@@ -65,8 +65,18 @@ Each of the mentioned 3D scenes will contain clickable elements that will open a
 like for example the circuit editor window.
 
 \subsection{Gameplay}
-The goal of the game is too build your own computer that can execute instructions of a predefined format (we made the instructions 
-predefined so that we can validate the validity of the made computer by executing predefined programs)
+The goal of the game is too build your own computer at home that can execute instructions of a predefined format (we made the instructions 
+predefined so that we can validate the validity of the made computer by executing predefined programs).\\
+The game will follow a linear path which is of the following form.\\
+\begin{enumerate}
+    \item Get an assignment from your boss 
+    \item Solve the assignemt (this include producing various components and buying the necessary parts to make the components) 
+    \item Get money for solving the assignment and unlock new components 
+    \item Use those components to build other more complex components and systems at home 
+    \item Once you progressed and unlocked every type of component you will get the final mission of building a computer  
+    \item Once you build a computer that satisfies the given conditions (checked via tests made by the developers) you have officialy completed the main story of the game 
+    \item After completing the game you unlock access to the black market where you can buy components made by other players and make anything you can imagine
+\end{enumerate}
 
 
 
@@ -75,6 +85,23 @@ predefined so that we can validate the validity of the made computer by executin
 
 
 \section{Product market}
+The audience for this product are electronics and computer enthusiasts aswell as college students.\\
+THe product could be used by universities to teach computer architecture in a fun way engaging and rewarding way.\\
+Profit will be earned by leveraging the game economy and reward ads. (Up to disscussion, detailed description needed).\\
 \section{Product implementation}
+The core simulator will be written in Rust (WASM) or in TS (ran in a seperate worker).
 
+The frontend of this application will be made using the following technologies.\\
+\begin{itemize}
+    \item Svelte (Sveltekit) as the frontend framework
+    \item Threlte (Three.js) as the webGL framework (library)
+    \item TailwindCSS for styling
+    \item Google adsense ads
+\end{itemize}
+The backend of this application will be made using the following technologies.\\
+\begin{itemize}
+    \item Vert.x as the backend web framework (toolkit more precisely)
+    \item Postgres as the database
+\end{itemize}
+The application will be hosted on a VPS (most likely oracle on an oracle free VPS)
 \end{document}
