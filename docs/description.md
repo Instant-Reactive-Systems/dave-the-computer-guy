@@ -7,9 +7,9 @@
 1. [Simple explanation](#simple-explanation)
 2. [Story intro](story-intro)
 3. [Graphics](#graphics)
-    a. [Office](#office)
-    b. [Home](#home)
-    c. [Electronics shop](#shop)
+  a. [Office](#office)
+  b. [Home](#home)
+  c. [Electronics shop](#shop)
 4. [Gameplay](#gameplay)
 5. [Product market](#product-market)
 6. [Product implementation](#product-impl)
@@ -40,15 +40,15 @@ The rooms can be viewed down below:
 
 ### The office - Dave's workplace
 [office]: #office
-![Image of the office space](../images/office.jpeg){width=50%}
+![Image of the office space](../images/office.jpeg)
 
 ### Home - Dave's place of rest and personal hobbies
 [home]: #home
-![Image of the home space](../images/office.jpeg){width=50%}
+![Image of the home space](../images/office.jpeg)
 
 ### Electronics shop - Dave's go-to shop for electronics components
 [shop]: #shop
-![Image of the shop space](../images/shop.jpeg){width=50%}
+![Image of the shop space](../images/shop.jpeg)
 
 ## Gameplay
 [gameplay]: #gameplay
@@ -64,7 +64,7 @@ The game will follow a linear path which is of the following form:
 
 ## Product market
 [product-market]: #product-market
-The audience for this product are electronics and computer enthusiasts as well as college students. The product could be used by universities to teach computer architecture in a fun way engaging and rewarding way. Profit will be earned by leveraging the game economy and reward ads. (Up to disscussion, detailed description needed).
+The audience for this product are electronics and computer enthusiasts as well as college students. The product could be used by universities to teach computer architecture in a fun way engaging and rewarding way. Profit will be earned by leveraging the game economy and reward ads. (Up to discussion, detailed description needed).
 
 ## Product implementation
 [product-impl]: #product-impl
