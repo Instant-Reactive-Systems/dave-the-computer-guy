@@ -34,21 +34,48 @@ The reason he wants to do this is that he was originally a software engineer and
 [graphics]: #graphics
 The game will use WebGL to display its graphics. The graphics are 3D and voxel models will be used. An isometric camera will be used to view the scenes.
 
+### Scenes
 There will be 3 main scenes in which the player will play. Each of the mentioned 3D scenes will contain clickable elements that will open additional UI elements where the gameplay will actually happen (e.g. the circuit editor window).
 
 The rooms can be viewed down below:
 
-### The office - Dave's workplace
+#### The office - Dave's workplace
 [office]: #office
 ![Image of the office space](../images/office.jpeg)
 
-### Home - Dave's place of rest and personal hobbies
+#### Home - Dave's place of rest and personal hobbies
 [home]: #home
 ![Image of the home space](../images/home.jpeg)
 
-### Electronics shop - Dave's go-to shop for electronics components
+#### Electronics shop - Dave's go-to shop for electronics components
 [shop]: #shop
 ![Image of the shop space](../images/shop.jpeg)
+
+### Player models
+There are 3 NPC models and 1 player model.
+
+The NPCs are:
+- Dexter Crawford - the boss
+- John Dodi - the senior engineer
+- Adam Shady - the shop clerk
+
+The models can be viewed down below:
+
+#### Dexter Crawford - the boss
+[boss]: #boss
+![Image of the boss](../images/boss.png)
+
+#### John Dodi - the senior engineer
+[dodi]: #dodi
+![Image of John Dodi](../images/john-dodi.png)
+
+#### Shop clerk
+[clerk]: #clerk
+![Image of the shop clerk](../images/clerk.png)
+
+#### Player
+[player]: #player
+![Image of the player](../images/player.png)
 
 ## Gameplay
 [gameplay]: #gameplay
