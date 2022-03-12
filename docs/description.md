@@ -44,7 +44,7 @@ The rooms can be viewed down below:
 
 ### Home - Dave's place of rest and personal hobbies
 [home]: #home
-![Image of the home space](../images/office.jpeg)
+![Image of the home space](../images/home.jpeg)
 
 ### Electronics shop - Dave's go-to shop for electronics components
 [shop]: #shop
