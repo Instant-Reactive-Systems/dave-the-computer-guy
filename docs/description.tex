@@ -23,20 +23,21 @@
 \subsection{Simple explanation}
 Dave The Computer Guy is a WebGL game with the goal of teaching you how to build a computer from scratch out of logic gates step by step.
 \subsection{Story intro}
-You are in control of Dave, a fresh out-of-college computer science graduate.
-After he graduated, he was hired by a local electronics manufacturer called "Electro Nick's".
 
-He works in the company's office with his assigned mentor and senior hardware developer John Dodi and their boss Dexter Crawford.
+You are in control of Dave, a fresh computer science graduate who has worked as a software developer throughout.
+After he graduated, he applied for a job at a local electronics manufacturer called "Electro Nick's" because he wanted to 
+improve his knowledge of the hardware side of computers.
+
+He got the and job and now works in the company's office with his assigned mentor and senior hardware developer John Dodi and their boss Dexter Crawford.
 
 Dave's day to day will consist of syncing with his boss about the work that needs to be done and doing the required work which is mostly
-creating new electronic components and manufacturing them.
+creating new electronic components.
 
 Whenever Dave gets stuck on a task or has no idea where to even start he can always ask John Dodi for help as he is a senior developer with
 decades of experience and wisdom.
 
-The reason he wants to do this is that he was originally a software engineer and only recently dived into the world of hardware and he
-wishes to connect his software knowledge with his newly found hardware knowledge so that he can have a deep understanding of computers.
-
+Dave is really motivated and decided to take on a side project in which he will make his very own computer at home by using the knowledge 
+he acquires at work.
 \subsection{Graphics}
 
 The game will use webGL to display its graphics.\\
@@ -48,6 +49,7 @@ There will be 3 main scenes in which the player will play:\\
           \begin{center}
               \includegraphics[width=5cm, height=4cm]{office.png}
           \end{center}
+          \pagebreak
     \item Home - Dave's home where he spends time learning and creating.
           \begin{center}
               \includegraphics[width=5cm, height=4cm]{home.png}
@@ -60,9 +62,9 @@ There will be 3 main scenes in which the player will play:\\
 
 Each of the mentioned 3D scenes will contain clickable elements that will open additional UI elements where the gameplay will actually happen 
 like for example the circuit editor window.
+\pagebreak
 
 \subsection{Player models}
-
 There are 3 NPC models and 1 player model.
 
 The NPCs are:
@@ -84,19 +86,21 @@ The models can be viewed down below:
           \begin{center}
               \includegraphics[width=5cm, height=4cm]{john-dodi.png}
           \end{center}
+          \pagebreak
     \item Adam Shady - the shop clerk
           \begin{center}
               \includegraphics[width=5cm, height=4cm]{clerk.png}
           \end{center}
-    \item Player
+    \item Dave - the player
           \begin{center}
               \includegraphics[width=5cm, height=4cm]{player.png}
           \end{center}
 \end{enumerate}
 
 \subsection{Gameplay}
-The goal of the game is too build your own computer at home that can execute instructions of a predefined format (we made the instructions 
-predefined so that we can validate the validity of the made computer by executing predefined programs).\\
+The goal of the game is to build your own computer at home.\\
+The main gameplay will take part in the circuit editor window which you will use to create new components/circuits 
+and analyse existing circuits/components.
 The game will follow a linear path which is of the following form.\\
 \begin{enumerate}
     \item Get an assignment from your boss.
@@ -105,26 +109,31 @@ The game will follow a linear path which is of the following form.\\
     \item Use the knowledge you've acquired to advance your computer during your free-time at home.
     \item Once you progressed and unlocked every type of component you will get the final mission of building a computer.
     \item Once you build a computer that satisfies the given conditions (checked via tests made by the developers) you have officially completed the main story of the game.
+    \item The game does not end once you build the computer, you can still work at your job and earn resources and make new circuits and components.
 \end{enumerate}
 
+
+
 \section{Product market}
-The audience for this product are electronics and computer enthusiasts as well as college students.\\
-The product could be used by universities to teach computer architecture in a fun way engaging and rewarding way.\\
-Profit will be earned by leveraging the game economy and reward ads. (Up to disscussion, detailed description needed).\\
+The audience for this product are computer and programming enthusiasts as well as college students.\\
+The product could be used by universities to teach computer architecture in a fun, engaging and rewarding way.\\
+The game will have interstitial ads with the option of paying a one time fee to remove them for your account.
 \section{Product implementation}
-The core simulator will be written in Rust (compiled into WASM) or in TypeScript (ran in a seperate worker).
+
+The core simulator will be written in Rust (compiled into WASM).
 
 The frontend of this application will be made using the following technologies.\\
 \begin{itemize}
     \item Svelte (Sveltekit) as the frontend framework
     \item Threlte (Three.js) as the webGL framework (library)
     \item TailwindCSS for styling
-    \item Google adsense ads
+    \item Google adsense for monetization
 \end{itemize}
 The backend of this application will be made using the following technologies.\\
 \begin{itemize}
-    \item Vert.x as the backend web framework (toolkit more precisely)
+    \item Vert.x on the backend
     \item MongoDB as the database
 \end{itemize}
-The application will be hosted on a VPS (most likely Oracle on an Oracle free VPS)
+
+\textit{DISCLAIMER: Anything in the product implementation is subject to change.}
 \end{document}
