@@ -1,0 +1,11 @@
+Model Information:
+* title:	Rack
+* source:	https://sketchfab.com/3d-models/rack-1ebdf5f304134250b2768ca830094a11
+* author:	kolpakov.k99 (https://sketchfab.com/kolpakov.k99)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Rack" (https://sketchfab.com/3d-models/rack-1ebdf5f304134250b2768ca830094a11) by kolpakov.k99 (https://sketchfab.com/kolpakov.k99) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

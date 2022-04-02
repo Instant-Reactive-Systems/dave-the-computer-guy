@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 88,
+      "min": [
+        -0.30000001192092896,
+        0,
+        -0.20000000298023224
+      ],
+      "max": [
+        0.20000000298023224,
+        0.10000000149011612,
+        0.20000000298023224
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 88,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 88,
+      "min": [
+        0.7128909826278687,
+        0.5
+      ],
+      "max": [
+        0.7167969942092896,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 156,
+      "min": [
+        0
+      ],
+      "max": [
+        87
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Console_GameQoob_Remote",
+      "byteLength": 3484,
+      "uri": "data:application/octet-stream;base64,mpmZvs3MzD3NzEw+mpmZvgAAAADNzMy9mpmZvgAAAADNzEw+mpmZvs3MzD3NzMy9mpmZvgAAAADNzEy+mpmZvgAAAADNzMy9mpmZvs3MzD3NzMy9mpmZvs3MzD3NzEy+zczMPc3MzD3NzEw+zczMPQAAAADNzMw9zczMPQAAAADNzEw+zczMPc3MzD3NzMw9zcxMvgAAAADNzEw+zcxMvgAAAADNzMw9zcxMvs3MzD3NzEw+zcxMvs3MzD3NzMw9zcxMPgAAAADNzEw+zcxMPgAAAADNzMy9zcxMPs3MzD3NzEw+zcxMPgAAAADNzMy9zcxMPgAAAADNzEy+zcxMPs3MzD3NzMy9zcxMPs3MzD3NzMy9zcxMPs3MzD3NzEy+zcxMvgAAAADNzEw+mpmZvs3MzD3NzEw+mpmZvgAAAADNzEw+zcxMvs3MzD3NzEw+zcxMPgAAAADNzEw+zczMPc3MzD3NzEw+zczMPQAAAADNzEw+zcxMPs3MzD3NzEw+zczMPQAAAADNzMw9zcxMvs3MzD3NzMw9zcxMvgAAAADNzMw9zczMPc3MzD3NzMw9mpmZvgAAAADNzEy+mpmZvs3MzD3NzEy+zcxMvgAAAADNzEy+zcxMvs3MzD3NzEy+zcxMvgAAAADNzEy+zcxMvs3MzD3NzEy+zczMPQAAAADNzEy+zczMPc3MzD3NzEy+zczMPQAAAADNzEy+zczMPc3MzD3NzEy+zcxMPgAAAADNzEy+zcxMPs3MzD3NzEy+zcxMvgAAAADNzMw9zcxMvgAAAADNzEw+mpmZvgAAAADNzEw+zczMPQAAAADNzMw9zcxMPgAAAADNzEw+zczMPQAAAADNzEw+mpmZvgAAAADNzMy9zcxMvgAAAADNzMy9zczMPQAAAADNzMy9zcxMPgAAAADNzMy9mpmZvgAAAADNzEy+zcxMvgAAAADNzMy9mpmZvgAAAADNzMy9zcxMvgAAAADNzEy+zcxMvgAAAADNzEy+zczMPQAAAADNzEy+zcxMPgAAAADNzMy9zczMPQAAAADNzMy9zczMPQAAAADNzEy+zcxMPgAAAADNzEy+mpmZvs3MzD3NzEw+zcxMvs3MzD3NzEw+zcxMvs3MzD3NzMw9zczMPc3MzD3NzEw+zcxMPs3MzD3NzEw+zczMPc3MzD3NzMw9mpmZvs3MzD3NzMy9zcxMvs3MzD3NzMy9zczMPc3MzD3NzMy9zcxMPs3MzD3NzMy9mpmZvs3MzD3NzMy9zcxMvs3MzD3NzMy9mpmZvs3MzD3NzEy+zcxMvs3MzD3NzEy+zcxMvs3MzD3NzEy+zczMPc3MzD3NzMy9zcxMPs3MzD3NzMy9zczMPc3MzD3NzEy+zczMPc3MzD3NzEy+zcxMPs3MzD3NzEy+AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAABoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/AoA3PwAAAD8CgDc/AAAAPwKANz8AAAA/BoA2PwAAAD8CgDc/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8CgDc/AAAAPwKANz8AAAA/AoA3PwAAAD8GgDY/AAAAPwKANz8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/AoA3PwAAAD8CgDc/AAAAPwKANz8AAAA/AoA3PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwKANz8AAAA/AoA3PwAAAD8CgDc/AAAAPwKANz8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8CgDc/AAAAPwKANz8AAAA/AoA3PwAAAD8GgDY/AAAAPwKANz8AAAA/AoA3PwAAAD8CgDc/AAAAPwKANz8AAAA/BoA2PwAAAD8CgDc/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/BoA2PwAAAD8GgDY/AAAAPwaANj8AAAA/AoA3PwAAAD8CgDc/AAAAPwKANz8AAAA/BoA2PwAAAD8CgDc/AAAAPwKANz8AAAA/AoA3PwAAAD8CgDc/AAAAPwaANj8AAAA/AoA3PwAAAD8AAAEAAgADAAQABQAGAAEAAAAHAAQAAwAIAAkACgALAAkACAAMAA0ADgAOAA0ADwAQABEAEgATABQAFQASABEAFgAVABQAFwAYABkAGgAbABkAGAAcAB0AHgAfAB0AHAAgACEAIgAjACEAIAAkACUAJgAmACUAJwAoACkAKgAqACkAKwAsAC0ALgAuAC0ALwAwADEAMgAzADQANQA2ADAAMgA2ADMAMAA3ADMANgA4ADQAMwA4ADMANwA5ADQAOAA6ADsAPAA9ADgANwA+ADsAOgA/AEAAQQBCADgAPQBDAEAAPwBEAEUARgBHAEgASQBEAEYASgBGAEkASgBKAEkASwBJAEgATABLAEkATABMAEgATQBOAE8AUABLAEwAUQBQAE8AUgBTAFQAVQBRAEwAVgBVAFQAVwCJUE5HDQoaCgAAAA1JSERSAAABAAAAAAEIBgAAADFZcHcAAAABc1JHQgCuzhzpAAABHUlEQVQ4je3QPUgCcQCG8Uf6d3nieZZXQt1ZBgfRTdZQc5NwQ0ttQQg1NB8EDc2CS4tTCGFLH1MNtkVQ4I0G1RQSWZMhJaFmctUQjS1NDf7WF57h9dm2/UlX1z8VS+eobKz8up9We1H6NZRwhMHQOXJYxh/2E6vMk0jYJEsWnqTgSUGeLqJ0ZJl32U/meYj4cILL9CFJtY/Sag+1Wg3DMHBdFyEE9XqdxSOL1PQEM4FtsktznEwGSJnLGIaBrusU20Vur19Zi5dplu+Jji2ANo6UyXHg3bF/9UCj1WY0OkAkIHF8U0WMfBDSgihakFBrilnru/XT1HUd0zRRVZWz3U32snlemm88Njqsb+3gui6O4yCEwLKsP39bKBR8XwkcUgISmtP/AAAAAElFTkSuQmCCAA=="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 1056,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 1056,
+      "byteOffset": 1056,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 704,
+      "byteOffset": 2112,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 312,
+      "byteOffset": 2816,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 3128,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Console_GameQoob_Remote",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Console_GameQoob_Remote",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

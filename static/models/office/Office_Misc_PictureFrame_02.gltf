@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 70,
+      "min": [
+        -0.20000000298023224,
+        0,
+        -0.10000000149011612
+      ],
+      "max": [
+        0.20000000298023224,
+        0.5,
+        0.10000000149011612
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 70,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 70,
+      "min": [
+        0.7597659826278687,
+        0.5
+      ],
+      "max": [
+        0.8183590173721313,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 138,
+      "min": [
+        0
+      ],
+      "max": [
+        69
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_PictureFrame_02",
+      "byteLength": 2872,
+      "uri": "data:application/octet-stream;base64,zcxMvgAAAD/NzMw9zcxMvgAAAAAWAICyzcxMvgAAAADNzMw9zcxMvgAAAD8WAICyzczMvc3MzD4WAICyzczMvQAAAADNzMy9zczMvQAAAAAWAICyzczMvc3MzD7NzMy9zczMPQAAAAAWAICyzczMPQAAAADNzMy9zczMPc3MzD4WAICyzczMPc3MzD7NzMy9zcxMPgAAAADNzMw9zcxMPgAAAAAWAICyzcxMPgAAAD/NzMw9zcxMPgAAAD8WAICyzczMvc3MzD3NzMw9zcxMvgAAAD/NzMw9zcxMvgAAAADNzMw9zczMvc3MTD7NzMw9zczMvc3MzD7NzMw9AAAAAJqZmT7NzMw9zczMvc3MzD7NzMw9zczMvc3MTD7NzMw9AAAAAM3MzD7NzMw9AAAAAM3MzD7NzMw9zczMPc3MzD3NzMw9zczMPc3MzD3NzMw9zczMvc3MTD7NzMw9zczMvc3MzD3NzMw9zczMPc3MTD7NzMw9zczMPc3MTD7NzMw9zczMPZqZmT7NzMw9AAAAAM3MzD7NzMw9AAAAAJqZmT7NzMw9zczMPZqZmT7NzMw9zczMPc3MzD7NzMw9zczMPc3MzD7NzMw9zcxMPgAAAADNzMw9zczMPZqZmT7NzMw9zczMPc3MTD7NzMw9zcxMPgAAAD/NzMw9zcxMvgAAAAAWAICyzcxMvgAAAD8WAICyzczMvQAAAAAWAICyzczMvc3MzD4WAICyzczMPc3MzD4WAICyzczMPQAAAAAWAICyzcxMPgAAAAAWAICyzcxMPgAAAD8WAICyzczMvQAAAADNzMy9zczMvc3MzD7NzMy9zczMPQAAAADNzMy9zczMPc3MzD7NzMy9zcxMvgAAAAAWAICyzcxMPgAAAADNzMw9zcxMvgAAAADNzMw9zczMvQAAAAAWAICyzczMPQAAAAAWAICyzcxMPgAAAAAWAICyzczMvQAAAADNzMy9zczMPQAAAADNzMy9zczMvc3MzD4WAICyzczMPc3MzD4WAICyzczMvc3MzD7NzMy9zczMPc3MzD7NzMy9zcxMvgAAAD/NzMw9zcxMPgAAAD/NzMw9zcxMvgAAAD8WAICyzcxMPgAAAD8WAICyAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/BoBOPwAAAD8GgE4/AAAAPwaATj8AAAA/AoBLPwAAAD8GgE4/AAAAPwKASz8AAAA/+n9RPwAAAD/6f1E/AAAAP/p/UT8AAAA/BoBOPwAAAD/6f1E/AAAAPwaAQj8AAAA/BoBCPwAAAD8GgEI/AAAAPwaATj8AAAA/AoBLPwAAAD8GgEI/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8AAAEAAgADAAEAAAAEAAUABgAHAAUABAAIAAkACgAKAAkACwAMAA0ADgAOAA0ADwAQABEAEgATABEAEAAUABEAEwAVABYAFwAYABEAFAAZABYAFQAaABAAEgAbABwAHQAeABUAFwAfABwAGwAgACEAIgAjABUAHgAkABEAGAAlACEAIAAmACcAKAAmACgAGgAmACQAJwAmABoAEgApABEAJAApACQAJgAqACsALAAsACsALQAtACsALgAvAC4AMAAuACsAMQAwAC4AMQAyADMANAA0ADMANQA2ADcAOAA5ADcANgA6ADcAOQA7ADcAOgA8ADoAOQA9ADoAPAA+AD8AQABAAD8AQQBCAEMARABEAEMARQCJUE5HDQoaCgAAAA1JSERSAAABAAAAAAEIBgAAADFZcHcAAAABc1JHQgCuzhzpAAABHUlEQVQ4je3QPUgCcQCG8Uf6d3nieZZXQt1ZBgfRTdZQc5NwQ0ttQQg1NB8EDc2CS4tTCGFLH1MNtkVQ4I0G1RQSWZMhJaFmctUQjS1NDf7WF57h9dm2/UlX1z8VS+eobKz8up9We1H6NZRwhMHQOXJYxh/2E6vMk0jYJEsWnqTgSUGeLqJ0ZJl32U/meYj4cILL9CFJtY/Sag+1Wg3DMHBdFyEE9XqdxSOL1PQEM4FtsktznEwGSJnLGIaBrusU20Vur19Zi5dplu+Jji2ANo6UyXHg3bF/9UCj1WY0OkAkIHF8U0WMfBDSgihakFBrilnru/XT1HUd0zRRVZWz3U32snlemm88Njqsb+3gui6O4yCEwLKsP39bKBR8XwkcUgISmtP/AAAAAElFTkSuQmCCAA=="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 840,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 840,
+      "byteOffset": 840,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 560,
+      "byteOffset": 1680,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 276,
+      "byteOffset": 2240,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2516,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_PictureFrame_02",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_PictureFrame_02",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}
