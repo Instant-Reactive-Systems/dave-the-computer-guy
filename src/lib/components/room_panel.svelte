@@ -8,7 +8,6 @@
 
 	const dispatch = createEventDispatcher();
 	let currentPage = $page;
-    let currentRoute;
     let destinations = [
         Router.SHOP_ROUTE,
         Router.HOME_ROUTE,
@@ -17,20 +16,6 @@
     
 	function onCloseClicked() {
 		dispatch('close');
-        console.log("Clicked");
-        console.log(JSON.stringify(currentPage));
-	}
-
-	function onHomeClicked() {
-		console.log(JSON.stringify(currentPage));
-	}
-
-	function onOfficeClicked() {
-		console.log(JSON.stringify(currentPage));
-	}
-
-	function onShopClicked() {
-		console.log(JSON.stringify(currentPage));
 	}
 
     function goToDestination(e:Event){
@@ -39,9 +24,7 @@
         goto(targetDestination, { replaceState:true })
     }
 
-    $:{
-        currentRoute = currentPage.routeId;
-    }
+   
 
 </script>
 
