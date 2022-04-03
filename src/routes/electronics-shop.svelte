@@ -10,13 +10,28 @@
         OrbitControls,
         PerspectiveCamera,
     } from "threlte";
+    import RoomPanel from "$lib/components/room_panel.svelte";
+
+
+    let roomPanelVisible = false;
+    function showRoomPanel(){
+        roomPanelVisible = true;
+    }
+
+    function hideRoomPanel(){
+        roomPanelVisible = false;
+    }
 </script>
 
+{#if roomPanelVisible}
+    <RoomPanel on:close={hideRoomPanel}></RoomPanel>
+{/if}
 <div>
     <Canvas>
         <PerspectiveCamera position={{ x: -10, y: 10, z: -10 }}>
             <OrbitControls />
         </PerspectiveCamera>
+
 
         <DirectionalLight
             shadow
@@ -28,6 +43,20 @@
             groundColor={"#ac844c"}
             intensity={0.4}
         />
+
+
+
+        <Mesh
+        interactive on:click={showRoomPanel}
+        visible={false}
+        position={{ y: 2, x: 6.2, z: -2.6  }}
+        rotation={{ y: -90 * (Math.PI / 180) }}
+        geometry={new BoxBufferGeometry(2, 2.8 , 0.2)}
+        material={new MeshStandardMaterial({
+            side: DoubleSide,
+            color: "white",
+        })}
+    />
 
         <Mesh
             receiveShadow

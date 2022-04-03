@@ -10,7 +10,22 @@
         OrbitControls,
         PerspectiveCamera,
     } from "threlte";
+    import RoomPanel from '$lib/components/room_panel.svelte'
+
+
+    let roomPanelVisible = false;
+    function showRoomPanel(){
+        roomPanelVisible = true;
+    }
+
+    function hideRoomPanel(){
+        roomPanelVisible = false;
+    }
 </script>
+
+{#if roomPanelVisible}
+    <RoomPanel on:close={hideRoomPanel}></RoomPanel>
+{/if}
 
 <div>
     <Canvas>
@@ -104,6 +119,17 @@
             position={{ y: -0.4, x: 4, z: 4.2 }}
             rotation={{ y: -90 * (Math.PI / 180) }}
         />
+        <Mesh
+        interactive on:click={showRoomPanel}
+        visible={false}
+        position={{ y: 2, x: 4.85, z: -3.6  }}
+        rotation={{ y: -90 * (Math.PI / 180) }}
+        geometry={new BoxBufferGeometry(2, 2.8 , 0.2)}
+        material={new MeshStandardMaterial({
+            side: DoubleSide,
+            color: "white",
+        })}
+    />
         <GLTF
             url="/static/models/office/Office_Misc_Door_01.gltf"
             position={{ y: -0.4, x: 4.85, z: -3.6 }}
