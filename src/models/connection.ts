@@ -1,4 +1,4 @@
-import { Connector } from "./connector"
+import type { Connector } from "./connector"
 
 export type Connection = {
     from: Connector,
