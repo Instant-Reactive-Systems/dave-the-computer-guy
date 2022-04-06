@@ -8,7 +8,7 @@ export type Component = {
     definitionId: number,
 }
 
-export type Pins {
+export type Pins = {
     input: Connector[],
     output: Connector[]
 }

@@ -34,6 +34,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"fabric": "^5.2.1",
+		"rxjs": "^7.5.5",
 		"ts-results": "^3.3.0"
 	}
 }

@@ -4,17 +4,7 @@
     import {circuit as circuitStore}   from '$lib/stores/circuit'
     import {circuitState as circuitStateStore} from '$lib/stores/circuit_state'
     import { createEventDispatcher } from "svelte";
-    import { CircuitModification } from "$lib/models/circuit_actions";
-    import ELK from "elkjs/lib/elk-api.js";
-    import { CircuitState } from "$lib/models/circuit_state";
-    import { Circuit } from "$lib/models/circuit";
-    import { ComponentDefinition } from "$lib/models/component_definition";
-    import { Connection } from "$lib/models/connection";
-    import { Grid } from "$lib/digisim/rendering/grid";
-    import Scene from "svelthree/src/components/Scene.svelte";
-    import { Component } from "$lib/digisim/rendering/component";
-    import { dataset_dev, object_without_properties } from "svelte/internal";
-    import { map } from "rxjs";
+  
 
     let circuit = $circuitStore;
     let circuitState = $circuitStateStore
