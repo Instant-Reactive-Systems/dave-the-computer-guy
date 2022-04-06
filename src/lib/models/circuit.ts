@@ -1,4 +1,5 @@
 import type { Connection } from "./connection"
+import type { Junction } from "./junction"
 import type { Wire } from "./wire"
 
 export type Circuit = {
@@ -18,9 +19,9 @@ export type Circuit = {
             }[],
             wiring: {
                 connection: Connection,
-                wires: Wire[];
+                wires: Wire[]
             }[],
-            junctions: Junction 
+            junctions: Junction[]
         }
     }
 }

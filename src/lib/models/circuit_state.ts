@@ -1,0 +1,1 @@
+export type CircuitState = Record<number,any>
