@@ -36,6 +36,42 @@
 	onMount(() => {});
 </script>
 
+
+<nav id="app-tab-menu" class="shadow-md flex flex-row justify-between">
+    <ul class="h-10">
+        <li>
+            <div class="tab-name">File</div>
+            <div class="dropdown-menu">
+                <ul>
+                    <li>
+                        <button on:click={createNewCircuit}>New circuit</button>
+                    </li>
+                    <li>
+                        <button on:click={saveCircuit}>Save circuit</button>
+                    </li>
+                    <li>
+                        <button on:click={loadCircuit}>Load circuit</button>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+
+    <ul class="h-10 space-x-3">
+        <li class="pt-2">
+            <button on:click={startSimulation}>Start</button>
+        </li>
+        <li class="pt-2">
+            <button on:click={pauseSimulation}>Pause</button>
+        </li>
+        <li class="pt-2 ">
+            <button on:click={stepSimulation}>Step</button>
+        </li>
+    </ul>
+
+    <div />
+</nav>
+
 <div id="main-content-wrapper" class="grid grid-cols-12">
     <div class="col-span-9">
         <div class=" h-full flex flex-col">
