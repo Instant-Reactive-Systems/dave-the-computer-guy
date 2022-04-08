@@ -30,6 +30,9 @@
 
 	function stepSimulation() {}
 
+    function handleKeyPress(e:KeyboardEvent) {
+        console.log(e);
+    }
 	onMount(() => {});
 </script>
 
@@ -61,6 +64,7 @@
         />
     </aside>
 </div>
+<svelte:window  on:keypress|trusted="{handleKeyPress}" />
 
 <style>
     /*

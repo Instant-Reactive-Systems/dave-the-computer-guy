@@ -1,0 +1,29 @@
+{
+    "id": 0,
+    "name": "Nand gate circuit",
+    "description": "w/e",
+    "components": [
+        {
+            "definitionId": 1,
+            "id": 0
+        },
+        {
+            "definitionId": 2,
+            "id": 1
+        }
+    ],
+    "connections": [
+        {
+            "from": {
+                "componentId": 0,
+                "pin": 2
+            },
+            "to": [
+                {
+                    "componentId": 1,
+                    "pin": 0
+                }
+            ]
+        }
+    ]
+}

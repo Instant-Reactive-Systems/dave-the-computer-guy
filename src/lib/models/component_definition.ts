@@ -1,3 +1,4 @@
+import type { Input } from "postcss"
 import type { Option } from "ts-results"
 import type { Connection } from "./connection"
 import type { Connector } from "./connector"
@@ -8,9 +9,14 @@ export type Component = {
     definitionId: number,
 }
 
-export type Pins = {
+export type PinsMapping = {
     input: Connector[],
     output: Connector[]
+}
+
+export type Pins = {
+    input: string[],
+    output: string[]
 }
 
 export type Circuit = {
@@ -21,9 +27,13 @@ export type Circuit = {
 export type ComponentDefinition = {
     id: number,
     name: string,
-    desc: string,
-    pins: Pins,
-    circuit: Circuit,
-    truthTable: Option<boolean[][]>
+    description: string,
+    pinsMapping: Option<PinsMapping>,
+    pins: Pins
+    circuit: Option<Circuit>,
+    truthTable: Option<boolean[][]>,
     booleanFunction: Option<String>
+    metadata: {
+        imgURL: string,
+    }
 }
