@@ -1,5 +1,6 @@
 import type { Input } from "postcss"
 import type { Option } from "ts-results"
+import type { Circuit } from "./circuit"
 import type { Connection } from "./connection"
 import type { Connector } from "./connector"
 
@@ -10,19 +11,19 @@ export type Component = {
 }
 
 export type PinsMapping = {
-    input: Connector[],
-    output: Connector[]
+    input: Connector[][],
+    output: Connector[][]
 }
+
+
+
 
 export type Pins = {
     input: string[],
     output: string[]
 }
 
-export type Circuit = {
-    components: Component[],
-    connections: Connection[]
-}
+
 
 export type ComponentDefinition = {
     id: number,

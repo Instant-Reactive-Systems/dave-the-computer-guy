@@ -1,4 +1,4 @@
 export type Connector = {
     componentId: number,
-    pinId: number,
+    pin: number,
 }
