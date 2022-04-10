@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Circuit } from '$lib/models/circuit';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
     import TabSystem from '$lib/components/tab_system.svelte';
     import ComponentsTab from '$lib/components/properties_tab.svelte';
     import PropertiesTab from '$lib/components/components_tab.svelte';
@@ -22,7 +22,10 @@
 
     }
 
-	function loadCircuit() {}
+	function loadCircuit() {
+        
+
+    }
 
 	function startSimulation() {}
 

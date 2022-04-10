@@ -1,6 +1,7 @@
-import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject } from "typedjson";
+import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson";
 import { Connection } from "./connection"
 
+@toJson
 @jsonObject
 export class Junction {
     @jsonMember(Number)

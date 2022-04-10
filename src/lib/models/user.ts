@@ -1,7 +1,7 @@
-import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject } from "typedjson"
+import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson"
 import { Item } from "./item";
 
-
+@toJson
 @jsonObject
 export class User{
     @jsonMember(String)

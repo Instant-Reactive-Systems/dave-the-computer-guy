@@ -1,5 +1,6 @@
-import { AnyT, jsonMember, jsonObject } from "typedjson";
+import { AnyT, jsonMember, jsonObject, toJson } from "typedjson";
 
+@toJson
 @jsonObject
 export class Param{
 

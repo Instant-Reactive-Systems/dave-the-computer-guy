@@ -1,12 +1,12 @@
 import type { Option } from "ts-results"
-import { AnyT, jsonArrayMember, jsonMember, jsonObject } from "typedjson"
+import { AnyT, jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson"
 import { Connection } from "./connection"
 import { Junction } from "./junction"
 import { Param } from "./param"
 import type { Wire } from "./wire"
 
 
-
+@toJson
 @jsonObject
 export class ComponentRenderingData {
     @jsonMember id: number;
@@ -75,7 +75,8 @@ export class Circuit {
     @jsonArrayMember(Param)
     params: Param[];
 
-    @jsonMember metadata: CircuitMetadata;
+    @jsonMember (CircuitMetadata)
+    metadata: CircuitMetadata;
 
 }
 

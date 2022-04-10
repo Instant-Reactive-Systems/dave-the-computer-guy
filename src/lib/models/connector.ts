@@ -1,8 +1,9 @@
-import { jsonMember, jsonObject } from "typedjson";
+import { jsonMember, jsonObject, toJson } from "typedjson";
 
-
+@toJson
 @jsonObject
 export class  Connector{
+    
     @jsonMember(Number)
     componentId: Number;
 

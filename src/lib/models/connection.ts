@@ -1,6 +1,7 @@
-import { jsonArrayMember, jsonMember, jsonObject } from "typedjson";
+import { jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson";
 import { Connector } from "./connector"
 
+@toJson
 @jsonObject
 export class Connection{
     

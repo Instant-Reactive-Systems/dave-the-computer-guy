@@ -1,6 +1,7 @@
-import { jsonMember, jsonObject } from "typedjson";
+import { jsonMember, jsonObject, toJson } from "typedjson";
 import { ComponentDefinition } from "./component_definition"
 
+@toJson
 @jsonObject
 export class Component{
 

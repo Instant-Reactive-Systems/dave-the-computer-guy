@@ -1,11 +1,13 @@
 import type { Input } from "postcss"
 import type { Option } from "ts-results"
-import { jsonArrayMember, jsonMember, jsonObject } from "typedjson"
+import { jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson"
 import { Circuit } from "./circuit"
 import type { ComponentType } from "./component_type"
 import type { Connection } from "./connection"
 import { Connector } from "./connector"
 
+
+@toJson
 @jsonObject
 export class Component {
 
@@ -16,6 +18,7 @@ export class Component {
     definitionId: number;
 }
 
+@toJson
 @jsonObject
 export class PinsMapping {
 
@@ -27,7 +30,7 @@ export class PinsMapping {
 }
 
 
-
+@toJson
 @jsonObject
 export class Pins {
 
@@ -38,11 +41,7 @@ export class Pins {
     output: string[]
 }
 
-@jsonObject
-export class ComponentDefinitionMetadata{
-
-}
-
+@toJson
 @jsonObject
 export class ComponentDefinition {
 

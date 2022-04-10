@@ -1,6 +1,7 @@
-import { jsonMember, jsonObject } from "typedjson";
+import { jsonMember, jsonObject, toJson } from "typedjson";
 
 
+@toJson
 @jsonObject
 export class Wire {
   @jsonMember(Number)
