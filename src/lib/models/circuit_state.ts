@@ -1,1 +1,1 @@
-export type CircuitState = Record<number,any>
+export type CircuitState = Map<number,any>

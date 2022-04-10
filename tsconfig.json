@@ -2,7 +2,9 @@
 	"extends": "./.svelte-kit/tsconfig.json",
 	"compilerOptions": {
 		"lib": [
-			"webworker"
-		]
+			"webworker",
+		],
+		"emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
 	}
 }

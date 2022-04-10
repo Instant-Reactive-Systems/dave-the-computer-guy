@@ -1,30 +1,81 @@
 import type { Option } from "ts-results"
-import type { Connection } from "./connection"
-import type { Junction } from "./junction"
-import type { Param } from "./param"
+import { AnyT, jsonArrayMember, jsonMember, jsonObject } from "typedjson"
+import { Connection } from "./connection"
+import { Junction } from "./junction"
+import { Param } from "./param"
 import type { Wire } from "./wire"
 
-export type Circuit = {
-    id: number,
-    name: string,
-    components: {
-        id: number,
-        definitionId: number
-    }[],
-    connections: Connection[],
-    params: Param[],
-    metadata: {
-        rendering:Option<{
-            components: {
-                id: number,
-                x: number,
-                y: number
-            }[],
-            wiring: {
-                connection: Connection,
-                wires: Wire[]
-            }[],
-            junctions: Junction[]
-        }>
-    }
+
+
+@jsonObject
+export class ComponentRenderingData {
+    @jsonMember id: number;
+
+    @jsonMember x: number;
+
+    @jsonMember y: number;
 }
+
+
+@jsonObject
+export class WiringRenderingData {
+    @jsonMember connection: Connection;
+    @jsonMember wires: Wire[]
+}
+
+@jsonObject
+export class RenderingMetadata {
+    @jsonMember(ComponentRenderingData)
+    components: ComponentRenderingData;
+    @jsonMember(WiringRenderingData)
+    wiring: WiringRenderingData;
+    @jsonArrayMember(Junction)
+    junctions: Junction[]
+}
+
+
+
+
+@jsonObject
+export class CircuitMetadata {
+    @jsonMember(RenderingMetadata)
+    rendering: RenderingMetadata;
+    @jsonMember(Date)
+    createdAt: Date;
+    @jsonMember(Date) 
+    modifiedAt: Date;
+}
+
+@jsonObject
+export class Component {
+    @jsonMember(Number) 
+    id: number;
+
+    @jsonMember(Number)
+    definitionId: number;
+}
+
+@jsonObject
+export class Circuit {
+    @jsonMember(Number)
+    id: number;
+
+    @jsonMember(String)
+    name: string;
+
+    @jsonMember(String)
+    description: string;
+
+    @jsonArrayMember(Component)
+    components: Component[];
+
+    @jsonMember(Connection)
+    connections: Connection[];
+
+    @jsonArrayMember(Param)
+    params: Param[];
+
+    @jsonMember metadata: CircuitMetadata;
+
+}
+

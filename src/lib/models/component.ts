@@ -1,6 +1,13 @@
-import type { ComponentDefinition } from "./component_definition"
+import { jsonMember, jsonObject } from "typedjson";
+import { ComponentDefinition } from "./component_definition"
 
-export type Component = {
-    id: number,
-    definition: ComponentDefinition
+@jsonObject
+export class Component{
+
+    @jsonMember(Number)
+    id: number;
+
+    @jsonMember(ComponentDefinition)
+    definition: ComponentDefinition;
 }
+

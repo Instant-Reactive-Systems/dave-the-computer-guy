@@ -1,11 +1,26 @@
-import type { Inventory } from "./inventory"
-import type { Preferences } from "./preferences"
+import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject } from "typedjson"
+import { Item } from "./item";
 
-export type User = {
-    username: string,
-    email: string,
-    inventory: Inventory,
-    balance: number,
-    preferences: Preferences,
-    completedQuestIds: number[],  
+
+@jsonObject
+export class User{
+    @jsonMember(String)
+    username: string;
+    
+    @jsonMember(String)
+    email: string;
+
+    @jsonArrayMember(Item)
+    inventory: Item[];
+
+    @jsonMember(Number)
+    balance: number;
+
+    @jsonMapMember(Number,AnyT)
+    preferences: Map<string,any>;
+
+    @jsonArrayMember(Number)
+    completedQuestIds: number[]; 
 }
+
+

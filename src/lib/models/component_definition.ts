@@ -1,40 +1,76 @@
 import type { Input } from "postcss"
 import type { Option } from "ts-results"
-import type { Circuit } from "./circuit"
+import { jsonArrayMember, jsonMember, jsonObject } from "typedjson"
+import { Circuit } from "./circuit"
+import type { ComponentType } from "./component_type"
 import type { Connection } from "./connection"
-import type { Connector } from "./connector"
+import { Connector } from "./connector"
 
+@jsonObject
+export class Component {
 
-export type Component = {
-    id: number,
-    definitionId: number,
+    @jsonMember(Number)
+    id: number;
+
+    @jsonMember(Number)
+    definitionId: number;
 }
 
-export type PinsMapping = {
-    input: Connector[][],
-    output: Connector[][]
+@jsonObject
+export class PinsMapping {
+
+    @jsonArrayMember(Connector, { dimensions: 2 })
+    input: Connector[][];
+
+    @jsonArrayMember(Connector, { dimensions: 2 })
+    output: Connector[][];
 }
 
 
 
+@jsonObject
+export class Pins {
 
-export type Pins = {
-    input: string[],
+    @jsonArrayMember(String)
+    input: string[];
+
+    @jsonArrayMember(String)
     output: string[]
 }
 
+@jsonObject
+export class ComponentDefinitionMetadata{
 
+}
 
-export type ComponentDefinition = {
-    id: number,
-    name: string,
-    description: string,
-    pinsMapping: Option<PinsMapping>,
-    pins: Pins
-    circuit: Option<Circuit>,
-    truthTable: Option<boolean[][]>,
-    booleanFunction: Option<String>
-    metadata: {
-        imgURL: string,
-    }
+@jsonObject
+export class ComponentDefinition {
+
+    @jsonMember(Number)
+    id: number;
+
+    @jsonMember(String)
+    name: string;
+
+    @jsonMember(String)
+    type: ComponentType
+
+    @jsonMember(String)
+    description: string;
+
+    @jsonMember(PinsMapping, { isRequired: false })
+    pinsMapping: PinsMapping;
+
+    @jsonMember(Pins)
+    pins: Pins;
+
+    @jsonMember(Circuit, { isRequired: false })
+    circuit: Circuit;
+
+    @jsonArrayMember(Boolean, { dimensions: 2, isRequired: false })
+    truthTable: boolean[][];
+
+    @jsonMember(String,{isRequired:false})
+    booleanFunction: string;
+
 }

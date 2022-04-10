@@ -1,6 +1,12 @@
-import type { Connector } from "./connector"
+import { jsonArrayMember, jsonMember, jsonObject } from "typedjson";
+import { Connector } from "./connector"
 
-export type Connection = {
-    from: Connector,
+@jsonObject
+export class Connection{
+    
+    @jsonMember(Connector)
+    from: Connector;
+
+    @jsonArrayMember(Connector)
     to: Connector[]
 }

@@ -1,7 +1,16 @@
-import type { Connection } from "./connection"
+import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject } from "typedjson";
+import { Connection } from "./connection"
 
-export type Junction = {
-    x: number,
-    y: number,
+@jsonObject
+export class Junction {
+    @jsonMember(Number)
+    x: number;
+
+    @jsonMember(Number)
+    y: number;
+    
+    @jsonArrayMember(Connection)
     sourceConnections: Connection[]
 }
+
+
