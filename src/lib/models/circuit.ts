@@ -3,25 +3,30 @@ import { AnyT, jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson
 import { Connection } from "./connection"
 import { Junction } from "./junction"
 import { Param } from "./param"
-import type { Wire } from "./wire"
+import { Wire } from "./wire"
 
 
 @toJson
 @jsonObject
 export class ComponentRenderingData {
-    @jsonMember id: number;
+    @jsonMember(Number)
+    id: number;
 
-    @jsonMember x: number;
+    @jsonMember(Number)
+    x: number;
 
-    @jsonMember y: number;
+    @jsonMember(Number)
+    y: number;
 }
 
 
 @toJson
 @jsonObject
 export class WiringRenderingData {
-    @jsonMember connection: Connection;
-    @jsonMember wires: Wire[]
+    @jsonMember(Connection)
+    connection: Connection;
+    @jsonArrayMember(Wire)
+    wires: Wire[]
 }
 
 @toJson

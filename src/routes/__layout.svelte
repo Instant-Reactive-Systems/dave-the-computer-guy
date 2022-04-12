@@ -20,10 +20,12 @@ import { MockCircuitLoaderService } from '$lib/services/impl/mock_circuit_loader
 	onMount(() => {
 		authService = new MockAuthService();
 		circuitLoaderService = new MockCircuitLoaderService();
+		
 	});
+	
 
 	onDestroy(() => {
-		console.log("Destoryed");
+		console.log("Root layout destroyed");
 	})
 </script>
 

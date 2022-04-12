@@ -1,6 +1,6 @@
 import type { Input } from "postcss"
 import type { Option } from "ts-results"
-import { jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson"
+import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject, JsonObjectMetadata, toJson } from "typedjson"
 import { CircuitMetadata } from "./circuit"
 import type { ComponentType } from "./component_type"
 import { Connection } from "./connection"
@@ -32,9 +32,6 @@ export class Circuit {
 
     @jsonArrayMember(Param)
     params: Param[];
-
-    @jsonMember (CircuitMetadata)
-    metadata: CircuitMetadata;
     
 }
 
@@ -48,6 +45,53 @@ export class PinsMapping {
     @jsonArrayMember(Connector, { dimensions: 2 })
     output: Connector[][];
 }
+
+@toJson
+@jsonObject
+export class NameAndPinPair{
+    
+    @jsonMember(String)
+    name: string;
+
+    @jsonMember(Number)
+    pin: number;
+}
+
+@toJson
+@jsonObject
+export class PinLocationMapping{
+    
+    @jsonArrayMember(NameAndPinPair)
+    top: NameAndPinPair[];
+
+    @jsonArrayMember(NameAndPinPair)
+    bottom: NameAndPinPair[];
+
+    @jsonArrayMember(NameAndPinPair)
+    left: NameAndPinPair[];
+
+    @jsonArrayMember(NameAndPinPair)
+    right: NameAndPinPair[];
+
+}
+
+
+
+@toJson
+@jsonObject
+export class ComponentDefinitionMetadata{
+
+    @jsonMember(PinLocationMapping)
+    pinLocationMapping: PinLocationMapping;
+
+    @jsonMember(Date)
+    createdAt: Date;
+
+    @jsonMember(Date) 
+    modifiedAt: Date;
+
+}
+
 
 
 @toJson
@@ -91,5 +135,8 @@ export class ComponentDefinition {
 
     @jsonMember(String,{isRequired:false})
     booleanFunction: string;
+
+    @jsonMember(ComponentDefinitionMetadata)
+    metadata: ComponentDefinitionMetadata;
 
 }

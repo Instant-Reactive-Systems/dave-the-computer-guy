@@ -7,6 +7,10 @@
 	let circuit = $circuitStore;
 	let canvas: fabric.Canvas;
 	let canvasElement;
+
+	$:{
+		
+	}
 	
 	function resizeCanvas() {
 		const parent = document.getElementById('canvas-wrapper');

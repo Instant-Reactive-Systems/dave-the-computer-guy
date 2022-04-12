@@ -10,5 +10,6 @@ export class Component{
 
     @jsonMember(ComponentDefinition)
     definition: ComponentDefinition;
+
 }
 

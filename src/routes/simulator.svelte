@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { Circuit } from '$lib/models/circuit';
+	import { Circuit } from '$lib/models/circuit';
 	import { getContext, onMount } from 'svelte';
     import TabSystem from '$lib/components/tab_system.svelte';
     import ComponentsTab from '$lib/components/properties_tab.svelte';
     import PropertiesTab from '$lib/components/components_tab.svelte';
     import Canvas from '$lib/components/canvas.svelte';
-    import { dialogs } from "svelte-dialogs";
     import NewCircuitDialog from '$lib/components/new_circuit_dialog.svelte';
+import { circuitStore } from '$lib/stores/circuit';
 
 	type CircuitTab = {
 		name: string;
@@ -18,28 +18,26 @@
 
 
 	function createNewCircuit() {
-        const myInputProps = {
-    placeholder: "a placeholder",
-    label: "my input",
-    name: "my-input",
-    id: "my-input-id",
-  };
         console.log("Creating new circuit");
-        dialogs.prompt("",{
-            component: NewCircuitDialog as any,
-            props: myInputProps as any
-        } as any);
-    
+        let newCircuitTab = {
+            name: Math.random().toString(36).slice(-5),
+            circuit: new Circuit()
+        }
+        circuitTabs = [...circuitTabs,newCircuitTab];
+        currentCircuitTab = newCircuitTab;
     }
 
-	function saveCircuit() {}
+	function saveCircuit() {
+        console.log("Saving circuit");
+    }
 
 	function switchCircuitTab(tab: CircuitTab) {
-
+        console.log("Switching circuit tab");
+        currentCircuitTab = tab;
     }
 
 	function loadCircuit() {
-        
+        console.log("Loading circuit");
 
     }
 
@@ -51,6 +49,12 @@
 
     function handleKeyPress(e:KeyboardEvent) {
         console.log(e);
+    }
+
+    $: {
+        const circuit = currentCircuitTab?.circuit
+        console.log("Setting current circuit");
+        circuitStore.set(circuit);
     }
 	onMount(() => {});
 </script>
@@ -102,9 +106,9 @@
             <nav class="shadow-md">
                 <ul class="h-10 flex flex-row">
                     {#each circuitTabs as tab (tab)}
-                        <li class=" p-3 hover:bg-blue-500 hover:text-white">
+                        <li class:selected="{tab.name == currentCircuitTab.name}" class="p-3 hover:bg-blue-500 hover:text-white">
                             <button on:click={() => switchCircuitTab(tab)}
-                                >{tab[0]}</button
+                                >{tab.name}</button
                             >
                         </li>
                     {/each}
@@ -166,6 +170,10 @@
         @apply px-2 py-2 flex items-start w-max;
     }
 
+    .selected {
+        @apply bg-blue-400;
+    }
+
     /*
     Main content styles
     */
@@ -175,4 +183,7 @@
         max-height: var(--hgt);
         min-height: var(--hgt);
     }
+
+
 </style>
+
