@@ -6,4 +6,5 @@ export class Router {
     static readonly QUESTS_PANEL_ROUTE = "quests-panel";
     static readonly SHOP_PANEL_ROUTE = "shop-panel";
     static readonly SIMULATOR_ROUTE = "simulator"
+
 }

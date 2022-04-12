@@ -15,6 +15,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
+		"@types/three": "^0.139.0",
 		"@typescript-eslint/eslint-plugin": "^5.10.1",
 		"@typescript-eslint/parser": "^5.10.1",
 		"autoprefixer": "^10.4.2",
@@ -35,6 +36,7 @@
 	"type": "module",
 	"dependencies": {
 		"@fortawesome/free-solid-svg-icons": "^6.1.1",
+		"@sveltejs/adapter-static": "^1.0.0-next.29",
 		"svelte-fa": "^2.4.0",
 		"three": "^0.139.2",
 		"threlte": "^2.2.1"

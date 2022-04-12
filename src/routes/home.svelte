@@ -89,60 +89,60 @@
         })}
     />
         <GLTF
-            url="/static/models/office/Office_Misc_Door_01.gltf"
+            url="models/office/Office_Misc_Door_01.gltf"
             position={{ y: -0.4, x: 3, z: 4.85 }}
             rotation={{ y: 1 * (Math.PI / 180) }}
         />
 
         <GLTF
-            url="/static/models/home/Decor-36.gltf"
+            url="models/home/Decor-36.gltf"
             scale={{ x: 0.7, y: 0.7, z: 0.7 }}
             position={{ y: -0.5, x: 7, z: 1.3 }}
             rotation={{ y: -90 * (Math.PI / 180) }}
         />
 
         <GLTF
-            url="/static/models/office/Office_Table_White_3x1_02.gltf"
+            url="models/office/Office_Table_White_3x1_02.gltf"
             position={{ y: -0.5, x: 4, z: -1.5 }}
             rotation={{ y: -90 * (Math.PI / 180) }}
         />
 
         <GLTF
-            url="/static/models/office/Office_Misc_PC_01.gltf"
+            url="models/office/Office_Misc_PC_01.gltf"
             position={{ y: 0.6, x: 4, z: -1.5 }}
             rotation={{ y: -90 * (Math.PI / 180) }}
         />
 
         <GLTF
-            url="/static/models/office/Office_Chair_White_02.gltf"
+            url="models/office/Office_Chair_White_02.gltf"
             position={{ y: -0.4, x: 3, z: -1.7 }}
             rotation={{ y: 90 * (Math.PI / 180) }}
         />
 
         <GLTF
-            url="/static/models/office/Office_Misc_TV_Stand_02.gltf"
+            url="models/office/Office_Misc_TV_Stand_02.gltf"
             position={{ y: 0.7, x: -3, z: -4 }}
         />
         <GLTF
-            url="/static/models/office/Office_Table_White_3x1_02.gltf"
+            url="models/office/Office_Table_White_3x1_02.gltf"
             position={{ y: -0.4, x: -2.5, z: -4 }}
         />
         <GLTF
-            url="/static/models/office/Office_Misc_Console_Woo_01.gltf"
+            url="models/office/Office_Misc_Console_Woo_01.gltf"
             position={{ y: 0.7, x: -1.2, z: -4 }}
         />
         <GLTF
-            url="/static/models/office/Office_Misc_Cabinet_01.gltf"
+            url="models/office/Office_Misc_Cabinet_01.gltf"
             position={{ y: -0.4, x: -0.8, z: 4.2 }}
             rotation={{ y: Math.PI }}
         />
         <GLTF
-            url="/static/models/office/Office_Misc_Cabinet_01.gltf"
+            url="models/office/Office_Misc_Cabinet_01.gltf"
             position={{ y: -0.4, x: 0.35, z: 4.2 }}
             rotation={{ y: Math.PI }}
         />
         <GLTF
-            url="/static/models/office/player-sitting-1.gltf"
+            url="models/office/player-sitting-1.gltf"
             receiveShadow
             rotation={{ y: 90 * (Math.PI / 180) }}
             position={{ y: -0.35, x: 3.4, z: -1.65 }}
