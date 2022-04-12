@@ -4,8 +4,10 @@ import type { BehaviorSubject } from "rxjs";
 import type { Result } from "ts-results";
 import type { CircuitLoaderService } from "../circuit_loader_service";
 import type {Connection } from "$lib/models/connection"
+import type { AuthService } from "../auth_service";
+import { HtmlTagHydration } from "svelte/internal";
 
-class MockCircuitLoaderService implements CircuitLoaderService{
+export class MockCircuitLoaderService implements CircuitLoaderService{
 
     loadUserCircuits(user: User, offset: number, limit: number): Promise<Result<Circuit[], Error>> {
         throw new Error("Method not implemented.");
@@ -19,8 +21,11 @@ class MockCircuitLoaderService implements CircuitLoaderService{
     getCircuitsBehaviourSubject(): BehaviorSubject<Circuit[]> {
         throw new Error("Method not implemented.");
     }
-   
 
+    
+   
+   
+    
 }
 
 const NAND_GATE_CIRCUIT_JSON = {

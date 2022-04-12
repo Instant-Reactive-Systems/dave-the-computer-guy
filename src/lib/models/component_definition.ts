@@ -1,10 +1,11 @@
 import type { Input } from "postcss"
 import type { Option } from "ts-results"
 import { jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson"
-import { Circuit } from "./circuit"
+import { CircuitMetadata } from "./circuit"
 import type { ComponentType } from "./component_type"
-import type { Connection } from "./connection"
+import { Connection } from "./connection"
 import { Connector } from "./connector"
+import { Param } from "./param"
 
 
 @toJson
@@ -16,6 +17,25 @@ export class Component {
 
     @jsonMember(Number)
     definitionId: number;
+}
+
+
+
+@toJson
+@jsonObject
+export class Circuit {
+    @jsonArrayMember(Component)
+    components: Component[];
+
+    @jsonMember(Connection)
+    connections: Connection[];
+
+    @jsonArrayMember(Param)
+    params: Param[];
+
+    @jsonMember (CircuitMetadata)
+    metadata: CircuitMetadata;
+    
 }
 
 @toJson

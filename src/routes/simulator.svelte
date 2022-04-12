@@ -5,6 +5,8 @@
     import ComponentsTab from '$lib/components/properties_tab.svelte';
     import PropertiesTab from '$lib/components/components_tab.svelte';
     import Canvas from '$lib/components/canvas.svelte';
+    import { dialogs } from "svelte-dialogs";
+    import NewCircuitDialog from '$lib/components/new_circuit_dialog.svelte';
 
 	type CircuitTab = {
 		name: string;
@@ -14,7 +16,21 @@
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
 
-	function createNewCircuit() {}
+
+	function createNewCircuit() {
+        const myInputProps = {
+    placeholder: "a placeholder",
+    label: "my input",
+    name: "my-input",
+    id: "my-input-id",
+  };
+        console.log("Creating new circuit");
+        dialogs.prompt("",{
+            component: NewCircuitDialog as any,
+            props: myInputProps as any
+        } as any);
+    
+    }
 
 	function saveCircuit() {}
 
@@ -38,6 +54,8 @@
     }
 	onMount(() => {});
 </script>
+
+
 
 
 <nav id="app-tab-menu" class="shadow-md flex flex-row justify-between">

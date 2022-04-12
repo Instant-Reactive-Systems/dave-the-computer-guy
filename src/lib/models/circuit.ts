@@ -17,12 +17,14 @@ export class ComponentRenderingData {
 }
 
 
+@toJson
 @jsonObject
 export class WiringRenderingData {
     @jsonMember connection: Connection;
     @jsonMember wires: Wire[]
 }
 
+@toJson
 @jsonObject
 export class RenderingMetadata {
     @jsonMember(ComponentRenderingData)
@@ -35,7 +37,7 @@ export class RenderingMetadata {
 
 
 
-
+@toJson
 @jsonObject
 export class CircuitMetadata {
     @jsonMember(RenderingMetadata)
@@ -46,6 +48,7 @@ export class CircuitMetadata {
     modifiedAt: Date;
 }
 
+@toJson
 @jsonObject
 export class Component {
     @jsonMember(Number) 
@@ -55,6 +58,8 @@ export class Component {
     definitionId: number;
 }
 
+
+@toJson
 @jsonObject
 export class Circuit {
     @jsonMember(Number)

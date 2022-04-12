@@ -5,11 +5,9 @@ import type { AuthService } from "../auth_service";
 
 export class MockAuthService implements AuthService {
     private userBehaviorSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
-    private tokenBehaviourSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
     async authenticate(username: string, password: string): Promise<Result<string, Error>> {
-        this.tokenBehaviourSubject.next("MYTOKEN");
-
+        window.localStorage.setItem("token",`${username}-${password}`)
         return Ok("MYTOKEN");
     }
 
@@ -19,7 +17,7 @@ export class MockAuthService implements AuthService {
             email: `${username}}@gmail.com`,
             inventory: [],
             balance: 1000,
-            preferences: {},
+            preferences: new Map<string,any>(),
             completedQuestIds: []
         };
         this.userBehaviorSubject.next(user);
@@ -28,10 +26,6 @@ export class MockAuthService implements AuthService {
 
     getUserBehaviourSubject(): BehaviorSubject<User> {
         return this.userBehaviorSubject;
-    }
-
-    getTokenBehaviourSubject(): BehaviorSubject<string> {
-        return this.tokenBehaviourSubject;
     }
 
 }
