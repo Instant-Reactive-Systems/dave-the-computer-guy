@@ -3,7 +3,7 @@ import { ComponentDefinition } from "./component_definition"
 
 @toJson
 @jsonObject
-export class Component{
+export class Component {
 
     @jsonMember(Number)
     id: number;
@@ -11,5 +11,9 @@ export class Component{
     @jsonMember(ComponentDefinition)
     definition: ComponentDefinition;
 
+    constructor(id: number, definition: ComponentDefinition) {
+        this.id = id;
+        this.definition = definition;
+    }
 }
 

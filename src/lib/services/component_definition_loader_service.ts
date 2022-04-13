@@ -11,4 +11,5 @@ export type ComponentDefinitionLoaderService = {
     deleteDefinition(id: number):Promise<Result<ComponentDefinition,Error>>
     insertDefinition(definition: ComponentDefinition, force: boolean): Promise<Result<void,Error>>,
     getUserDefinitionsBehaviourSubject(): BehaviorSubject<ComponentDefinition[]>,
+    getDefinition(id:number): Result<ComponentDefinition,Error>
 }

@@ -1,46 +1,42 @@
-import { Component } from  '../models/component'
-import { fabric }  from 'fabric'
-class GenericComponentRenderable implements RenderableComponent{
+import type { Component } from '../models/component'
+import { fabric } from 'fabric'
+import { skip } from 'rxjs';
+import type { RenderableComponent } from './renderable_component';
+export class GenericComponentRenderable implements RenderableComponent{
+    type: "generic"
+    static readonly BASE_SIZE = 100;
     component: Component;
     fabricObject: fabric.Object;
     canvas: fabric.Canvas;
-    static readonly BASE_SIZE = 100;
-
-    constructor(top:number, left: number,component: Component){
-        this.component = component;
-    }
-    
-    render(canvas: fabric.Canvas) {
-        
-    }
-
-    setState(state: any): void {
-        
-    }
-    
-    onClick(): void {
-        
-    }
-
     left: number;
-
     top: number;
 
-    pinSelectedListener: (component: Component, pin: fabric.Group) => void;
+    constructor(left: number, top: number,  component: Component) {
+        this.component = component;
+        this.top = top;
+        this.left = left;
+    }
+    onClick() {
+        throw new Error('Method not implemented.');
+    }
+    update(state: any) {
+        throw new Error('Method not implemented.');
+    }
 
-
-    calculateDimensions(){
+    calculateDimensions() {
         const BASE_HEIGHT_SIZE = GenericComponentRenderable.BASE_SIZE;
         const BASE_WIDTH_SIZE = GenericComponentRenderable.BASE_SIZE;
-        let height = BASE_HEIGHT_SIZE + Math.max(this.pins.left.length, this.pins.right.length) * (BASE_HEIGHT_SIZE / 4);
-        let width = BASE_WIDTH_SIZE + Math.max(this.pins.top.length, this.pins.bottom.length) * (BASE_WIDTH_SIZE / 4);
+        let height = BASE_HEIGHT_SIZE + Math.max(this.component.definition.metadata.pinLocationMapping.left.length,
+            this.component.definition.metadata.pinLocationMapping.left.length) * (BASE_HEIGHT_SIZE / 4);
+        let width = BASE_WIDTH_SIZE + Math.max(this.component.definition.metadata.pinLocationMapping.top.length,
+            this.component.definition.metadata.pinLocationMapping.bottom.length) * (BASE_WIDTH_SIZE / 4);
         return {
-            height:height,
+            height: height,
             width: width
         }
     }
 
-    createPins(componentHeight: number, componentWidth: number){
+    createPins(componentHeight: number, componentWidth: number) {
         let pins = {
             "top": [],
             "bottom": [],
@@ -70,17 +66,18 @@ class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "value": namePinPair.pin,
-                "component": this.component.id, 
+                "value": namePinPair,
+                "component": this.component.id,
             }
             pins.left.push(pinGroup);
         }
-        for (const pin of this.pins.right) {
-            const baseOffset = componentHeight / (this.pins.right.length + 1)
+
+        for (const namePinPair of pinLocationMapping.right) {
+            const baseOffset = componentHeight / (pinLocationMapping.right.length + 1)
             const line = new fabric.Line([0, 0, 40, 0], { stroke: 'black' });
-            const pinIndex = this.pins.right.indexOf(pin);
+            const pinIndex = pinLocationMapping.right.indexOf(namePinPair);
             const pinOffset = (pinIndex + 1) * baseOffset;
-            const lineText = new fabric.Text(pin, {
+            const lineText = new fabric.Text(namePinPair.name, {
                 originY: "bottom",
                 fontSize: 18,
                 left: line.width - 10
@@ -98,18 +95,19 @@ class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "value": pin,
-                "component": this.component.id, 
+                "value": namePinPair,
+                "component": this.component.id,
             }
             pins.right.push(pinGroup);
 
         }
-        for (const pin of this.pins.bottom) {
-            const baseOffset = componentWidth / (this.pins.bottom.length + 1)
+
+        for (const namePinPair of pinLocationMapping.bottom) {
+            const baseOffset = componentWidth / (pinLocationMapping.bottom.length + 1)
             const line = new fabric.Line([0, 0, 0, -40], { stroke: 'black' });
-            const pinIndex = this.pins.bottom.indexOf(pin);
+            const pinIndex = pinLocationMapping.bottom.indexOf(namePinPair);
             const pinOffset = (pinIndex + 1) * baseOffset;
-            const lineText = new fabric.Text(pin, {
+            const lineText = new fabric.Text(namePinPair.name, {
                 fontSize: 18,
                 originX: "right",
                 left: -20,
@@ -128,18 +126,18 @@ class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "value": pin,
-                "component": this.component.id, 
+                "value": namePinPair,
+                "component": this.component.id,
             }
             pins.bottom.push(pinGroup);
         }
 
-        for (const pin of this.pins.top) {
-            const baseOffset = componentWidth / (this.pins.top.length + 1)
+        for (const namePinPair of pinLocationMapping.top) {
+            const baseOffset = componentWidth / (pinLocationMapping.top.length + 1)
             const line = new fabric.Line([0, 0, 0, -40], { stroke: 'black' });
-            const pinIndex = this.pins.top.indexOf(pin);
+            const pinIndex = pinLocationMapping.top.indexOf(namePinPair);
             const pinOffset = (pinIndex + 1) * baseOffset;
-            const lineText = new fabric.Text(pin, {
+            const lineText = new fabric.Text(namePinPair.name, {
                 fontSize: 18,
                 originX: "right",
                 left: -10,
@@ -157,8 +155,8 @@ class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "value": pin,
-                "component": this.component.id, 
+                "value": namePinPair,
+                "component": this.component.id,
             }
             pins.top.push(pinGroup);
         }
@@ -166,12 +164,12 @@ class GenericComponentRenderable implements RenderableComponent{
         return pins;
     }
 
-    buildFabricObject():fabric.Object {
-     
+    buildFabricObject(): fabric.Object {
+
 
         let dimensions = this.calculateDimensions();
         let componentOutline = new fabric.Rect({
-            height:dimensions.height,
+            height: dimensions.height,
             width: dimensions.width,
             fill: "transparent",
             stroke: "black",
@@ -187,8 +185,8 @@ class GenericComponentRenderable implements RenderableComponent{
             fontSize: 40
         });
 
-       
-        let pins = this.createPins(componentOutline.height,componentOutline.width);
+
+        let pins = this.createPins(componentOutline.height, componentOutline.width);
 
         this.fabricObject = new fabric.Group([componentOutline, componentText, ...pins.left, ...pins.right, ...pins.bottom, ...pins.top], {
             left: this.left,
@@ -197,21 +195,21 @@ class GenericComponentRenderable implements RenderableComponent{
 
         })
         this.fabricObject.setControlsVisibility({
-            mt: false, 
-            mb: false, 
-            ml: false, 
-            mr: false, 
+            mt: false,
+            mb: false,
+            ml: false,
+            mr: false,
             bl: false,
-            br: false, 
-            tl: false, 
+            br: false,
+            tl: false,
             tr: false,
-            mtr: false, 
-       });
-       this.fabricObject.data = {
-           type: 'GenericRenderableComponent',
-           ref:this
-       }
-       return this.fabricObject;
+            mtr: false,
+        });
+        this.fabricObject.data = {
+            type: 'GenericRenderableComponent',
+            ref: this
+        }
+        return this.fabricObject;
     }
 
 }

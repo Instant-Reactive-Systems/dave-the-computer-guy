@@ -1,17 +1,70 @@
 <script lang="ts">
+	import { GenericComponentRenderable } from '$lib/fabric/generic_renderable_component';
+
+	import type { RenderableComponent } from '$lib/fabric/renderable_component';
+	import type { Circuit } from '$lib/models/circuit';
+
+	import { Component } from '$lib/models/component';
+	import type { ComponentDefinition } from '$lib/models/component_definition';
+	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
+
 	import { circuitStore } from '$lib/stores/circuit';
 	import { fabric } from 'fabric';
-    import { stringify } from 'postcss';
+	import { stringify } from 'postcss';
 	import { onMount } from 'svelte';
 
 	let circuit = $circuitStore;
 	let canvas: fabric.Canvas;
 	let canvasElement;
+	let definitionLoaderService: ComponentDefinitionLoaderService;
+	let renderedComponents;
 
-	$:{
+	$: {
+		console.log('Rerendering circuit');
+		if (canvas != undefined && circuit != undefined) {
+			renderCircuit();
+		}
+	}
+
+	function fetchDefinition(id: number): ComponentDefinition {
+		return definitionLoaderService.getDefinition(id).unwrap();
+	}
+
+	function renderCircuit() {
+		try {
+			const componentsWithDefinition = circuit.components.map((component) => {
+				return new Component(component.id, fetchDefinition(component.definitionId));
+			});
+			renderComponents(componentsWithDefinition);
+			renderWiring();
+		} catch (err) {
+			console.log(err);
+			//showErrorNotification(err);
+		}
+	}
+
+	function renderComponents(components: Component[]) {
+		for (const component of components) {
+			//Add special case here for rendering builtins
+			const renderingData = circuit.metadata.rendering.components.get(component.id);
+			if (renderingData == undefined) {
+				throw new Error(
+					`Component with id=${component.id} has no entry in circuit components rendering metadata`
+				);
+			}
+			const fabricComponent = new GenericComponentRenderable(
+				renderingData.x,
+				renderingData.y,
+				component
+			).buildFabricObject();
+			canvas.add(fabricComponent);
+		}
+	}
+
+	function renderWiring(){
 		
 	}
-	
+
 	function resizeCanvas() {
 		const parent = document.getElementById('canvas-wrapper');
 
@@ -29,7 +82,7 @@
 
 	function prepareCanvas(): void {
 		canvas = new fabric.Canvas();
-        setupZoom(canvas);
+		setupZoom(canvas);
 	}
 
 	function setupZoom(canvas: fabric.Canvas) {
@@ -44,8 +97,6 @@
 			opt.e.stopPropagation();
 		});
 	}
-
-	
 
 	onMount(() => {
 		prepareCanvas();

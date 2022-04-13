@@ -1,5 +1,5 @@
 import type { Option } from "ts-results"
-import { AnyT, jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson"
+import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson"
 import { Connection } from "./connection"
 import { Junction } from "./junction"
 import { Param } from "./param"
@@ -9,9 +9,6 @@ import { Wire } from "./wire"
 @toJson
 @jsonObject
 export class ComponentRenderingData {
-    @jsonMember(Number)
-    id: number;
-
     @jsonMember(Number)
     x: number;
 
@@ -32,8 +29,8 @@ export class WiringRenderingData {
 @toJson
 @jsonObject
 export class RenderingMetadata {
-    @jsonMember(ComponentRenderingData)
-    components: ComponentRenderingData;
+    @jsonMapMember(Number,ComponentRenderingData)
+    components: Map<number,ComponentRenderingData>;
     @jsonMember(WiringRenderingData)
     wiring: WiringRenderingData;
     @jsonArrayMember(Junction)

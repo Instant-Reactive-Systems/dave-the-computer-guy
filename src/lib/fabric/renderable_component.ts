@@ -1,5 +1,8 @@
-type RenderableComponent = {
-    render(canvas:fabric.Canvas),
-    setState(state:any): void,
-    onClick():void
+import type { fabric } from 'fabric'
+
+export interface RenderableComponent{
+    type: 'builtin' | 'generic',
+    buildFabricObject():fabric.Object,
+    onClick(),
+    update(state:any),
 }
