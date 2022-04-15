@@ -2,6 +2,7 @@ import type { Component } from '../models/component'
 import { fabric } from 'fabric'
 import { skip } from 'rxjs';
 import type { RenderableComponent } from './renderable_component';
+import { ComponentDefinition } from '$lib/models/component_definition';
 export class GenericComponentRenderable implements RenderableComponent{
     type: "generic"
     static readonly BASE_SIZE = 100;
@@ -20,7 +21,7 @@ export class GenericComponentRenderable implements RenderableComponent{
         throw new Error('Method not implemented.');
     }
     update(state: any) {
-        throw new Error('Method not implemented.');
+        //OVDJE SU UPDATE IZ GET STATE
     }
 
     calculateDimensions() {
@@ -66,8 +67,9 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
+                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
-                "component": this.component.id,
+                "component": this.component
             }
             pins.left.push(pinGroup);
         }
@@ -95,8 +97,9 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
+                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
-                "component": this.component.id,
+                "component": this.component
             }
             pins.right.push(pinGroup);
 
@@ -126,8 +129,9 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
+                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
-                "component": this.component.id,
+                "component": this.component,
             }
             pins.bottom.push(pinGroup);
         }
@@ -155,9 +159,11 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
+                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
-                "component": this.component.id,
+                "component": this.component,
             }
+            //OVDJE DODAT tip pina i rijesili problem connectora
             pins.top.push(pinGroup);
         }
 

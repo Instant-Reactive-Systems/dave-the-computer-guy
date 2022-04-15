@@ -3,11 +3,9 @@ import { getContext, setContext } from "svelte";
 
 
 
-export function loadService(serviceName: string): any{
-    return getContext(`service.${serviceName}`);
-}
 
-export function addService(serviceName: string, service: any){
-    setContext(`service.${serviceName}`,service);
-}
+export const AUTH_SERVICE = "AuthService";
 
+export const CIRCUIT_LOADER_SERVICE = "CircuitLoaderService";
+
+export const COMPONENT_DEFINITION_LOADER_SERVICE = "ComponentDefinitionLoaderService";

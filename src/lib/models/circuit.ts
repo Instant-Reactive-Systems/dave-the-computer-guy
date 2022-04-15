@@ -31,8 +31,8 @@ export class WiringRenderingData {
 export class RenderingMetadata {
     @jsonMapMember(Number,ComponentRenderingData)
     components: Map<number,ComponentRenderingData>;
-    @jsonMember(WiringRenderingData)
-    wiring: WiringRenderingData;
+    @jsonArrayMember(WiringRenderingData)
+    wires: WiringRenderingData[];
     @jsonArrayMember(Junction)
     junctions: Junction[]
 }

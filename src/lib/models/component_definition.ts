@@ -77,6 +77,9 @@ export class ComponentDefinitionMetadata{
     @jsonMember(Date) 
     modifiedAt: Date;
 
+    @jsonMember(String)
+    imageUrl: string;
+
 }
 
 

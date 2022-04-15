@@ -2,11 +2,11 @@
 	import { Circuit } from '$lib/models/circuit';
 	import { getContext, onMount } from 'svelte';
     import TabSystem from '$lib/components/tab_system.svelte';
-    import ComponentsTab from '$lib/components/properties_tab.svelte';
-    import PropertiesTab from '$lib/components/components_tab.svelte';
+    import PropertiesTab from '$lib/components/properties_tab.svelte';
+    import ComponentsTab from '$lib/components/components_tab.svelte';
     import Canvas from '$lib/components/canvas.svelte';
     import NewCircuitDialog from '$lib/components/new_circuit_dialog.svelte';
-import { circuitStore } from '$lib/stores/circuit';
+    import { circuitStore } from '$lib/stores/circuit';
 
 	type CircuitTab = {
 		name: string;

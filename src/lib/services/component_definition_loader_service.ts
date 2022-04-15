@@ -7,9 +7,9 @@ import type { Result } from "ts-results";
 
 
 export type ComponentDefinitionLoaderService = {
-    loadUserDefinitions(user:User, offset:number, limit:number): Promise<Result<ComponentDefinition[],Error>>,
+    loadDefinitions(user:User, offset:number, limit:number): Promise<Result<Map<number,ComponentDefinition>,Error>>,
     deleteDefinition(id: number):Promise<Result<ComponentDefinition,Error>>
     insertDefinition(definition: ComponentDefinition, force: boolean): Promise<Result<void,Error>>,
-    getUserDefinitionsBehaviourSubject(): BehaviorSubject<ComponentDefinition[]>,
+    getDefinitionsBehaviourSubject(): BehaviorSubject<Map<number,ComponentDefinition>>,
     getDefinition(id:number): Result<ComponentDefinition,Error>
 }

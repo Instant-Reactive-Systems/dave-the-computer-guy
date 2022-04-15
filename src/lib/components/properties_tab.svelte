@@ -8,7 +8,7 @@
 	<table class="table-fixed w-full">
 		<thead>
 			<tr>
-				<th>Field</th>
+				<th>Properties</th>
 				<th>Value</th>
 			</tr>
 			<thead />

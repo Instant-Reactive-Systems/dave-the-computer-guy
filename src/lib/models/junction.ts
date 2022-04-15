@@ -1,3 +1,5 @@
+import { connect } from "rxjs";
+import { src_url_equal } from "svelte/internal";
 import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson";
 import { Connection } from "./connection"
 
@@ -14,4 +16,10 @@ export class Junction {
     sourceConnections: Connection[]
 }
 
+
+
+onClick => {
+
+
+}
 

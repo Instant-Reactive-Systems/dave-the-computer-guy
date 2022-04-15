@@ -2,22 +2,27 @@
 	import { GenericComponentRenderable } from '$lib/fabric/generic_renderable_component';
 
 	import type { RenderableComponent } from '$lib/fabric/renderable_component';
-	import type { Circuit } from '$lib/models/circuit';
+	import { WireRenderable } from '$lib/fabric/wire_renderable';
+	import type { Circuit, WiringRenderingData } from '$lib/models/circuit';
 
 	import { Component } from '$lib/models/component';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
+	import type { Connection } from '$lib/models/connection';
+	import type { Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 
 	import { circuitStore } from '$lib/stores/circuit';
 	import { fabric } from 'fabric';
 	import { stringify } from 'postcss';
 	import { onMount } from 'svelte';
+	import { xlink_attr } from 'svelte/internal';
 
 	let circuit = $circuitStore;
 	let canvas: fabric.Canvas;
 	let canvasElement;
 	let definitionLoaderService: ComponentDefinitionLoaderService;
-	let renderedComponents;
+	let renderedComponents: Map<number, fabric.Object> = new Map<number, fabric.Object>();
+	let wires: Map<string, fabric.Object[]> = new Map<string, fabric.Object[]>();
 
 	$: {
 		console.log('Rerendering circuit');
@@ -35,8 +40,9 @@
 			const componentsWithDefinition = circuit.components.map((component) => {
 				return new Component(component.id, fetchDefinition(component.definitionId));
 			});
+			const wires = circuit.metadata.rendering.wires;
 			renderComponents(componentsWithDefinition);
-			renderWiring();
+			renderWires(wires);
 		} catch (err) {
 			console.log(err);
 			//showErrorNotification(err);
@@ -58,11 +64,26 @@
 				component
 			).buildFabricObject();
 			canvas.add(fabricComponent);
+			renderedComponents.set(component.id, fabricComponent);
 		}
 	}
 
-	function renderWiring(){
-		
+	function renderWire(wiringRenderingData: WiringRenderingData) {
+		const wire: WireRenderable = new WireRenderable(wiringRenderingData);
+		const fabricWire = wire.buildFabricObject();
+		canvas.add(fabricWire);
+		let currentWires = wires.get(JSON.stringify(wiringRenderingData.connection));
+		if (currentWires == undefined) {
+			wires.set(JSON.stringify(wiringRenderingData.connection), [fabricWire]);
+		} else {
+			currentWires.push(fabricWire);
+		}
+	}
+
+	function renderWires(wiringRenderingDataArr: WiringRenderingData[]) {
+		for (const wiringRenderingData of wiringRenderingDataArr) {
+			renderWire(wiringRenderingData);
+		}
 	}
 
 	function resizeCanvas() {
@@ -81,7 +102,7 @@
 	}
 
 	function prepareCanvas(): void {
-		canvas = new fabric.Canvas();
+		canvas = new fabric.Canvas(canvasElement);
 		setupZoom(canvas);
 	}
 
