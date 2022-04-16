@@ -8,4 +8,6 @@ export type CircuitLoaderService = {
     insertCircuit(circuit: Circuit, force: boolean): Promise<Result<void,Error>>,
     deleteCircuit(circuitId: number): Promise<Result<Circuit,Error>>,
     getCircuitsBehaviourSubject(): BehaviorSubject<Circuit[]>,
+    init(),
+    dispose()
 }

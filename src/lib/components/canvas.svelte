@@ -15,7 +15,6 @@
 	import { fabric } from 'fabric';
 	import { stringify } from 'postcss';
 	import { onMount } from 'svelte';
-	import { xlink_attr } from 'svelte/internal';
 
 	let circuit = $circuitStore;
 	let canvas: fabric.Canvas;

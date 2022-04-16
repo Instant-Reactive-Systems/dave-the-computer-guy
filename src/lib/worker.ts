@@ -1,14 +1,17 @@
+import type { Circuit } from "./models/circuit";
+import type { ComponentDefinition } from "./models/component_definition";
+import type { UserEvent } from "./models/user_event";
 
 
 
 export type WorkerMessage = {
-    action: 'setCircuit' | 'startSimulation' | 'stopSimulation' | 'stepSimulation' | 'modifyCircuitState' | 'insertDefinition' | 'cancelSimulation',
-    payload: ComponentDefinition | Circuit | InputComponentEvent
+    action: 'setCircuit' | 'startSimulation' | 'stopSimulation' | 'stepSimulation' | 'insertUserEvent' | 'insertDefinition' | 'cancelSimulation',
+    payload: ComponentDefinition | Circuit | UserEvent
 };
 
 export type WorkerResponse = {
     action: 'circuitStateUpdate'
-    payload: CircuitState
+    payload: Map<number,any>
 }
 
 
@@ -35,8 +38,8 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
         case "stepSimulation":
             stepSimulation();
             break;
-        case "modifyCircuitState":
-            modifyCircuitState(payload as InputComponentEvent);
+        case "insertUserEvent":
+            insertUserEvent(payload as UserEvent);
             break;
         case "insertDefinition":
             insertDefinition(payload as ComponentDefinition);
@@ -51,9 +54,7 @@ function insertDefinition(definition: ComponentDefinition){
     console.log("Inserting definition");
 }
 
-function measureFrequency() {
-    console.log("Measuring frequency");
-}
+
 
 function startSimulation() {
     console.log("Starting simulation");
@@ -65,14 +66,14 @@ function stopSimulation() {
 }
 
 function cancelSimulation(){
-    
+    console.log("Canceling simulation");
 }
 
 function stepSimulation() {
     console.log("Stepping simulation");
 }
 
-function modifyCircuitState(InputComponentEvent: InputComponentEvent) {
-    console.log("Modifying circuit state");
+function insertUserEvent(event:UserEvent) {
+    console.log("Inserting user event");
 }
 

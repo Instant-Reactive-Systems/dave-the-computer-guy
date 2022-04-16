@@ -8,6 +8,10 @@ import type { AuthService } from "../auth_service";
 import { HtmlTagHydration } from "svelte/internal";
 
 export class MockCircuitLoaderService implements CircuitLoaderService{
+    init() {
+    }
+    dispose() {
+    }
 
     loadUserCircuits(user: User, offset: number, limit: number): Promise<Result<Circuit[], Error>> {
         throw new Error("Method not implemented.");

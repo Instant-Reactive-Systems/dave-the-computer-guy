@@ -4,6 +4,10 @@ import { Ok, type Result } from "ts-results";
 import type { AuthService } from "../auth_service";
 
 export class MockAuthService implements AuthService {
+    init() {
+    }
+    dispose() {
+    }
     private userBehaviorSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
     async authenticate(username: string, password: string): Promise<Result<string, Error>> {
