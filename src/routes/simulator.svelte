@@ -7,6 +7,8 @@
     import Canvas from '$lib/components/canvas.svelte';
     import NewCircuitDialog from '$lib/components/new_circuit_dialog.svelte';
     import { circuitStore } from '$lib/stores/circuit';
+import { SIMULATOR_SERVICE } from '$lib/services/service';
+import type { SimulatorService } from '$lib/services/simulator_service';
 
 	type CircuitTab = {
 		name: string;
@@ -15,6 +17,7 @@
 
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
+    let simulator:SimulatorService = getContext(SIMULATOR_SERVICE);
 
 
 	function createNewCircuit() {
@@ -41,11 +44,17 @@
 
     }
 
-	function startSimulation() {}
+	function startSimulation() {
+        simulator.startSimulation();
+    }
 
-	function pauseSimulation() {}
+	function pauseSimulation() {
+        simulator.stopSimulation();
+    }
 
-	function stepSimulation() {}
+	function stepSimulation() {
+        simulator.stepSimulation();
+    }
 
     function handleKeyPress(e:KeyboardEvent) {
         console.log(e);
