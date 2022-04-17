@@ -45,7 +45,12 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
     }
 
     getDefinition(id: number): Result<ComponentDefinition, Error> {
-        return null;
+        const def = this.definitionsBehaviourSubject.getValue().get(id)
+        if(def != undefined){
+            return Ok(def) 
+        }else{
+            return Err(new Error(`No definition with id=${id}`));
+        }
     }
 
 }

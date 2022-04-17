@@ -38,8 +38,12 @@
 	}
 	$: {
 		let event = $eventStore;
-		if (event != undefined && event.type == 'click' && event.source == 'ComponentDefinitionComponent') {
-			selectedComponentDefinition = event.payload.componentDefinition;
+		if (event != undefined && event.type == 'click') {
+			if (event.source == 'ComponentDefinitionComponent') {
+				selectedComponentDefinition = event.payload.componentDefinition;
+			} else {
+				selectedComponentDefinition = null;
+			}
 		}
 	}
 </script>

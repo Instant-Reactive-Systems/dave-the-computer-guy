@@ -58,6 +58,12 @@ export class Component {
 
     @jsonMember(Number)
     definitionId: number;
+
+
+    constructor(id: number,definitionId: number){
+        this.id = id;
+        this.definitionId = definitionId;
+    }
 }
 
 
@@ -85,5 +91,20 @@ export class Circuit {
     @jsonMember (CircuitMetadata)
     metadata: CircuitMetadata;
 
+    constructor(){
+        this.components = [];
+        this.description = null;
+        this.connections = [];
+        this.params = [];
+        const metadata: CircuitMetadata = new CircuitMetadata();
+        metadata.createdAt = new Date();
+        metadata.modifiedAt = new Date();
+        const rendering: RenderingMetadata = new RenderingMetadata();
+        rendering.components = new Map<number,ComponentRenderingData>();
+        rendering.junctions = [];
+        rendering.wires = [];
+        metadata.rendering = rendering;
+        this.metadata = metadata;
+    }
 }
 

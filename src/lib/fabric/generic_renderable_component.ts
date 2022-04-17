@@ -5,7 +5,7 @@ import type { RenderableComponent } from './renderable_component';
 import { ComponentDefinition } from '$lib/models/component_definition';
 export class GenericComponentRenderable implements RenderableComponent{
     type: "generic"
-    static readonly BASE_SIZE = 100;
+    static readonly BASE_SIZE = 150;
     component: Component;
     fabricObject: fabric.Object;
     canvas: fabric.Canvas;
@@ -185,7 +185,7 @@ export class GenericComponentRenderable implements RenderableComponent{
             hasBorders: false,
         });
 
-        let componentText = new fabric.Text(this.component.definition.name, {
+        let componentText = new fabric.Text(this.component.definition.name.substring(0,4), {
             originX: 'center', originY: 'center',
             left: 0.5 * componentOutline.width, top: 0.5 * componentOutline.height,
             fontSize: 40

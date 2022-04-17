@@ -10,23 +10,39 @@
 	import type { Connection } from '$lib/models/connection';
 	import type { Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
-
+	import { createEventDispatcher, getContext } from 'svelte';
 	import { circuitStore } from '$lib/stores/circuit';
+	import { eventStore } from '$lib/stores/event_store';
 	import { fabric } from 'fabric';
-	import { stringify } from 'postcss';
 	import { onMount } from 'svelte';
+	import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
+	import { Event } from '$lib/models/event';
 
 	let circuit = $circuitStore;
 	let canvas: fabric.Canvas;
 	let canvasElement;
-	let definitionLoaderService: ComponentDefinitionLoaderService;
+	let definitionLoaderService: ComponentDefinitionLoaderService = getContext(
+		COMPONENT_DEFINITION_LOADER_SERVICE
+	);
 	let renderedComponents: Map<number, fabric.Object> = new Map<number, fabric.Object>();
 	let wires: Map<string, fabric.Object[]> = new Map<string, fabric.Object[]>();
+	const dispatch = createEventDispatcher();
 
 	$: {
-		console.log('Rerendering circuit');
-		if (canvas != undefined && circuit != undefined) {
+		circuit = $circuitStore;
+		if (canvas != undefined && circuit != null) {
+			clearCanvas();
 			renderCircuit();
+		}
+	}
+
+	$: {
+		let event = $eventStore;
+		if (
+			event != undefined &&
+			event.type == 'click' &&
+			event.source == 'ComponentDefinitionComponent'
+		) {
 		}
 	}
 
@@ -34,6 +50,11 @@
 		return definitionLoaderService.getDefinition(id).unwrap();
 	}
 
+	function clearCanvas() {
+		canvas.clear();
+		renderedComponents = new Map<number, fabric.Object>();
+		wires = new Map<string, fabric.Object[]>();
+	}
 	function renderCircuit() {
 		try {
 			const componentsWithDefinition = circuit.components.map((component) => {
@@ -103,6 +124,73 @@
 	function prepareCanvas(): void {
 		canvas = new fabric.Canvas(canvasElement);
 		setupZoom(canvas);
+		attachListeners(canvas);
+		resizeCanvas();
+	}
+
+	function attachListeners(canvas: fabric.Canvas) {
+		canvas.on('mouse:down', (mouseEvent) => {
+			console.log(mouseEvent);
+			if (!mouseEventHasTarget(mouseEvent)) {
+				processNoTargetMouseDown(mouseEvent);
+			}
+		});
+
+		canvas.on('object:modified', (e: any) => {
+			switch (e.action) {
+				case 'drag':
+					processObjectDrag(e);
+			}
+		});
+	}
+
+	function processObjectDrag(e) {
+		const y = e.target.top;
+		const x = e.target.left;
+		const componentId = e.target.data.ref.component.id;
+		onComponentMove(componentId, x, y);
+	}
+
+	function onComponentMove(componentId: number, x: number, y: number) {
+		dispatch('componentMove', {
+			componentId,
+			x,
+			y
+		});
+	}
+
+	function processNoTargetMouseDown(event) {
+		if ($eventStore != null && $eventStore.source == 'ComponentDefinitionComponent') {
+			const x = canvas.getPointer(event.opt).x;
+			const y = canvas.getPointer(event.opt).y;
+			const evt = $eventStore;
+			eventStore.set(
+				new Event('Canvas', 'click', {
+					x: x,
+					y: y
+				})
+			);
+
+			addNewComponentToCircuit(evt.payload.componentDefinition, x, y);
+		}
+	}
+
+	function addNewComponentToCircuit(
+		componentDefinition: ComponentDefinition,
+		x: number,
+		y: number
+	) {
+		console.log('Adding new component');
+		dispatch('addNewComponent', {
+			componentDefinition: componentDefinition,
+			x: x,
+			y: y
+		});
+	}
+
+	function mouseEventHasTarget(event: fabric.IEvent<MouseEvent>) {
+		console.log(event.target == null && event.subTargets.length == 0);
+		return !(event.target == null && event.subTargets.length == 0);
 	}
 
 	function setupZoom(canvas: fabric.Canvas) {
