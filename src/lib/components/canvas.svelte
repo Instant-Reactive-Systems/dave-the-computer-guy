@@ -17,7 +17,7 @@
 	import { onMount } from 'svelte';
 	import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
 	import { Event } from '$lib/models/event';
-import { simulationStateStore } from '$lib/stores/simulation_state';
+	import { simulationStateStore } from '$lib/stores/simulation_state';
 
 	let circuit = $circuitStore;
 	let canvas: fabric.Canvas;
@@ -27,7 +27,11 @@ import { simulationStateStore } from '$lib/stores/simulation_state';
 	);
 	let renderedComponents: Map<number, fabric.Object> = new Map<number, fabric.Object>();
 	let wires: Map<string, fabric.Object[]> = new Map<string, fabric.Object[]>();
+	let inWireMode = false;
+	let wireModeDirection:'horizontal' | 'vertical' = null;
 	const dispatch = createEventDispatcher();
+
+
 
 	$: {
 		circuit = $circuitStore;
@@ -47,9 +51,22 @@ import { simulationStateStore } from '$lib/stores/simulation_state';
 		}
 	}
 
-	
-
-
+	$: {
+		if(inWireMode && canvas != null){
+			console.log("In Wire mode");
+			canvas.getObjects("component").forEach((obj) => {
+                    obj.selectable = false;
+                    obj.lockMovementX = true;
+                    obj.lockMovementY = true;
+        });
+		}else if(canvas != null && !inWireMode){
+			canvas.getObjects("component").forEach((obj) => {
+                    obj.selectable = true;
+                    obj.lockMovementX = false;
+                    obj.lockMovementY = false;
+                });
+		}
+	}
 
 	function fetchDefinition(id: number): ComponentDefinition {
 		return definitionLoaderService.getDefinition(id).unwrap();
@@ -60,6 +77,7 @@ import { simulationStateStore } from '$lib/stores/simulation_state';
 		renderedComponents = new Map<number, fabric.Object>();
 		wires = new Map<string, fabric.Object[]>();
 	}
+
 	function renderCircuit() {
 		try {
 			const componentsWithDefinition = circuit.components.map((component) => {
@@ -135,13 +153,19 @@ import { simulationStateStore } from '$lib/stores/simulation_state';
 
 	function attachListeners(canvas: fabric.Canvas) {
 		canvas.on('mouse:down', (mouseEvent) => {
-			
+			if (mouseEvent.e.altKey === true) {
+				canvas.isDragging = true;
+				canvas.selection = false;
+				canvas.lastPosX = mouseEvent.e.clientX;
+				canvas.lastPosY = mouseEvent.e.clientY;
+				return;
+			}
 			const target = getMouseDownTarget(mouseEvent);
 			if (target == null) {
 				processNoTargetMouseDown(mouseEvent);
 				return;
 			}
-			if(target.data.type == "pin"){
+			if (target.data.type == 'pin') {
 				processPinPressed(mouseEvent);
 			}
 		});
@@ -152,30 +176,42 @@ import { simulationStateStore } from '$lib/stores/simulation_state';
 					processObjectDrag(e);
 			}
 		});
+
+		canvas.on('mouse:move', (opt) => {
+			if (canvas.isDragging) {
+				canvas.viewportTransform[4] += opt.e.clientX - canvas.lastPosX;
+				canvas.viewportTransform[5] += opt.e.clientY - canvas.lastPosY;
+				canvas.requestRenderAll();
+				canvas.lastPosX = opt.e.clientX;
+				canvas.lastPosY = opt.e.clientY;
+				return;
+			}
+		});
 	}
 
+	function processPinPressed(mouseEvent) {
+		const pin: fabric.Object = mouseEvent.subTargets[0];
+		inWireMode = true;
+		
 
-	function processPinPressed(mouseEvent){
-		console.log("Pin pressed");
 	}
+	
 
-	function getMouseDownTarget(event): fabric.Object{
-
-		if(event.target == null && event.subTargets.length == 0){
+	function getMouseDownTarget(event): fabric.Object {
+		if (event.target == null && event.subTargets.length == 0) {
 			return null;
 		}
 
-		if(event.subTargets.length == 1){
-			if(event.subTargets[0].data != undefined && event.subTargets[0].data.type == "pin"){
-				console.log("Pressed pin");
+		if (event.subTargets.length == 1) {
+			if (event.subTargets[0].data != undefined && event.subTargets[0].data.type == 'pin') {
+				console.log('Pressed pin');
 				return event.subTargets[0];
 			}
 		}
 
-		if(event.target != null){
+		if (event.target != null) {
 			return event.target;
 		}
-
 	}
 	function processObjectDrag(e) {
 		const y = e.target.top;
@@ -219,11 +255,6 @@ import { simulationStateStore } from '$lib/stores/simulation_state';
 			x: x,
 			y: y
 		});
-	}
-
-	function mouseEventHasTarget(event: fabric.IEvent<MouseEvent>) {
-		console.log(event.target == null && event.subTargets.length == 0);
-		return 
 	}
 
 	function setupZoom(canvas: fabric.Canvas) {

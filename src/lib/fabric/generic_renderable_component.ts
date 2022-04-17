@@ -67,7 +67,7 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
                 "component": this.component
             }
@@ -97,7 +97,7 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
                 "component": this.component
             }
@@ -129,7 +129,7 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
                 "component": this.component,
             }
@@ -159,11 +159,10 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pin_type": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
                 "value": namePinPair,
                 "component": this.component,
             }
-            //OVDJE DODAT tip pina i rijesili problem connectora
             pins.top.push(pinGroup);
         }
 
@@ -215,6 +214,7 @@ export class GenericComponentRenderable implements RenderableComponent{
             type: 'GenericRenderableComponent',
             ref: this
         }
+        this.fabricObject.type = "component"
         return this.fabricObject;
     }
 
