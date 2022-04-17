@@ -67,9 +67,10 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
                 "value": namePinPair,
-                "component": this.component
+                "component": this.component,
+                "location": "left"
             }
             pins.left.push(pinGroup);
         }
@@ -97,9 +98,10 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
                 "value": namePinPair,
-                "component": this.component
+                "component": this.component,
+                "location": "right"
             }
             pins.right.push(pinGroup);
 
@@ -129,9 +131,10 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
                 "value": namePinPair,
                 "component": this.component,
+                "location": "bottom"
             }
             pins.bottom.push(pinGroup);
         }
@@ -159,9 +162,10 @@ export class GenericComponentRenderable implements RenderableComponent{
             })
             pinGroup.data = {
                 "type": "pin",
-                "pinType": namePinPair.name in this.component.definition.pins.input ? "input" : "output",
+                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
                 "value": namePinPair,
                 "component": this.component,
+                "location": "top"
             }
             pins.top.push(pinGroup);
         }

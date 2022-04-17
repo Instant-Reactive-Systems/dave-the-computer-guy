@@ -4,10 +4,10 @@
 	import type { RenderableComponent } from '$lib/fabric/renderable_component';
 	import { WireRenderable } from '$lib/fabric/wire_renderable';
 	import type { Circuit, WiringRenderingData } from '$lib/models/circuit';
-
+	import _ from 'lodash';
 	import { Component } from '$lib/models/component';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
-	import type { Connection } from '$lib/models/connection';
+	import { Connection } from '$lib/models/connection';
 	import type { Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 	import { createEventDispatcher, getContext } from 'svelte';
@@ -18,8 +18,11 @@
 	import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
 	import { Event } from '$lib/models/event';
 	import { simulationStateStore } from '$lib/stores/simulation_state';
+	import { ConnectableObservable } from 'rxjs';
+	import { JsonObjectMetadata } from 'typedjson';
+	import type { Connector } from '$lib/models/connector';
 
-	let circuit = $circuitStore;
+	let circuit: Circuit = $circuitStore;
 	let canvas: fabric.Canvas;
 	let canvasElement;
 	let definitionLoaderService: ComponentDefinitionLoaderService = getContext(
@@ -28,10 +31,13 @@
 	let renderedComponents: Map<number, fabric.Object> = new Map<number, fabric.Object>();
 	let wires: Map<string, fabric.Object[]> = new Map<string, fabric.Object[]>();
 	let inWireMode = false;
-	let wireModeDirection:'horizontal' | 'vertical' = null;
+	let wireModeData: {
+		connection: Connection;
+		lastX: number;
+		lastY: number;
+	} = null;
+	let wireModeRenderedWire = null;
 	const dispatch = createEventDispatcher();
-
-
 
 	$: {
 		circuit = $circuitStore;
@@ -52,19 +58,19 @@
 	}
 
 	$: {
-		if(inWireMode && canvas != null){
-			console.log("In Wire mode");
-			canvas.getObjects("component").forEach((obj) => {
-                    obj.selectable = false;
-                    obj.lockMovementX = true;
-                    obj.lockMovementY = true;
-        });
-		}else if(canvas != null && !inWireMode){
-			canvas.getObjects("component").forEach((obj) => {
-                    obj.selectable = true;
-                    obj.lockMovementX = false;
-                    obj.lockMovementY = false;
-                });
+		if (inWireMode && canvas != null) {
+			console.log('In Wire mode');
+			canvas.getObjects('component').forEach((obj) => {
+				obj.selectable = false;
+				obj.lockMovementX = true;
+				obj.lockMovementY = true;
+			});
+		} else if (canvas != null && !inWireMode) {
+			canvas.getObjects('component').forEach((obj) => {
+				obj.selectable = true;
+				obj.lockMovementX = false;
+				obj.lockMovementY = false;
+			});
 		}
 	}
 
@@ -161,9 +167,12 @@
 				return;
 			}
 			const target = getMouseDownTarget(mouseEvent);
-			if (target == null) {
+			if (target == null && $simulationStateStore == 'STOPPED') {
 				processNoTargetMouseDown(mouseEvent);
 				return;
+			}
+			if (target == null && $simulationStateStore == 'STOPPED' && inWireMode) {
+				addNewWire(mouseEvent);
 			}
 			if (target.data.type == 'pin') {
 				processPinPressed(mouseEvent);
@@ -177,25 +186,95 @@
 			}
 		});
 
-		canvas.on('mouse:move', (opt) => {
+		canvas.on('mouse:move', (mouseEvent) => {
 			if (canvas.isDragging) {
-				canvas.viewportTransform[4] += opt.e.clientX - canvas.lastPosX;
-				canvas.viewportTransform[5] += opt.e.clientY - canvas.lastPosY;
+				canvas.viewportTransform[4] += mouseEvent.e.clientX - canvas.lastPosX;
+				canvas.viewportTransform[5] += mouseEvent.e.clientY - canvas.lastPosY;
 				canvas.requestRenderAll();
-				canvas.lastPosX = opt.e.clientX;
-				canvas.lastPosY = opt.e.clientY;
+				canvas.lastPosX = mouseEvent.e.clientX;
+				canvas.lastPosY = mouseEvent.e.clientY;
 				return;
 			}
+			if (inWireMode) {
+				showWire(mouseEvent);
+			}
+		});
+
+		canvas.on('mouse:up', (_) => {
+			// on mouse up we want to recalculate new interaction
+			// for all objects, so we call setViewportTransform
+			canvas.setViewportTransform(canvas.viewportTransform);
+			canvas.isDragging = false;
+			canvas.selection = true;
 		});
 	}
 
-	function processPinPressed(mouseEvent) {
-		const pin: fabric.Object = mouseEvent.subTargets[0];
-		inWireMode = true;
-		
-
+	function addNewWire(evt) {
+		console.log(`Adding new wire: ${evt}`);
 	}
-	
+
+	function showWire(evt) {
+		console.log("Showing wire");
+		let x = wireModeData.lastX;
+		let y = wireModeData.lastY;
+		if (Math.abs(canvas.getPointer(evt.e).y - y) > Math.abs(canvas.getPointer(evt.e).x - x)) {
+			y = canvas.getPointer(evt.e).y;
+		} else {
+			x = canvas.getPointer(evt.e).x;
+		}
+
+		if (wireModeRenderedWire != null) {
+			canvas.remove(wireModeRenderedWire);
+		}
+		wireModeRenderedWire =
+			new fabric.Line([wireModeData.lastX, wireModeData.lastY, x, y], {
+				stroke: 'black',
+				strokeWidth: 2,
+				hasControls: false,
+				selectable: false
+			});
+		canvas.add(wireModeRenderedWire);
+	}
+
+	function processPinPressed(mouseEvent) {
+		if (!inWireMode) {
+			const pin: fabric.Object = mouseEvent.subTargets[0];
+			console.log(pin);
+			inWireMode = true;
+			wireModeData = { lastX: null, lastY: null, connection: null };
+			const pinType = pin.data.pinType;
+			const sourceConnector: Connector = {
+				componentId: pin.data.component.id,
+				pin: pin.data.value.pin
+			};
+			let matrix = (pin as fabric.Group).item(2).calcTransformMatrix();
+			let x = matrix[4]; // translation in X
+			let y = matrix[5];
+			wireModeData.lastX = x;
+			wireModeData.lastY = y;
+			if (pinType == 'input') {
+				const connection: Connection = new Connection();
+				connection.from = null;
+				connection.to = [sourceConnector];
+				wireModeData.connection = connection;
+			} else if (pinType == 'ouput') {
+				let connection: Connection;
+				let sameConnection = circuit.connections.find((conn) =>
+					_.isEqual(conn.from, sourceConnector)
+				);
+				if (sameConnection == undefined) {
+					connection = new Connection();
+					connection.from = sourceConnector;
+					connection.to = [];
+				} else {
+					connection = _.cloneDeep(sameConnection);
+					wireModeData.connection = connection;
+				}
+			}
+		} else {
+			//handleConnectionEnd
+		}
+	}
 
 	function getMouseDownTarget(event): fabric.Object {
 		if (event.target == null && event.subTargets.length == 0) {
@@ -270,6 +349,14 @@
 		});
 	}
 
+	function handleKeydown(e) {
+		console.log(e);
+		if (inWireMode && e.key == 'Escape') {
+			inWireMode = false;
+			console.log('Setting wire mode to false');
+		}
+	}
+
 	onMount(() => {
 		prepareCanvas();
 		return () => {
@@ -278,7 +365,10 @@
 	});
 </script>
 
-<svelte:window on:resize={resizeCanvas} />
+<svelte:window
+	on:resize={resizeCanvas}
+	on:keydown|preventDefault|trusted|stopPropagation={handleKeydown}
+/>
 <canvas bind:this={canvasElement} />
 
 <style>
