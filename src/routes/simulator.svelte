@@ -10,11 +10,46 @@
 	import { SIMULATOR_SERVICE } from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
+	import { simulationStateStore } from '$lib/stores/simulation_state';
+	import type { Command } from '$lib/models/command';
+	import { get } from 'svelte/store';
+	import { undoStore } from '$lib/stores/undo_store';
+	import { redoStore } from '$lib/stores/redo_store';
 
 	type CircuitTab = {
 		name: string;
 		circuit: Circuit;
 	};
+
+	function undo() {
+		const commandStack = get(undoStore);
+		const commandToUndo: Command = commandStack.pop();
+		if (commandToUndo != undefined) {
+			commandToUndo.undo();
+		} else {
+			console.log('Undo stack empty');
+            return;
+		}
+		undoStore.set(commandStack);
+		const redoStack = get(redoStore);
+		redoStack.push(commandToUndo);
+		redoStore.set(redoStack);
+	}
+
+	function redo() {
+		const redoStack = get(redoStore);
+		const commandToRedo: Command = redoStack.pop();
+		if (commandToRedo != undefined) {
+			commandToRedo.do();
+		} else {
+			console.log('Redo stack empty');
+            return;
+		}
+		redoStore.set(redoStack);
+		const undoStack = get(undoStore);
+		undoStack.push(commandToRedo);
+		undoStore.set(undoStack);
+	}
 
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
@@ -44,11 +79,21 @@
 	}
 
 	function startSimulation() {
-		simulator.startSimulation();
+		if ($simulationStateStore != 'RUNNING') {
+			simulator.startSimulation();
+			simulationStateStore.set('RUNNING');
+		} else {
+			console.log('Simulation already running');
+		}
 	}
 
 	function pauseSimulation() {
-		simulator.stopSimulation();
+		if ($simulationStateStore != 'STOPPED') {
+			simulator.stopSimulation();
+			simulationStateStore.set('STOPPED');
+		} else {
+			console.log('Simulation already stopped');
+		}
 	}
 
 	function stepSimulation() {
@@ -57,21 +102,42 @@
 
 	function handleKeyPress(e: KeyboardEvent) {
 		console.log(e);
+		if (e.ctrlKey == true && e.key.toLowerCase() == 'z') {
+			undo();
+		}
+		if (e.ctrlKey == true && e.key.toLowerCase() == 'y') {
+			console.log('Redoing');
+			redo();
+		}
 	}
 
 	function addNewComponent(event) {
-		console.log('Addingn new component');
+		console.log('Adding new component');
 		const definition: ComponentDefinition = event.detail.componentDefinition;
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
 		const id = getNewComponentId();
 		const component = new Component(id, definition.id);
-		const circuit = $circuitStore;
-		console.log(circuit);
-		circuit.metadata.rendering.components.set(id, { x: x, y: y });
-		circuit.components.push(component);
-		circuitStore.set(circuit);
-		console.log(circuit);
+
+		const addNewComponentCommand: Command = {
+			name: 'Add new component',
+			do: () => {
+				const circuit: Circuit = get(circuitStore);
+				circuit.metadata.rendering.components.set(id, { x: x, y: y });
+				circuit.components.push(component);
+				circuitStore.set(circuit);
+			},
+			undo: () => {
+				const circuit: Circuit = get(circuitStore);
+				circuit.metadata.rendering.components.delete(id);
+				circuit.components.pop();
+				circuitStore.set(circuit);
+			}
+		};
+		addNewComponentCommand.do();
+		const undoCommandsStack = get(undoStore);
+		undoCommandsStack.push(addNewComponentCommand);
+		undoStore.set(undoCommandsStack);
 	}
 
 	//returns the id of the new component which is calculated as the length of the current components in the circuit
@@ -86,11 +152,11 @@
 		const id = event.detail.componentId;
 		const circuit = $circuitStore;
 		circuit.metadata.rendering.components.set(id, { x: x, y: y });
-		disconnectConnectorsForComponent(circuit,id);
-        circuitStore.set(circuit);
+		disconnectConnectorsForComponent(circuit, id);
+		circuitStore.set(circuit);
 	}
 
-	function disconnectConnectorsForComponent(circuit: Circuit,id: number) {
+	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
 	}
 
@@ -168,7 +234,7 @@
 		/>
 	</aside>
 </div>
-<svelte:window on:keypress|trusted={handleKeyPress} />
+<svelte:window on:keydown|preventDefault|trusted={handleKeyPress} />
 
 <style>
 	/*

@@ -17,6 +17,7 @@
 	import { onMount } from 'svelte';
 	import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
 	import { Event } from '$lib/models/event';
+import { simulationStateStore } from '$lib/stores/simulation_state';
 
 	let circuit = $circuitStore;
 	let canvas: fabric.Canvas;
@@ -45,6 +46,10 @@
 		) {
 		}
 	}
+
+	
+
+
 
 	function fetchDefinition(id: number): ComponentDefinition {
 		return definitionLoaderService.getDefinition(id).unwrap();
@@ -130,9 +135,14 @@
 
 	function attachListeners(canvas: fabric.Canvas) {
 		canvas.on('mouse:down', (mouseEvent) => {
-			console.log(mouseEvent);
-			if (!mouseEventHasTarget(mouseEvent)) {
+			
+			const target = getMouseDownTarget(mouseEvent);
+			if (target == null) {
 				processNoTargetMouseDown(mouseEvent);
+				return;
+			}
+			if(target.data.type == "pin"){
+				processPinPressed(mouseEvent);
 			}
 		});
 
@@ -144,6 +154,29 @@
 		});
 	}
 
+
+	function processPinPressed(mouseEvent){
+		console.log("Pin pressed");
+	}
+
+	function getMouseDownTarget(event): fabric.Object{
+
+		if(event.target == null && event.subTargets.length == 0){
+			return null;
+		}
+
+		if(event.subTargets.length == 1){
+			if(event.subTargets[0].data != undefined && event.subTargets[0].data.type == "pin"){
+				console.log("Pressed pin");
+				return event.subTargets[0];
+			}
+		}
+
+		if(event.target != null){
+			return event.target;
+		}
+
+	}
 	function processObjectDrag(e) {
 		const y = e.target.top;
 		const x = e.target.left;
@@ -190,7 +223,7 @@
 
 	function mouseEventHasTarget(event: fabric.IEvent<MouseEvent>) {
 		console.log(event.target == null && event.subTargets.length == 0);
-		return !(event.target == null && event.subTargets.length == 0);
+		return 
 	}
 
 	function setupZoom(canvas: fabric.Canvas) {
