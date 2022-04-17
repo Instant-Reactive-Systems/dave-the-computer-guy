@@ -1,11 +1,10 @@
 import type { Circuit } from "./models/circuit";
 import type { ComponentDefinition } from "./models/component_definition";
 import type { UserEvent } from "./models/user_event";
-
-
+import { Simulation, Config } from "./digisim/digisim";
 
 export type WorkerMessage = {
-    action: 'setCircuit' | 'startSimulation' | 'stopSimulation' | 'stepSimulation' | 'insertUserEvent' | 'insertDefinition' | 'cancelSimulation',
+    action: 'setCircuit' | 'startSimulation' | 'pauseSimulation' | 'stepSimulation' | 'insertUserEvent' | 'insertDefinition' | 'stopSimulation',
     payload: ComponentDefinition | Circuit | UserEvent
 };
 
@@ -14,9 +13,14 @@ export type WorkerResponse = {
     payload: Map<number,any>
 }
 
+enum SimulationState {
+    STOPPED,
+    PAUSED,
+    RUNNING,
+}
 
-
-
+const simulation: Simulation = Simulation.new(Config.new(1000));
+let state: SimulationState = SimulationState.STOPPED;
 
 declare var self: DedicatedWorkerGlobalScope;
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
@@ -29,11 +33,11 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
         case "startSimulation":
             startSimulation();
             break;
+        case "pauseSimulation":
+            pauseSimulation();
+            break;
         case "stopSimulation":
             stopSimulation();
-            break;
-        case "cancelSimulation":
-            cancelSimulation();
             break;
         case "stepSimulation":
             stepSimulation();
@@ -48,32 +52,37 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
 
 function setCircuit(circuit:Circuit) {
     console.log("Setting circuit");
+    simulation.set_circuit(circuit);
 }
 
 function insertDefinition(definition: ComponentDefinition){
     console.log("Inserting definition");
+    simulation.update_registry(definition);
 }
-
-
 
 function startSimulation() {
     console.log("Starting simulation");
+    simulation.init();
+    state = SimulationState.RUNNING;
 }
 
-
-function stopSimulation() {
+function pauseSimulation() {
     console.log("Stoping simulation");
+    state = SimulationState.PAUSED;
 }
 
-function cancelSimulation(){
+function stopSimulation(){
     console.log("Canceling simulation");
+    state = SimulationState.STOPPED;
 }
 
 function stepSimulation() {
     console.log("Stepping simulation");
+    simulation.tick();
 }
 
-function insertUserEvent(event:UserEvent) {
+function insertUserEvent(event: UserEvent) {
     console.log("Inserting user event");
+    simulation.insert_input_event(event);
 }
 
