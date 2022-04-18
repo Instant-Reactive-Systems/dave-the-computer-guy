@@ -3,7 +3,7 @@
 
 	import type { RenderableComponent } from '$lib/fabric/renderable_component';
 	import { WireRenderable } from '$lib/fabric/wire_renderable';
-	import type { Circuit, WiringRenderingData } from '$lib/models/circuit';
+	import { WiringRenderingData, type Circuit } from '$lib/models/circuit';
 	import _ from 'lodash';
 	import { Component } from '$lib/models/component';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
@@ -222,28 +222,55 @@
 	}
 
 	function addNewWireToWireConnection(evt) {
-		console.log('Adding new wire to wire connection');
-	}
-
-	function addEndWire(mouseEvent) {
-		console.log('Adding end wire');
-	}
-
-	function addNewWires(evt) {
+		const pointer = canvas.getPointer(evt.e);
+		const targetData = evt.target.data.ref.wiringRenderingData;
+		let wires = [];
 		for (const wireModeRenderedWire of wireModeRenderedWires) {
 			const wire: Wire = new Wire();
 			wire.startX = wireModeRenderedWire.data.startX;
 			wire.startY = wireModeRenderedWire.data.startY;
 			wire.endX = wireModeRenderedWire.data.endX;
 			wire.endY = wireModeRenderedWire.data.endY;
+			wires.push(wire);
 
-			dispatch('addNewWire', {
-				wire: wire,
-				connection: wireModeData.connection
-			});
 			wireModeData.lastX = wire.endX;
 			wireModeData.lastY = wire.endY;
 		}
+		dispatch('addNewWireToWireConnection', {
+			pointer: {
+				x: pointer.x,
+				y: pointer.y
+			},
+			wires: wires,
+			connection: wireModeData.connection,
+			targetConnection: targetData.connection
+		});
+
+		quitWireMode();
+	}
+
+	function addEndWire(mouseEvent) {
+		const target = mouseEvent.subTargets[0];
+		console.log("Adding end wire",target);
+	}
+
+	function addNewWires(evt) {
+		let wires = [];
+		for (const wireModeRenderedWire of wireModeRenderedWires) {
+			const wire: Wire = new Wire();
+			wire.startX = wireModeRenderedWire.data.startX;
+			wire.startY = wireModeRenderedWire.data.startY;
+			wire.endX = wireModeRenderedWire.data.endX;
+			wire.endY = wireModeRenderedWire.data.endY;
+			wires.push(wire);
+
+			wireModeData.lastX = wire.endX;
+			wireModeData.lastY = wire.endY;
+		}
+		dispatch('addNewWires', {
+			wires: wires,
+			connection: wireModeData.connection
+		});
 	}
 
 	function showWires(evt) {
@@ -415,9 +442,18 @@
 	function handleKeydown(e) {
 		console.log(e);
 		if (inWireMode && e.key == 'Escape') {
-			inWireMode = false;
-			console.log('Setting wire mode to false');
+			quitWireMode();
 		}
+	}
+
+	function quitWireMode() {
+		inWireMode = false;
+		wireModeRenderedWires.forEach((wire) => {
+			canvas.remove(wire);
+		});
+		wireModeData = null;
+		wireModeRenderedWires = [];
+		console.log('Setting wire mode to false');
 	}
 
 	onMount(() => {

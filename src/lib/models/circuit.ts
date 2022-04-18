@@ -1,7 +1,6 @@
 import type { Option } from "ts-results"
 import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson"
 import { Connection } from "./connection"
-import { Junction } from "./junction"
 import { Param } from "./param"
 import { Wire } from "./wire"
 
@@ -33,8 +32,6 @@ export class RenderingMetadata {
     components: Map<number,ComponentRenderingData>;
     @jsonArrayMember(WiringRenderingData)
     wires: WiringRenderingData[];
-    @jsonArrayMember(Junction)
-    junctions: Junction[]
 }
 
 
@@ -101,7 +98,6 @@ export class Circuit {
         metadata.modifiedAt = new Date();
         const rendering: RenderingMetadata = new RenderingMetadata();
         rendering.components = new Map<number,ComponentRenderingData>();
-        rendering.junctions = [];
         rendering.wires = [];
         metadata.rendering = rendering;
         this.metadata = metadata;

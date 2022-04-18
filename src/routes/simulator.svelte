@@ -18,6 +18,7 @@
 	import _ from 'lodash';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
 	import type { Wire } from '$lib/models/wire';
+import type { Connection } from '$lib/models/connection';
 
 	type CircuitTab = {
 		name: string;
@@ -159,10 +160,31 @@
 		circuitStore.set(circuit);
 	}
 
-	function addNewWire(e) {
-		const wire = e.detail.wire;
+
+    //TODO handle undo and redo
+	function addNewWires(e) {
+		const wires = e.detail.wires;
 		const connection = e.detail.connection;
-		console.log(wire, connection);
+        for(const wire of wires){
+            addNewWire(wire,connection);
+        }
+	}
+
+
+    function addNewWireToWireConnection(e){
+        const wires = e.detail.wires;
+        const connection = e.detail.connection;
+        const targetConnection = e.detail.targetConnection;
+        console.log(wires,connection,targetConnection);
+    }
+
+    function addNewWireToPinConnection(e){
+        const wires = e.detail.wires;
+        const connection = e.detail.connection;
+        console.log(wires,connection,connection);
+    }
+    function addNewWire(wire: Wire, connection: Connection){
+        console.log(wire, connection);
 		const circuit = $circuitStore;
 		if (connection.from == null || connection.to.length == 0) {
 			circuit.connections.push(connection);
@@ -188,7 +210,7 @@
 			oldData.wires = [...oldData.wires, wire];
 		}
 		circuitStore.set(circuit);
-	}
+    }
 
 	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
@@ -250,7 +272,8 @@
 				<Canvas
 					on:componentMove={moveComponent}
 					on:addNewComponent={addNewComponent}
-					on:addNewWire={addNewWire}
+					on:addNewWires={addNewWires}
+                    on:addNewWireToWireConnection={addNewWireToWireConnection}
 				/>
 			</main>
 			<nav class="shadow-md">
