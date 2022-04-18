@@ -22,6 +22,7 @@
 	import { JsonObjectMetadata } from 'typedjson';
 	import { Connector } from '$lib/models/connector';
 	import type { Input } from 'postcss';
+	import { dataset_dev } from 'svelte/internal';
 
 	let circuit: Circuit = $circuitStore;
 	let canvas: fabric.Canvas;
@@ -37,7 +38,7 @@
 		lastX: number;
 		lastY: number;
 	} = null;
-	let wireModeRenderedWire = null;
+	let wireModeRenderedWires: fabric.Line[] = null;
 	const dispatch = createEventDispatcher();
 
 	$: {
@@ -161,6 +162,7 @@
 
 	function attachListeners(canvas: fabric.Canvas) {
 		canvas.on('mouse:down', (mouseEvent) => {
+			console.log(`Mouse event`, mouseEvent);
 			if (mouseEvent.e.altKey === true) {
 				canvas.isDragging = true;
 				canvas.selection = false;
@@ -170,9 +172,16 @@
 			}
 			const target = getMouseDownTarget(mouseEvent);
 
-			if (target == null && $simulationStateStore == 'STOPPED' && inWireMode) {
-				addNewWire(mouseEvent);
+			if ($simulationStateStore == 'STOPPED' && inWireMode) {
+				if (target == null) {
+					addNewWires(mouseEvent);
+				} else if (target.data.type == 'wire') {
+					addNewWireToWireConnection(mouseEvent);
+				} else if (target.data.type == 'pin') {
+					addEndWire(mouseEvent);
+				}
 			}
+
 			if (target == null && $simulationStateStore == 'STOPPED') {
 				processNoTargetMouseDown(mouseEvent);
 				return;
@@ -199,7 +208,7 @@
 				return;
 			}
 			if (inWireMode) {
-				showWire(mouseEvent);
+				showWires(mouseEvent);
 			}
 		});
 
@@ -212,23 +221,32 @@
 		});
 	}
 
-	function addNewWire(evt) {
-		console.log('Adding new wire');
-		const wire: Wire = new Wire();
-
-		wire.startX = wireModeRenderedWire.data.startX;
-		wire.startY = wireModeRenderedWire.data.startY;
-		wire.endX = wireModeRenderedWire.data.endX;
-		wire.endY = wireModeRenderedWire.data.endY;
-		dispatch('addNewWire', {
-			wire: wire,
-			connection: wireModeData.connection
-		});
-		wireModeData.lastX = wire.endX;
-		wireModeData.lastY = wire.endY;
+	function addNewWireToWireConnection(evt) {
+		console.log('Adding new wire to wire connection');
 	}
 
-	function showWire(evt) {
+	function addEndWire(mouseEvent) {
+		console.log('Adding end wire');
+	}
+
+	function addNewWires(evt) {
+		for (const wireModeRenderedWire of wireModeRenderedWires) {
+			const wire: Wire = new Wire();
+			wire.startX = wireModeRenderedWire.data.startX;
+			wire.startY = wireModeRenderedWire.data.startY;
+			wire.endX = wireModeRenderedWire.data.endX;
+			wire.endY = wireModeRenderedWire.data.endY;
+
+			dispatch('addNewWire', {
+				wire: wire,
+				connection: wireModeData.connection
+			});
+			wireModeData.lastX = wire.endX;
+			wireModeData.lastY = wire.endY;
+		}
+	}
+
+	function showWires(evt) {
 		console.log('Showing wire');
 		let x = wireModeData.lastX;
 		let y = wireModeData.lastY;
@@ -238,21 +256,47 @@
 			x = canvas.getPointer(evt.e).x;
 		}
 
-		if (wireModeRenderedWire != null) {
-			canvas.remove(wireModeRenderedWire);
+		if (wireModeRenderedWires != null) {
+			for (const wire of wireModeRenderedWires) {
+				canvas.remove(wire);
+			}
 		}
-		wireModeRenderedWire = new fabric.Line([wireModeData.lastX, wireModeData.lastY, x, y], {
-			stroke: 'black',
-			strokeWidth: 4,
-			hasControls: false,
-			selectable: false
-		});
-		wireModeRenderedWire.data = {};
-		wireModeRenderedWire.data.startX = wireModeData.lastX;
-		wireModeRenderedWire.data.startY = wireModeData.lastY;
-		wireModeRenderedWire.data.endX = x;
-		wireModeRenderedWire.data.endY = y;
-		canvas.add(wireModeRenderedWire);
+		wireModeRenderedWires = [
+			new fabric.Line([wireModeData.lastX, wireModeData.lastY, x, y], {
+				stroke: 'black',
+				strokeWidth: 4,
+				hasControls: false,
+				selectable: false
+			})
+		];
+		canvas.add(wireModeRenderedWires[0]);
+
+		wireModeRenderedWires[0].data = {};
+		wireModeRenderedWires[0].data.startX = wireModeData.lastX;
+		wireModeRenderedWires[0].data.startY = wireModeData.lastY;
+		wireModeRenderedWires[0].data.endX = x;
+		wireModeRenderedWires[0].data.endY = y;
+		let newX = x;
+		let newY = y;
+		if (canvas.getPointer(evt.e).y != newY) {
+			newY = canvas.getPointer(evt.e).y;
+		} else {
+			newX = canvas.getPointer(evt.e).x;
+		}
+		wireModeRenderedWires.push(
+			new fabric.Line([x, y, newX, newY], {
+				stroke: 'black',
+				strokeWidth: 4,
+				hasControls: false,
+				selectable: false
+			})
+		);
+		wireModeRenderedWires[1].data = {};
+		wireModeRenderedWires[1].data.startX = x;
+		wireModeRenderedWires[1].data.startY = y;
+		wireModeRenderedWires[1].data.endX = newX;
+		wireModeRenderedWires[1].data.endY = newY;
+		canvas.add(wireModeRenderedWires[1]);
 	}
 
 	function processPinPressed(mouseEvent) {

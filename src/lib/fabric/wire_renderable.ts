@@ -17,7 +17,10 @@ export class WireRenderable {
             strokeWidth: 4,
             hasControls: false,
             selectable: false,
-            data: this,
+            data: {
+                ref: this,
+                type: "wire"
+            },
             type: "wire",
             perPixelTargetFind: true,
             fill: null
