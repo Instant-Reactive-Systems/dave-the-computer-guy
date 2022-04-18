@@ -11,14 +11,16 @@ export class WireRenderable {
     }
 
     buildFabricObject(): fabric.Object {
-        const points = this.wiringRenderingData.wires.flatMap(wire => [{ x: wire.startX, y: wire.startX }, { x: wire.endX, y: wire.endY }])
+        const points = this.wiringRenderingData.wires.flatMap(wire => [{ x: wire.startX, y: wire.startY }, { x: wire.endX, y: wire.endY }])
         return new fabric.Polyline(points, {
             stroke: "black",
-            strokeWidth: 2,
+            strokeWidth: 4,
             hasControls: false,
             selectable: false,
             data: this,
             type: "wire",
+            perPixelTargetFind: true,
+            fill: null
         });
     }
 }

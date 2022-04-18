@@ -8,7 +8,7 @@
 	import { Component } from '$lib/models/component';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import { Connection } from '$lib/models/connection';
-	import type { Wire } from '$lib/models/wire';
+	import { Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import { circuitStore } from '$lib/stores/circuit';
@@ -20,7 +20,8 @@
 	import { simulationStateStore } from '$lib/stores/simulation_state';
 	import { ConnectableObservable } from 'rxjs';
 	import { JsonObjectMetadata } from 'typedjson';
-	import type { Connector } from '$lib/models/connector';
+	import { Connector } from '$lib/models/connector';
+	import type { Input } from 'postcss';
 
 	let circuit: Circuit = $circuitStore;
 	let canvas: fabric.Canvas;
@@ -60,13 +61,13 @@
 	$: {
 		if (inWireMode && canvas != null) {
 			console.log('In Wire mode');
-			canvas.getObjects('component').forEach((obj) => {
+			canvas.getObjects().forEach((obj) => {
 				obj.selectable = false;
 				obj.lockMovementX = true;
 				obj.lockMovementY = true;
 			});
 		} else if (canvas != null && !inWireMode) {
-			canvas.getObjects('component').forEach((obj) => {
+			canvas.getObjects().forEach((obj) => {
 				obj.selectable = true;
 				obj.lockMovementX = false;
 				obj.lockMovementY = false;
@@ -121,7 +122,8 @@
 		const wire: WireRenderable = new WireRenderable(wiringRenderingData);
 		const fabricWire = wire.buildFabricObject();
 		canvas.add(fabricWire);
-		let currentWires = wires.get(JSON.stringify(wiringRenderingData.connection));
+		console.log(wiringRenderingData.connection);
+		let currentWires = wires.get(JSON.stringify(wiringRenderingData.connection.from));
 		if (currentWires == undefined) {
 			wires.set(JSON.stringify(wiringRenderingData.connection), [fabricWire]);
 		} else {
@@ -167,12 +169,13 @@
 				return;
 			}
 			const target = getMouseDownTarget(mouseEvent);
+
+			if (target == null && $simulationStateStore == 'STOPPED' && inWireMode) {
+				addNewWire(mouseEvent);
+			}
 			if (target == null && $simulationStateStore == 'STOPPED') {
 				processNoTargetMouseDown(mouseEvent);
 				return;
-			}
-			if (target == null && $simulationStateStore == 'STOPPED' && inWireMode) {
-				addNewWire(mouseEvent);
 			}
 			if (target.data.type == 'pin') {
 				processPinPressed(mouseEvent);
@@ -210,11 +213,23 @@
 	}
 
 	function addNewWire(evt) {
-		console.log(`Adding new wire: ${evt}`);
+		console.log('Adding new wire');
+		const wire: Wire = new Wire();
+
+		wire.startX = wireModeRenderedWire.data.startX;
+		wire.startY = wireModeRenderedWire.data.startY;
+		wire.endX = wireModeRenderedWire.data.endX;
+		wire.endY = wireModeRenderedWire.data.endY;
+		dispatch('addNewWire', {
+			wire: wire,
+			connection: wireModeData.connection
+		});
+		wireModeData.lastX = wire.endX;
+		wireModeData.lastY = wire.endY;
 	}
 
 	function showWire(evt) {
-		console.log("Showing wire");
+		console.log('Showing wire');
 		let x = wireModeData.lastX;
 		let y = wireModeData.lastY;
 		if (Math.abs(canvas.getPointer(evt.e).y - y) > Math.abs(canvas.getPointer(evt.e).x - x)) {
@@ -226,13 +241,17 @@
 		if (wireModeRenderedWire != null) {
 			canvas.remove(wireModeRenderedWire);
 		}
-		wireModeRenderedWire =
-			new fabric.Line([wireModeData.lastX, wireModeData.lastY, x, y], {
-				stroke: 'black',
-				strokeWidth: 2,
-				hasControls: false,
-				selectable: false
-			});
+		wireModeRenderedWire = new fabric.Line([wireModeData.lastX, wireModeData.lastY, x, y], {
+			stroke: 'black',
+			strokeWidth: 4,
+			hasControls: false,
+			selectable: false
+		});
+		wireModeRenderedWire.data = {};
+		wireModeRenderedWire.data.startX = wireModeData.lastX;
+		wireModeRenderedWire.data.startY = wireModeData.lastY;
+		wireModeRenderedWire.data.endX = x;
+		wireModeRenderedWire.data.endY = y;
 		canvas.add(wireModeRenderedWire);
 	}
 
@@ -243,21 +262,21 @@
 			inWireMode = true;
 			wireModeData = { lastX: null, lastY: null, connection: null };
 			const pinType = pin.data.pinType;
-			const sourceConnector: Connector = {
-				componentId: pin.data.component.id,
-				pin: pin.data.value.pin
-			};
+			const sourceConnector: Connector = new Connector();
+			sourceConnector.componentId = pin.data.component.id;
+			sourceConnector.pin = pin.data.value.pin;
 			let matrix = (pin as fabric.Group).item(2).calcTransformMatrix();
 			let x = matrix[4]; // translation in X
 			let y = matrix[5];
 			wireModeData.lastX = x;
 			wireModeData.lastY = y;
+			console.log(pinType);
 			if (pinType == 'input') {
 				const connection: Connection = new Connection();
 				connection.from = null;
 				connection.to = [sourceConnector];
 				wireModeData.connection = connection;
-			} else if (pinType == 'ouput') {
+			} else if (pinType == 'output') {
 				let connection: Connection;
 				let sameConnection = circuit.connections.find((conn) =>
 					_.isEqual(conn.from, sourceConnector)
@@ -268,8 +287,8 @@
 					connection.to = [];
 				} else {
 					connection = _.cloneDeep(sameConnection);
-					wireModeData.connection = connection;
 				}
+				wireModeData.connection = connection;
 			}
 		} else {
 			//handleConnectionEnd

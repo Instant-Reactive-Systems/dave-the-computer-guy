@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, Component } from '$lib/models/circuit';
+	import { Circuit, Component, WiringRenderingData } from '$lib/models/circuit';
 	import { getContext, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -15,6 +15,9 @@
 	import { get } from 'svelte/store';
 	import { undoStore } from '$lib/stores/undo_store';
 	import { redoStore } from '$lib/stores/redo_store';
+	import _ from 'lodash';
+	import type { WireRenderable } from '$lib/fabric/wire_renderable';
+	import type { Wire } from '$lib/models/wire';
 
 	type CircuitTab = {
 		name: string;
@@ -28,7 +31,7 @@
 			commandToUndo.undo();
 		} else {
 			console.log('Undo stack empty');
-            return;
+			return;
 		}
 		undoStore.set(commandStack);
 		const redoStack = get(redoStore);
@@ -43,7 +46,7 @@
 			commandToRedo.do();
 		} else {
 			console.log('Redo stack empty');
-            return;
+			return;
 		}
 		redoStore.set(redoStack);
 		const undoStack = get(undoStore);
@@ -156,6 +159,37 @@
 		circuitStore.set(circuit);
 	}
 
+	function addNewWire(e) {
+		const wire = e.detail.wire;
+		const connection = e.detail.connection;
+		console.log(wire, connection);
+		const circuit = $circuitStore;
+		if (connection.from == null || connection.to.length == 0) {
+			circuit.connections.push(connection);
+		} else {
+			const index = circuit.connections.findIndex((conn) => _.isEqual(conn.from, connection.from));
+			if (index == -1) {
+				console.error('Connection that should exist not found');
+			} else {
+				circuit.connections[index] = connection;
+			}
+		}
+		const i = circuit.metadata.rendering.wires.findIndex((wire) =>
+			_.isEqual(wire.connection.from, connection.from)
+		);
+		if (i == -1) {
+			const wireRenderingData: WiringRenderingData = new WiringRenderingData();
+			wireRenderingData.connection = connection;
+			wireRenderingData.wires = [wire];
+			circuit.metadata.rendering.wires.push(wireRenderingData);
+		} else {
+			const oldData = circuit.metadata.rendering.wires[i];
+			oldData.connection = connection;
+			oldData.wires = [...oldData.wires, wire];
+		}
+		circuitStore.set(circuit);
+	}
+
 	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
 	}
@@ -164,6 +198,10 @@
 		const circuit = currentCircuitTab?.circuit;
 		console.log('Setting current circuit');
 		circuitStore.set(circuit);
+	}
+
+	$: {
+		console.log($circuitStore);
 	}
 	onMount(() => {
 		createNewCircuit();
@@ -209,7 +247,11 @@
 	<div class="col-span-9">
 		<div class=" h-full flex flex-col">
 			<main id="canvas-wrapper" class="grow">
-				<Canvas on:componentMove={moveComponent} on:addNewComponent={addNewComponent} />
+				<Canvas
+					on:componentMove={moveComponent}
+					on:addNewComponent={addNewComponent}
+					on:addNewWire={addNewWire}
+				/>
 			</main>
 			<nav class="shadow-md">
 				<ul class="h-10 flex flex-row">
