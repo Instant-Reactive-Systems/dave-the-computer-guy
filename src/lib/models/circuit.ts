@@ -16,22 +16,14 @@ export class ComponentRenderingData {
 }
 
 
-@toJson
-@jsonObject
-export class WiringRenderingData {
-    @jsonMember(Connection)
-    connection: Connection;
-    @jsonArrayMember(Wire)
-    wires: Wire[]
-}
 
 @toJson
 @jsonObject
 export class RenderingMetadata {
     @jsonMapMember(Number,ComponentRenderingData)
     components: Map<number,ComponentRenderingData>;
-    @jsonArrayMember(WiringRenderingData)
-    wires: WiringRenderingData[];
+    @jsonArrayMember(Wire)
+    wires: Wire[];
 }
 
 

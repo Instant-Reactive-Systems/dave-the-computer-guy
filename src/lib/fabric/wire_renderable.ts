@@ -1,18 +1,17 @@
-import type { WiringRenderingData } from "$lib/models/circuit";
 import type { Wire } from "$lib/models/wire";
 import { fabric } from 'fabric'
 
 
 export class WireRenderable {
-    wiringRenderingData: WiringRenderingData;
+    wire: Wire;
 
-    constructor(wiringRenderingData: WiringRenderingData) {
-        this.wiringRenderingData = wiringRenderingData;
+    constructor(wire: Wire) {
+        this.wire = wire;
     }
 
     buildFabricObject(): fabric.Object {
-        const points = this.wiringRenderingData.wires.flatMap(wire => [{ x: wire.startX, y: wire.startY }, { x: wire.endX, y: wire.endY }])
-        return new fabric.Polyline(points, {
+        const points = [this.wire.startX, this.wire.startY, this.wire.endX, this.wire.endY]
+        return new fabric.Line(points, {
             stroke: "black",
             strokeWidth: 4,
             hasControls: false,

@@ -3,7 +3,7 @@ import { fabric } from 'fabric'
 import { skip } from 'rxjs';
 import type { RenderableComponent } from './renderable_component';
 import { ComponentDefinition } from '$lib/models/component_definition';
-export class GenericComponentRenderable implements RenderableComponent{
+export class GenericComponentRenderable implements RenderableComponent {
     type: "generic"
     static readonly BASE_SIZE = 150;
     component: Component;
@@ -12,7 +12,7 @@ export class GenericComponentRenderable implements RenderableComponent{
     left: number;
     top: number;
 
-    constructor(left: number, top: number,  component: Component) {
+    constructor(left: number, top: number, component: Component) {
         this.component = component;
         this.top = top;
         this.left = left;
@@ -59,19 +59,20 @@ export class GenericComponentRenderable implements RenderableComponent{
                 top: line.top - 4,
                 fill: "black",
                 radius: 4,
+                data: {
+                    "type": "pin",
+                    "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
+                    "value": namePinPair,
+                    "component": this.component,
+                    "location": "right"
+                }
             })
 
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: - 40,
-                top: (pinOffset - lineText.height)
+                top: (pinOffset - lineText.height),
+                subTargetCheck: true
             })
-            pinGroup.data = {
-                "type": "pin",
-                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
-                "value": namePinPair,
-                "component": this.component,
-                "location": "left"
-            }
             pins.left.push(pinGroup);
         }
 
@@ -91,18 +92,20 @@ export class GenericComponentRenderable implements RenderableComponent{
                 top: line.top - 4,
                 fill: "black",
                 radius: 4,
+                data : {
+                    "type": "pin",
+                    "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
+                    "value": namePinPair,
+                    "component": this.component,
+                    "location": "right"
+                }
             })
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: componentWidth,
-                top: (pinOffset - lineText.height)
+                top: (pinOffset - lineText.height),
+                subTargetCheck: true
             })
-            pinGroup.data = {
-                "type": "pin",
-                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
-                "value": namePinPair,
-                "component": this.component,
-                "location": "right"
-            }
+            pinGroup.data = 
             pins.right.push(pinGroup);
 
         }
@@ -124,18 +127,20 @@ export class GenericComponentRenderable implements RenderableComponent{
                 top: line.top + line.height,
                 fill: "black",
                 radius: 4,
+                perPixelTargetFind: true,
+                data: {
+                    "type": "pin",
+                    "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
+                    "value": namePinPair,
+                    "component": this.component,
+                    "location": "bottom"
+                }
             })
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
-                top: componentHeight
+                top: componentHeight,
+                subTargetCheck: true
             })
-            pinGroup.data = {
-                "type": "pin",
-                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
-                "value": namePinPair,
-                "component": this.component,
-                "location": "bottom"
-            }
             pins.bottom.push(pinGroup);
         }
 
@@ -155,18 +160,20 @@ export class GenericComponentRenderable implements RenderableComponent{
                 top: line.top - 4,
                 fill: "black",
                 radius: 4,
+                data: {
+                    "type": "pin",
+                    "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
+                    "value": namePinPair,
+                    "component": this.component,
+                    "location": "bottom"
+                }
             })
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
-                top: -(line.height)
+                top: -(line.height),
+                subTargetCheck: true
             })
-            pinGroup.data = {
-                "type": "pin",
-                "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
-                "value": namePinPair,
-                "component": this.component,
-                "location": "top"
-            }
+            
             pins.top.push(pinGroup);
         }
 
@@ -188,7 +195,7 @@ export class GenericComponentRenderable implements RenderableComponent{
             hasBorders: false,
         });
 
-        let componentText = new fabric.Text(this.component.definition.name.substring(0,4), {
+        let componentText = new fabric.Text(this.component.definition.name.substring(0, 4), {
             originX: 'center', originY: 'center',
             left: 0.5 * componentOutline.width, top: 0.5 * componentOutline.height,
             fontSize: 40

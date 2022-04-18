@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, Component, WiringRenderingData } from '$lib/models/circuit';
+	import { Circuit, Component } from '$lib/models/circuit';
 	import { getContext, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -17,7 +17,7 @@
 	import { redoStore } from '$lib/stores/redo_store';
 	import _ from 'lodash';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
-	import type { Wire } from '$lib/models/wire';
+	import { Wire } from '$lib/models/wire';
 import type { Connection } from '$lib/models/connection';
 
 	type CircuitTab = {
@@ -162,55 +162,26 @@ import type { Connection } from '$lib/models/connection';
 
 
     //TODO handle undo and redo
-	function addNewWires(e) {
-		const wires = e.detail.wires;
-		const connection = e.detail.connection;
-        for(const wire of wires){
-            addNewWire(wire,connection);
-        }
+	function addNewWire(e) {
+        console.log("Adding new wire");
+        const circuit = $circuitStore;
+        const wire: Wire = e.detail.wire;
+        circuit.metadata.rendering.wires.push(wire);
+        circuitStore.set(circuit);
+        deductConnectionsFromWires();
 	}
 
-
-    function addNewWireToWireConnection(e){
-        const wires = e.detail.wires;
-        const connection = e.detail.connection;
-        const targetConnection = e.detail.targetConnection;
-        console.log(wires,connection,targetConnection);
+    function deductConnectionsFromWires(){
+        console.log("Deducting connections from wires");
     }
 
-    function addNewWireToPinConnection(e){
-        const wires = e.detail.wires;
-        const connection = e.detail.connection;
-        console.log(wires,connection,connection);
+
+    function addNewJunction(e){
+        console.log("Adding new junction",e.detail);
     }
-    function addNewWire(wire: Wire, connection: Connection){
-        console.log(wire, connection);
-		const circuit = $circuitStore;
-		if (connection.from == null || connection.to.length == 0) {
-			circuit.connections.push(connection);
-		} else {
-			const index = circuit.connections.findIndex((conn) => _.isEqual(conn.from, connection.from));
-			if (index == -1) {
-				console.error('Connection that should exist not found');
-			} else {
-				circuit.connections[index] = connection;
-			}
-		}
-		const i = circuit.metadata.rendering.wires.findIndex((wire) =>
-			_.isEqual(wire.connection.from, connection.from)
-		);
-		if (i == -1) {
-			const wireRenderingData: WiringRenderingData = new WiringRenderingData();
-			wireRenderingData.connection = connection;
-			wireRenderingData.wires = [wire];
-			circuit.metadata.rendering.wires.push(wireRenderingData);
-		} else {
-			const oldData = circuit.metadata.rendering.wires[i];
-			oldData.connection = connection;
-			oldData.wires = [...oldData.wires, wire];
-		}
-		circuitStore.set(circuit);
-    }
+
+  
+    
 
 	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
@@ -272,8 +243,8 @@ import type { Connection } from '$lib/models/connection';
 				<Canvas
 					on:componentMove={moveComponent}
 					on:addNewComponent={addNewComponent}
-					on:addNewWires={addNewWires}
-                    on:addNewWireToWireConnection={addNewWireToWireConnection}
+					on:addNewWire={addNewWire}
+                    on:addNewJunction={addNewJunction}
 				/>
 			</main>
 			<nav class="shadow-md">
