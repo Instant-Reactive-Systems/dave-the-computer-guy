@@ -17,8 +17,8 @@
 	import { redoStore } from '$lib/stores/redo_store';
 	import _ from 'lodash';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
-	import { Wire } from '$lib/models/wire';
-import type { Connection } from '$lib/models/connection';
+	import type { DirectLink, Wire } from '$lib/models/wire';
+	import type { Connection } from '$lib/models/connection';
 
 	type CircuitTab = {
 		name: string;
@@ -160,28 +160,34 @@ import type { Connection } from '$lib/models/connection';
 		circuitStore.set(circuit);
 	}
 
-
-    //TODO handle undo and redo
+	//TODO handle undo and redo
 	function addNewWire(e) {
-        console.log("Adding new wire");
-        const circuit = $circuitStore;
-        const wire: Wire = e.detail.wire;
-        circuit.metadata.rendering.wires.push(wire);
-        circuitStore.set(circuit);
-        deductConnectionsFromWires();
+		console.log('Adding new wire');
+		const circuit = $circuitStore;
+		const wire: Wire = e.detail.wire;
+		circuit.metadata.rendering.wires.push(wire);
+		circuitStore.set(circuit);
+		deductConnectionsFromWires();
 	}
 
-    function deductConnectionsFromWires(){
-        console.log("Deducting connections from wires");
-    }
+	function deductConnectionsFromWires() {
+		const circuit = $circuitStore;
+		const wires = circuit.metadata.rendering.wires;
+		//find wires that are connected to output pins
 
+		const wiresWithOutputConnectors = [];
+		for (const wire of wires) {
+			const outputLinks: DirectLink[] = wire.links.filter(
+				(link) => link.type == 'pin' && (link.value as any).type == 'output'
+			);
+		}
+	}
 
-    function addNewJunction(e){
-        console.log("Adding new junction",e.detail);
-    }
-
-  
-    
+	function addNewJunction(e) {
+		const circuit = $circuitStore;
+        circuit.metadata.rendering.junctions.push(e.detail.junction);
+        circuitStore.set(circuit);
+	}
 
 	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
@@ -244,7 +250,7 @@ import type { Connection } from '$lib/models/connection';
 					on:componentMove={moveComponent}
 					on:addNewComponent={addNewComponent}
 					on:addNewWire={addNewWire}
-                    on:addNewJunction={addNewJunction}
+					on:addNewJunction={addNewJunction}
 				/>
 			</main>
 			<nav class="shadow-md">

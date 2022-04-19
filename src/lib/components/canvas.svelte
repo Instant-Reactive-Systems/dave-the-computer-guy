@@ -21,8 +21,8 @@
 	import { JsonObjectMetadata } from 'typedjson';
 	import { Connector } from '$lib/models/connector';
 	import type { Input } from 'postcss';
-	import { dataset_dev } from 'svelte/internal';
-	import type { Circuit } from '$lib/models/circuit';
+	import { dataset_dev, xlink_attr } from 'svelte/internal';
+	import type { Circuit, Junction } from '$lib/models/circuit';
 
 	let circuit: Circuit = $circuitStore;
 	let canvas: fabric.Canvas;
@@ -92,11 +92,31 @@
 				return new Component(component.id, fetchDefinition(component.definitionId));
 			});
 			const wires = circuit.metadata.rendering.wires;
+			const junctions = circuit.metadata.rendering.junctions;
 			renderComponents(componentsWithDefinition);
 			renderWires(wires);
+			renderJunctions(junctions)
 		} catch (err) {
 			console.log(err);
 			//showErrorNotification(err);
+		}
+	}
+
+	function renderJunctions(junctions: Junction[]){
+		for(const junction of junctions){
+			canvas.add(new fabric.Circle({
+				radius: 3,
+				selectable: false,
+				hasControls: false,
+				hasBorders: false,
+				fill: "black",
+				top: junction.y-3,
+				left: junction.x-3,
+				data:{
+					ref: junction,
+					type: "junction"
+				}
+			}))
 		}
 	}
 
@@ -170,9 +190,9 @@
 				if (target == null) {
 					addNewWire(mouseEvent);
 				} else if (target.data.type == 'wire') {
-					addNewWireToWireConnection(mouseEvent);
+					addNewWireToWireConnection(target);
 				} else if (target.data.type == 'pin') {
-					processPinPressedInWireMode(mouseEvent);
+					processPinPressedInWireMode(target);
 				}
 			}
 
@@ -183,7 +203,7 @@
 				return;
 			}
 			if (target.data.type == 'pin' && !inWireMode) {
-				processPinPressed(mouseEvent);
+				processPinPressed(target);
 			}
 		});
 
@@ -195,6 +215,7 @@
 		});
 
 		canvas.on('mouse:move', (mouseEvent) => {
+			const pt = canvas.getPointer(mouseEvent.e);
 			if (canvas.isDragging) {
 				canvas.viewportTransform[4] += mouseEvent.e.clientX - canvas.lastPosX;
 				canvas.viewportTransform[5] += mouseEvent.e.clientY - canvas.lastPosY;
@@ -222,70 +243,69 @@
 	}
 
 	function getWiredModeTarget(mouseEvent) {
-		console.log(wireModeData);
 		if (wireModeData.currentWire == null) {
+			console.log("Current wire is null");
 			return getMouseDownTarget(mouseEvent);
 		} else {
 			const x = wireModeData.currentWire.data.ref.wire.endX;
 			const y = wireModeData.currentWire.data.ref.wire.endY;
 			const id = wireModeData.currentWire.data.ref.wire.id;
-			console.log({ x, y });
+			const hitCircle = new fabric.Circle({top: y-2.5, left:x-2.5, fill: null, radius: 2.5})
+			canvas.remove(wireModeData.currentWire);
 			for(const obj of canvas.getObjects()){
-				if (obj.containsPoint(new fabric.Point(x, y))) {
-					if ((obj as any).data.type == 'wire' && obj.data.ref.wire.id != id) {
-						console.log("Interescts with wire");
-						return obj;
-					} else if (obj.data.type == "GenericRenderableComponent"){
-						console.log("Interescts with generic renderable component")
+				if (obj.intersectsWithObject(hitCircle,true)) {
+					console.log("Intersection data",x,y,obj);
+					if (obj.data.type == "GenericRenderableComponent"){
 						for(const innerObj of (obj as fabric.Group)._objects){
-							console.log(innerObj);
 							if(innerObj instanceof fabric.Group){
 								const pin = (innerObj as fabric.Group).item(2)
-								console.log(pin,{x,y})
 								let matrix = pin.calcTransformMatrix();
 								let pinX= matrix[4]; // translation in X
 								let pinY = matrix[5];
 								if(Math.abs(pinX-x) < pin.width && Math.abs(pinY-y) < pin.height){
-									console.log("Returning pin");
-									console.log(pin);
+									wireModeData.currentWire.data.ref.wire.x = pinX+2;
+									wireModeData.currentWire.data.ref.wire.y = pinY+2;
 									return pin;
 								}
 							}
 						}
+					}else if ((obj as any).data.type == 'wire') {
+						return obj;
 					}
 				}
 			}
 			return null;
 		}
 	}
-	function addNewWireToWireConnection(evt) {
+	function addNewWireToWireConnection(wire: fabric.Object) {
 		console.log('Adding wire to wire connection');
 		if (wireModeData.currentWire == null) {
 			return;
 		}
 		const link = new DirectLink();
 		link.type = 'wire';
-		link.value = evt.target.data.ref.wire.id;
+		link.value = wire.data.ref.wire.id;
 		(wireModeData.currentWire.data.ref.wire as Wire).links.push(link);
 		dispatch('addNewWire', {
 			wire: wireModeData.currentWire.data.ref.wire
 		});
 		dispatch('addNewJunction', {
-			junction: {
+			junction:{
 				x: wireModeData.currentWire.data.ref.wire.endX,
 				y: wireModeData.currentWire.data.ref.wire.endY,
-				source: wireModeData.currentWire.data.ref.wire.id
-			}
+				sourceWire: wireModeData.currentWire.data.ref.wire.id
+			} as Junction
 		});
 		quitWireMode();
 	}
 
-	function addEndWire(mouseEvent) {
+	function addEndWire(pin: fabric.Object) {
 		if (wireModeData.currentWire == null) {
 			return;
 		}
 
-		const pin: fabric.Object = mouseEvent.subTargets[0];
+		
+		
 		const pinType = pin.data.pinType;
 		const sourceConnector: Connector = new Connector();
 		sourceConnector.componentId = pin.data.component.id;
@@ -345,9 +365,8 @@
 		canvas.add(wireModeData.currentWire);
 	}
 
-	function processPinPressedInWireMode(mouseEvent) {
+	function processPinPressedInWireMode(pin) {
 		if (wireModeData.source == null) {
-			const pin: fabric.Object = mouseEvent.subTargets[0];
 			const pinType = pin.data.pinType;
 			const sourceConnector: Connector = new Connector();
 			sourceConnector.componentId = pin.data.component.id;
@@ -366,7 +385,7 @@
 			};
 			console.log(wireModeData);
 		} else {
-			addEndWire(mouseEvent);
+			addEndWire(pin);
 		}
 	}
 

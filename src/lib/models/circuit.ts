@@ -19,11 +19,24 @@ export class ComponentRenderingData {
 
 @toJson
 @jsonObject
+export class Junction{
+    @jsonMember(Number)
+    x: number;
+    @jsonMember(Number)
+    y: number;
+    @jsonMember(Number)
+    sourceWire: number
+}
+
+@toJson
+@jsonObject
 export class RenderingMetadata {
     @jsonMapMember(Number,ComponentRenderingData)
     components: Map<number,ComponentRenderingData>;
     @jsonArrayMember(Wire)
     wires: Wire[];
+    @jsonArrayMember(Junction)
+    junctions: Junction[]
 }
 
 
@@ -91,6 +104,7 @@ export class Circuit {
         const rendering: RenderingMetadata = new RenderingMetadata();
         rendering.components = new Map<number,ComponentRenderingData>();
         rendering.wires = [];
+        rendering.junctions = [];
         metadata.rendering = rendering;
         this.metadata = metadata;
     }

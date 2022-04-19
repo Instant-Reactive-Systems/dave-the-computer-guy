@@ -13,7 +13,7 @@ export class WireRenderable {
         const points = [this.wire.startX, this.wire.startY, this.wire.endX, this.wire.endY]
         return new fabric.Line(points, {
             stroke: "black",
-            strokeWidth: 4,
+            strokeWidth: 1,
             hasControls: false,
             selectable: false,
             data: {
@@ -21,8 +21,8 @@ export class WireRenderable {
                 type: "wire"
             },
             type: "wire",
-            perPixelTargetFind: true,
-            fill: null
+            perPixelTargetFind: false,
+            fill: "black"
         });
     }
 }
