@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, Component } from '$lib/models/circuit';
+	import { Circuit, Component, ComponentRenderingData, Junction } from '$lib/models/circuit';
 	import { getContext, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -127,13 +127,17 @@
 			name: 'Add new component',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuit.metadata.rendering.components.set(id, { x: x, y: y });
+                const componentRenderingData = new ComponentRenderingData();
+                componentRenderingData.x = x;
+                componentRenderingData.y = y;
+                componentRenderingData.id = id;
+				circuit.metadata.rendering.components.push(componentRenderingData);
 				circuit.components.push(component);
 				circuitStore.set(circuit);
 			},
 			undo: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuit.metadata.rendering.components.delete(id);
+				circuit.metadata.rendering.components.pop();
 				circuit.components.pop();
 				circuitStore.set(circuit);
 			}
@@ -154,8 +158,11 @@
 		const x = event.detail.x;
 		const y = event.detail.y;
 		const id = event.detail.componentId;
+        const componentRenderingData = new ComponentRenderingData();
+        componentRenderingData.x = x;
+        componentRenderingData.y = y;
 		const circuit = $circuitStore;
-		circuit.metadata.rendering.components.set(id, { x: x, y: y });
+		circuit.metadata.rendering.components[id] = componentRenderingData;
 		disconnectConnectorsForComponent(circuit, id);
 		circuitStore.set(circuit);
 	}
@@ -185,7 +192,12 @@
 
 	function addNewJunction(e) {
 		const circuit = $circuitStore;
-        circuit.metadata.rendering.junctions.push(e.detail.junction);
+        const junction: Junction = new Junction();
+        console.log("Junction",e);
+        junction.sourceWire = e.detail.junction.sourceWire;
+        junction.x = e.detail.junction.x;
+        junction.y = e.detail.junction.y;
+        circuit.metadata.rendering.junctions.push(junction);
         circuitStore.set(circuit);
 	}
 

@@ -13,6 +13,9 @@ export class ComponentRenderingData {
 
     @jsonMember(Number)
     y: number;
+
+    @jsonMember(Number)
+    id: number
 }
 
 
@@ -31,8 +34,8 @@ export class Junction{
 @toJson
 @jsonObject
 export class RenderingMetadata {
-    @jsonMapMember(Number,ComponentRenderingData)
-    components: Map<number,ComponentRenderingData>;
+    @jsonArrayMember(ComponentRenderingData)
+    components: ComponentRenderingData[];
     @jsonArrayMember(Wire)
     wires: Wire[];
     @jsonArrayMember(Junction)
@@ -102,7 +105,7 @@ export class Circuit {
         metadata.createdAt = new Date();
         metadata.modifiedAt = new Date();
         const rendering: RenderingMetadata = new RenderingMetadata();
-        rendering.components = new Map<number,ComponentRenderingData>();
+        rendering.components = [];
         rendering.wires = [];
         rendering.junctions = [];
         metadata.rendering = rendering;

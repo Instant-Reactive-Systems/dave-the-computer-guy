@@ -43,6 +43,9 @@
 
 	$: {
 		circuit = $circuitStore;
+		if(circuit != null){
+		console.log(JSON.stringify(circuit.metadata.rendering));
+		}	
 		if (canvas != undefined && circuit != null) {
 			clearCanvas();
 			renderCircuit();
@@ -123,7 +126,7 @@
 	function renderComponents(components: Component[]) {
 		for (const component of components) {
 			//Add special case here for rendering builtins
-			const renderingData = circuit.metadata.rendering.components.get(component.id);
+			const renderingData = circuit.metadata.rendering.components[component.id];
 			if (renderingData == undefined) {
 				throw new Error(
 					`Component with id=${component.id} has no entry in circuit components rendering metadata`
