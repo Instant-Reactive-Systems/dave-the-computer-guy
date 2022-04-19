@@ -105,13 +105,13 @@
 	function renderJunctions(junctions: Junction[]){
 		for(const junction of junctions){
 			canvas.add(new fabric.Circle({
-				radius: 3,
+				radius: 4,
 				selectable: false,
 				hasControls: false,
 				hasBorders: false,
 				fill: "black",
-				top: junction.y-3,
-				left: junction.x-3,
+				top: junction.y-4,
+				left: junction.x-4,
 				data:{
 					ref: junction,
 					type: "junction"
@@ -250,7 +250,7 @@
 			const x = wireModeData.currentWire.data.ref.wire.endX;
 			const y = wireModeData.currentWire.data.ref.wire.endY;
 			const id = wireModeData.currentWire.data.ref.wire.id;
-			const hitCircle = new fabric.Circle({top: y-2.5, left:x-2.5, fill: null, radius: 2.5})
+			const hitCircle = new fabric.Circle({top: y-1, left:x-1, fill: null, radius: 1})
 			canvas.remove(wireModeData.currentWire);
 			for(const obj of canvas.getObjects()){
 				if (obj.intersectsWithObject(hitCircle,true)) {
