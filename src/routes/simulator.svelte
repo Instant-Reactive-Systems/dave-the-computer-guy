@@ -222,8 +222,9 @@
 			if (link.type == 'pin' && (link.value as any).type == 'input') {
 				connectors.push((link.value as any).conn);
 			} else if (link.type == 'wire' && !idsToIgnore.includes(link.value as number)) {
+                idsToIgnore.push(link.value as number);
 				connectors.push(...findAllConnectedInputConnectors($circuitStore.metadata.rendering.wires[link.value as number],
-                [link.value as number,...idsToIgnore]));
+                idsToIgnore));
 			}
 		}
 
@@ -232,7 +233,8 @@
             console.log("Here",linkedWire,idsToIgnore);
             const containsWire = linkedWire.links.some(link => link.type == "wire" && link.value as number == wire.id);
             if(containsWire && !idsToIgnore.includes(linkedWire.id)){
-                connectors.push(...findAllConnectedInputConnectors(linkedWire,[linkedWire.id,...idsToIgnore]));
+                idsToIgnore.push(linkedWire.id);
+                connectors.push(...findAllConnectedInputConnectors(linkedWire,idsToIgnore));
             }
         }
 
