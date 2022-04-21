@@ -30,9 +30,8 @@
 		"svelte-check": "^2.2.6",
 		"svelte-preprocess": "^4.10.1",
 		"tailwindcss": "^3.0.12",
-		"ts-macros": "^1.2.0",
 		"tslib": "^2.3.1",
-		"ttypescript": "^1.5.13",
+		"typedjson": "^1.8.0",
 		"typescript": "~4.6.2"
 	},
 	"type": "module",
@@ -44,7 +43,6 @@
 		"lodash": "^4.17.21",
 		"rxjs": "^7.5.5",
 		"svelte-forms-lib": "^2.0.1",
-		"ts-results": "^3.3.0",
-		"typedjson": "^1.8.0"
+		"ts-results": "^3.3.0"
 	}
 }
