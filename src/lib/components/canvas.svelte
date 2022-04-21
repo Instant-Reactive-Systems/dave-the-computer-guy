@@ -21,6 +21,12 @@
 	import { JsonObjectMetadata } from 'typedjson';
 	import { Connector } from '$lib/models/connector';
 	import type { Input } from 'postcss';
+	import { dataset_dev } from 'svelte/internal';
+	import type { Circuit } from '$lib/models/circuit';
+  import { NandRenderable } from '$lib/fabric/nand_renderable';
+  import { SwitchRenderable } from '$lib/fabric/switch_renderable';
+  import { LedRenderable } from '$lib/fabric/led_renderable';
+  import ComponentDefinition from './component_definition.svelte';
 	import { dataset_dev, xlink_attr } from 'svelte/internal';
 	import type { Circuit, Junction } from '$lib/models/circuit';
 
@@ -49,7 +55,7 @@
 		if (canvas != undefined && circuit != null) {
 			clearCanvas();
 			renderCircuit();
-		}
+        }
 	}
 
 	$: {
@@ -179,7 +185,7 @@
 
 	function attachListeners(canvas: fabric.Canvas) {
 		canvas.on('mouse:down', (mouseEvent) => {
-			console.log(`Mouse event`, mouseEvent);
+            console.log(mouseEvent);
 			if (mouseEvent.e.altKey === true) {
 				canvas.isDragging = true;
 				canvas.selection = false;
