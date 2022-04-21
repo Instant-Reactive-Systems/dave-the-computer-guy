@@ -64,7 +64,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
                     "value": namePinPair,
                     "component": this.component,
-                    "location": "right"
+                    "location": "left"
                 }
             })
 
@@ -204,7 +204,7 @@ export class GenericComponentRenderable implements RenderableComponent {
 
         let pins = this.createPins(componentOutline.height, componentOutline.width);
 
-        this.fabricObject = new fabric.Group([componentOutline, componentText, ...pins.left, ...pins.right, ...pins.bottom, ...pins.top], {
+        this.fabricObject = new fabric.Group([componentOutline, componentText, ...pins.left, ...pins.right, ...pins.top], {
             left: this.left,
             top: this.top,
             subTargetCheck: true,

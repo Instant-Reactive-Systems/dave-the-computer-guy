@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, Component } from '$lib/models/circuit';
+	import { Circuit, Component, ComponentRenderingData, Junction } from '$lib/models/circuit';
 	import { getContext, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -17,8 +17,9 @@
 	import { redoStore } from '$lib/stores/redo_store';
 	import _ from 'lodash';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
-	import { Wire } from '$lib/models/wire';
-import type { Connection } from '$lib/models/connection';
+	import type { DirectLink, Wire } from '$lib/models/wire';
+	import { Connection } from '$lib/models/connection';
+	import type { Connector } from '$lib/models/connector';
 
 	type CircuitTab = {
 		name: string;
@@ -127,13 +128,17 @@ import type { Connection } from '$lib/models/connection';
 			name: 'Add new component',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuit.metadata.rendering.components.set(id, { x: x, y: y });
+				const componentRenderingData = new ComponentRenderingData();
+				componentRenderingData.x = x;
+				componentRenderingData.y = y;
+				componentRenderingData.id = id;
+				circuit.metadata.rendering.components.push(componentRenderingData);
 				circuit.components.push(component);
 				circuitStore.set(circuit);
 			},
 			undo: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuit.metadata.rendering.components.delete(id);
+				circuit.metadata.rendering.components.pop();
 				circuit.components.pop();
 				circuitStore.set(circuit);
 			}
@@ -154,34 +159,99 @@ import type { Connection } from '$lib/models/connection';
 		const x = event.detail.x;
 		const y = event.detail.y;
 		const id = event.detail.componentId;
+		const componentRenderingData = new ComponentRenderingData();
+		componentRenderingData.x = x;
+		componentRenderingData.y = y;
 		const circuit = $circuitStore;
-		circuit.metadata.rendering.components.set(id, { x: x, y: y });
+		circuit.metadata.rendering.components[id] = componentRenderingData;
 		disconnectConnectorsForComponent(circuit, id);
 		circuitStore.set(circuit);
 	}
 
-
-    //TODO handle undo and redo
+	//TODO handle undo and redo
 	function addNewWire(e) {
-        console.log("Adding new wire");
-        const circuit = $circuitStore;
-        const wire: Wire = e.detail.wire;
-        circuit.metadata.rendering.wires.push(wire);
-        circuitStore.set(circuit);
-        deductConnectionsFromWires();
+		console.log('Adding new wire');
+		const circuit = $circuitStore;
+		const wire: Wire = e.detail.wire;
+		circuit.metadata.rendering.wires.push(wire);
+		circuitStore.set(circuit);
+		deductConnectionsFromWires();
 	}
 
-    function deductConnectionsFromWires(){
-        console.log("Deducting connections from wires");
-    }
+	function deductConnectionsFromWires() {
+		const circuit = $circuitStore;
+        circuit.connections = [];
+		const wires = circuit.metadata.rendering.wires;
+		//find wires that are connected to output pins
 
+		const wiresWithOutputConnectors = [];
+		for (const wire of wires) {
+			const outputConnectors: DirectLink[] = wire.links.filter(
+				(link) => link.type == 'pin' && (link.value as any).type == 'output'
+			).map(link => (link.value as any).conn);
+            if(outputConnectors.length != 0){
+                wiresWithOutputConnectors.push([wire, outputConnectors]);
+            }
+		}
 
-    function addNewJunction(e){
-        console.log("Adding new junction",e.detail);
-    }
+		for (const wireOutpinPinsTuple of wiresWithOutputConnectors) {
+			const wire = wireOutpinPinsTuple[0] as Wire;
+			const outputConnectors = wireOutpinPinsTuple[1];
+			const inputConnectors = findAllConnectedInputConnectors(wire,[wire.id]);
+			for (const connector of outputConnectors) {
+                let connection = circuit.connections.find(conn => _.isEqual(connector,conn.from))
+                if(connection == undefined){
+                    connection = new Connection();
+                    connection.from = connector;
+                    connection.to = [...inputConnectors];
+                    circuit.connections.push(connection);
+                    console.log("debug connection making",wire,connection);
+                }else{
+                    connection.to = _.uniq([...connection.to,...inputConnectors]);
+                }
+            }
+		}
+        circuitStore.set(circuit);
+	}
 
-  
-    
+	function findAllConnectedInputConnectors(wire: Wire,idsToIgnore: number[]): Connector[] {
+		const connectors: Connector[] = [];
+
+        //find all wires or pins this component is connected to
+		for (const link of wire.links) {
+			if (link.type == 'pin' && (link.value as any).type == 'input') {
+				connectors.push((link.value as any).conn);
+			} else if (link.type == 'wire' && !idsToIgnore.includes(link.value as number)) {
+                idsToIgnore.push(link.value as number);
+				connectors.push(...findAllConnectedInputConnectors($circuitStore.metadata.rendering.wires[link.value as number],
+                idsToIgnore));
+			}
+		}
+
+        //find all wires which are connected to this wire
+        for(const linkedWire of $circuitStore.metadata.rendering.wires){
+            console.log("Here",linkedWire,idsToIgnore);
+            const containsWire = linkedWire.links.some(link => link.type == "wire" && link.value as number == wire.id);
+            if(containsWire && !idsToIgnore.includes(linkedWire.id)){
+                idsToIgnore.push(linkedWire.id);
+                connectors.push(...findAllConnectedInputConnectors(linkedWire,idsToIgnore));
+            }
+        }
+
+        
+		return _.uniq(connectors);
+	}
+
+	function addNewJunction(e) {
+		const circuit = $circuitStore;
+		const junction: Junction = new Junction();
+		console.log('Junction', e);
+		junction.sourceWire = e.detail.junction.sourceWire;
+		junction.x = e.detail.junction.x;
+		junction.y = e.detail.junction.y;
+		circuit.metadata.rendering.junctions.push(junction);
+		circuitStore.set(circuit);
+	}
 
 	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
@@ -244,7 +314,7 @@ import type { Connection } from '$lib/models/connection';
 					on:componentMove={moveComponent}
 					on:addNewComponent={addNewComponent}
 					on:addNewWire={addNewWire}
-                    on:addNewJunction={addNewJunction}
+					on:addNewJunction={addNewJunction}
 				/>
 			</main>
 			<nav class="shadow-md">
