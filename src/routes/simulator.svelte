@@ -17,23 +17,22 @@
 	import { redoStore } from '$lib/stores/redo_store';
 	import _ from 'lodash';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
-	import type { DirectLink, Wire } from '$lib/models/wire';
+	import type { type Wire, DirectLink } from '$lib/models/wire';
 	import { Connection } from '$lib/models/connection';
 	import type { Connector } from '$lib/models/connector';
-import type { Subscription } from 'rxjs';
+	import type { Subscription } from 'rxjs';
 
 	type CircuitTab = {
 		name: string;
 		circuit: Circuit;
 	};
-
-	
+	let circuit;
 
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
 	let simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
-	let serviceSubscriptions:Subscription[] = [];
-	
+	let serviceSubscriptions: Subscription[] = [];
+
 	function createNewCircuit() {
 		console.log('Creating new circuit');
 		let newCircuitTab = {
@@ -42,6 +41,10 @@ import type { Subscription } from 'rxjs';
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
+	}
+
+	$: {
+		circuit = $circuitStore;
 	}
 
 	function saveCircuit() {
@@ -65,7 +68,6 @@ import type { Subscription } from 'rxjs';
 			console.log('Simulation already running');
 		}
 	}
-
 
 	function undo() {
 		const commandStack = get(undoStore);
@@ -200,10 +202,13 @@ import type { Subscription } from 'rxjs';
             }
 		}
 
+		
 		for (const wireOutpinPinsTuple of wiresWithOutputConnectors) {
 			const wire = wireOutpinPinsTuple[0] as Wire;
 			const outputConnectors = wireOutpinPinsTuple[1];
-			const inputConnectors = findAllConnectedInputConnectors(wire,[wire.id]);
+			const ignoreIdSet:Set<number> = new Set();
+			ignoreIdSet.add(wire.id);
+			const inputConnectors = findAllConnectedInputConnectors(wire,ignoreIdSet);
 			for (const connector of outputConnectors) {
                 let connection = circuit.connections.find(conn => _.isEqual(connector,conn.from))
                 if(connection == undefined){
@@ -214,6 +219,7 @@ import type { Subscription } from 'rxjs';
                     console.log("debug connection making",wire,connection);
                 }else{
                     connection.to = _.uniq([...connection.to,...inputConnectors]);
+
                 }
             }
 		}
@@ -223,32 +229,56 @@ import type { Subscription } from 'rxjs';
         console.log(`Deducting connections takes ${end - start}ms`);
 	}
 
-	function findAllConnectedInputConnectors(wire: Wire,idsToIgnore: number[]): Connector[] {
+	function findAllConnectedInputConnectors(wire: Wire, idsToIgnore: Set<number>): Connector[] {
+		console.log('Called');
 		const connectors: Connector[] = [];
+		console.log('Ids to ignore', idsToIgnore);
 
-        //find all wires or pins this component is connected to
+		//find all wires or pins this component is connected to
+		let start = window.performance.now();
+
 		for (const link of wire.links) {
 			if (link.type == 'pin' && (link.value as any).type == 'input') {
 				connectors.push((link.value as any).conn);
-			} else if (link.type == 'wire' && !idsToIgnore.includes(link.value as number)) {
-                idsToIgnore.push(link.value as number);
-				connectors.push(...findAllConnectedInputConnectors($circuitStore.metadata.rendering.wires[link.value as number],
-                idsToIgnore));
+			} else if (link.type == 'wire' && !idsToIgnore.has(link.value as number)) {
+				idsToIgnore.add(link.value as number);
+				connectors.push(
+					...findAllConnectedInputConnectors(
+						circuit.metadata.rendering.wires[link.value as number],
+						idsToIgnore
+					)
+				);
 			}
 		}
 
-        //find all wires which are connected to this wire
-        for(const linkedWire of $circuitStore.metadata.rendering.wires){
-            console.log("Here",linkedWire,idsToIgnore);
-            const containsWire = linkedWire.links.some(link => link.type == "wire" && link.value as number == wire.id);
-            if(containsWire && !idsToIgnore.includes(linkedWire.id)){
-                idsToIgnore.push(linkedWire.id);
-                connectors.push(...findAllConnectedInputConnectors(linkedWire,idsToIgnore));
-            }
-        }
+		console.log(
+			`Finding all wires or pins that connection is connected to takes ${
+				window.performance.now() - start
+			}ms`
+		);
 
-        
-		return _.uniq(connectors);
+		start = window.performance.now();
+		const linkedWireIds = (circuit.metadata.rendering.wires as Wire[])
+		.filter(w => w.links.some(link => link.value == wire.id) && !idsToIgnore.has(w.id))
+		.map(w => w.id);
+		linkedWireIds.forEach(id => idsToIgnore.add(id as number));
+
+		console.log("Linked wire ids",linkedWireIds);
+		//find all wires which are connected to this wire
+		for (const linkedWireId of linkedWireIds) {
+			const linkedWire = circuit.metadata.rendering.wires[linkedWireId as number];
+			connectors.push(...findAllConnectedInputConnectors(linkedWire, idsToIgnore));
+		
+		}
+
+		console.log(
+			`Finding all linkedWire connection is connected to takes ${
+				window.performance.now() - start
+			}ms`
+		);
+		const uniq = _.uniq(connectors);
+
+		return uniq;
 	}
 
 	function addNewJunction(e) {
@@ -275,18 +305,20 @@ import type { Subscription } from 'rxjs';
 	$: {
 		console.log($circuitStore);
 		const circuit = $circuitStore;
-		if(circuit != null){
-		 	simulator.setCircuit(circuit);
+		if (circuit != null) {
+			simulator.setCircuit(circuit);
 		}
 	}
 	onMount(() => {
 		createNewCircuit();
-		serviceSubscriptions.push(simulator.getCircuitStateBehaviourSubject().subscribe((state) => console.log(`state`,state)));
+		serviceSubscriptions.push(
+			simulator.getCircuitStateBehaviourSubject().subscribe((state) => console.log(`state`, state))
+		);
 	});
 
 	onDestroy(() => {
-		serviceSubscriptions.forEach(sub => sub.unsubscribe())
-	})
+		serviceSubscriptions.forEach((sub) => sub.unsubscribe());
+	});
 </script>
 
 <nav id="app-tab-menu" class="shadow-md flex flex-row justify-between">
