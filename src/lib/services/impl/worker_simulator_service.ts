@@ -30,6 +30,7 @@ export class WorkerSimulatorService implements SimulatorService {
     }
 
     private handleMessageFromWorker(msg: WorkerResponse) {
+        console.log("Got message from worker",msg);
         switch (msg.action) {
             case "circuitStateUpdate":
                 this.circuitStateBehaviourSubject.next(msg.payload as Map<number, any>)

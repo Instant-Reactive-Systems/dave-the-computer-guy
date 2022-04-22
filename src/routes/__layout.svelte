@@ -29,7 +29,7 @@
 	setContext(SIMULATOR_SERVICE,simulatorService);
 
 
-	const services = [authService,circuitLoaderService,componentDefinitionLoaderService];
+	const services = [authService,circuitLoaderService,componentDefinitionLoaderService,simulatorService];
 	onMount(() => {
 		for(const service of services){
 			service.init();

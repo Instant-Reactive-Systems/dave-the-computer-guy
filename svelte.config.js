@@ -19,8 +19,8 @@ const config = {
 			},
 			ssr:{
 				noExternal: ["ts-results"]
-			}
-		}
+			},
+		},
 	}
 };
 

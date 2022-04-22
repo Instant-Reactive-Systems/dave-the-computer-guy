@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Circuit, Component, ComponentRenderingData, Junction } from '$lib/models/circuit';
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
 	import ComponentsTab from '$lib/components/components_tab.svelte';
@@ -20,46 +20,20 @@
 	import type { DirectLink, Wire } from '$lib/models/wire';
 	import { Connection } from '$lib/models/connection';
 	import type { Connector } from '$lib/models/connector';
+import type { Subscription } from 'rxjs';
 
 	type CircuitTab = {
 		name: string;
 		circuit: Circuit;
 	};
 
-	function undo() {
-		const commandStack = get(undoStore);
-		const commandToUndo: Command = commandStack.pop();
-		if (commandToUndo != undefined) {
-			commandToUndo.undo();
-		} else {
-			console.log('Undo stack empty');
-			return;
-		}
-		undoStore.set(commandStack);
-		const redoStack = get(redoStore);
-		redoStack.push(commandToUndo);
-		redoStore.set(redoStack);
-	}
-
-	function redo() {
-		const redoStack = get(redoStore);
-		const commandToRedo: Command = redoStack.pop();
-		if (commandToRedo != undefined) {
-			commandToRedo.do();
-		} else {
-			console.log('Redo stack empty');
-			return;
-		}
-		redoStore.set(redoStack);
-		const undoStack = get(undoStore);
-		undoStack.push(commandToRedo);
-		undoStore.set(undoStack);
-	}
+	
 
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
 	let simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
-
+	let serviceSubscriptions:Subscription[] = [];
+	
 	function createNewCircuit() {
 		console.log('Creating new circuit');
 		let newCircuitTab = {
@@ -90,6 +64,37 @@
 		} else {
 			console.log('Simulation already running');
 		}
+	}
+
+
+	function undo() {
+		const commandStack = get(undoStore);
+		const commandToUndo: Command = commandStack.pop();
+		if (commandToUndo != undefined) {
+			commandToUndo.undo();
+		} else {
+			console.log('Undo stack empty');
+			return;
+		}
+		undoStore.set(commandStack);
+		const redoStack = get(redoStore);
+		redoStack.push(commandToUndo);
+		redoStore.set(redoStack);
+	}
+
+	function redo() {
+		const redoStack = get(redoStore);
+		const commandToRedo: Command = redoStack.pop();
+		if (commandToRedo != undefined) {
+			commandToRedo.do();
+		} else {
+			console.log('Redo stack empty');
+			return;
+		}
+		redoStore.set(redoStack);
+		const undoStack = get(undoStore);
+		undoStack.push(commandToRedo);
+		undoStore.set(undoStack);
 	}
 
 	function pauseSimulation() {
@@ -265,10 +270,19 @@
 
 	$: {
 		console.log($circuitStore);
+		const circuit = $circuitStore;
+		if(circuit != null){
+		 	simulator.setCircuit(circuit);
+		}
 	}
 	onMount(() => {
 		createNewCircuit();
+		serviceSubscriptions.push(simulator.getCircuitStateBehaviourSubject().subscribe((state) => console.log(`state`,state)));
 	});
+
+	onDestroy(() => {
+		serviceSubscriptions.forEach(sub => sub.unsubscribe())
+	})
 </script>
 
 <nav id="app-tab-menu" class="shadow-md flex flex-row justify-between">

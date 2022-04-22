@@ -1,7 +1,7 @@
 import type { Circuit } from "./models/circuit";
 import type { ComponentDefinition } from "./models/component_definition";
 import type { UserEvent } from "./models/user_event";
-import { Simulation, Config } from "./digisim/digisim";
+import * as wasm from "digisim";
 
 export type WorkerMessage = {
     action: 'setCircuit' | 'startSimulation' | 'pauseSimulation' | 'stepSimulation' | 'insertUserEvent' | 'insertDefinition' | 'stopSimulation',
@@ -19,11 +19,12 @@ enum SimulationState {
     RUNNING,
 }
 
-const simulation: Simulation = Simulation.new(Config.new(1000));
+const simulation: wasm.Simulation = wasm.Simulation.new(wasm.Config.new(1000));
 let state: SimulationState = SimulationState.STOPPED;
 
 declare var self: DedicatedWorkerGlobalScope;
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
+    console.log("Message in worker",msg);
     const action = msg.data.action;
     const payload = msg.data.payload;
     switch (action) {
