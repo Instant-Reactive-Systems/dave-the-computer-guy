@@ -77,23 +77,28 @@ function insertDefinition(definition: ComponentDefinition){
 }
 
 function startSimulation() {
-    console.log("Starting simulation");
+    console.log("Starting simulation.");
     simulation.init();
     console.log('After init');
     state = SimulationState.RUNNING;
+    simulate();
+       
+}
 
-    while (state == SimulationState.RUNNING) {
-        console.log('Outside setTimeout');
-        setTimeout(() => {
-            console.log('Called setTimeout tick');
-            for (let i = 0; i < 100; ++i) {
-                stepSimulation();
-            }
+function simulate(){
+    setTimeout(() => {
+        if(state != SimulationState.RUNNING){
+            return;
+        }
+        console.log('Called setTimeout tick');
+        for (let i = 0; i < 100; ++i) {
+            stepSimulation();
+        }
 
-            const circuitState = simulation!.circuit_state();
-            console.log(circuitState);
-        }, 10);
-    }
+        const circuitState = simulation!.circuit_state();
+        console.log(circuitState);
+        simulate();
+    }, 10);
 }
 
 function pauseSimulation() {
