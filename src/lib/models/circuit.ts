@@ -97,8 +97,10 @@ export class Circuit {
     metadata: CircuitMetadata;
 
     constructor(){
+        this.id = 0;
+        this.name = 'test';
+        this.description = 'testdesc';
         this.components = [];
-        this.description = null;
         this.connections = [];
         this.params = [];
         const metadata: CircuitMetadata = new CircuitMetadata();
