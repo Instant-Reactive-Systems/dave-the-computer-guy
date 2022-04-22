@@ -1,9 +1,9 @@
 import { fabric } from 'fabric'
 import type { PinType } from '$lib/models/pin_type';
 import { NameAndPinPair } from '$lib/models/component_definition';
-import type {Component} from '$lib/models/circuit';
-import {assert} from './common';
-import type {Direction} from '$lib/models/direction';
+import { assert } from './common';
+import type { Component } from '$lib/models/component'
+import type { Direction } from '$lib/models/direction';
 
 /// Returns the first parsed SVG object that Fabric parses from a string.
 export function loadSvg(str: string): fabric.Object {
@@ -33,8 +33,8 @@ export function normalizeLook(obj: fabric.Object) {
     obj.strokeWidth = 1;
 }
 
-export function createPinObject(name: string, id: number, x: number, y: number, type: PinType, component: Component): fabric.Object {
-    const pin = new fabric.Circle({
+export function createPinObject(name: string, pin: number, x: number, y: number, type: PinType, component: Component): fabric.Object {
+    const fabricPin = new fabric.Circle({
         left: x,
         top: y,
         fill: "black",
@@ -42,13 +42,24 @@ export function createPinObject(name: string, id: number, x: number, y: number, 
         data: {
             "type": "pin",
             "pinType": type,
-            "value": { name, id },
+            "value": { name, pin },
             "component": component
         }
     });
 
-    normalizeLook(pin);
-    return pin;
+    normalizeLook(fabricPin);
+    return fabricPin;
+}
+
+export function createTextObject(text: string, x: number, y: number) {
+    const lineText = new fabric.Text(text, {
+        fontSize: 18,
+        originX: "right",
+        left: x,
+        top: y,
+    });
+    normalizeLook(lineText);
+    return lineText;
 }
 
 export function createConnector(name: string, id: number, x: number, y: number, type: PinType, component: Component, direction: Direction): fabric.Object {
@@ -63,6 +74,8 @@ export function createConnector(name: string, id: number, x: number, y: number, 
     connectorWire.setCoords();
     normalizeLook(connectorWire);
 
+
+
     let pinCoords: fabric.Point;
     switch (direction) {
         case 'left': pinCoords = connectorWire.oCoords.ml; pinCoords.x -= 5; pinCoords.y -= 3.5; break;
@@ -72,10 +85,16 @@ export function createConnector(name: string, id: number, x: number, y: number, 
     }
     const pin = createPinObject(name, id, pinCoords.x, pinCoords.y, type, component);
 
-    const obj = new fabric.Group([pin, connectorWire], {
+    
+
+    const obj = new fabric.Group([connectorWire,pin], {
         left: x,
         top: y,
         subTargetCheck: true,
+        data:{
+            type: "pinGroup",
+            pin: pin
+        }
     });
 
     normalizeLook(obj);

@@ -21,14 +21,13 @@
 	import { JsonObjectMetadata } from 'typedjson';
 	import { Connector } from '$lib/models/connector';
 	import type { Input } from 'postcss';
-	import { dataset_dev } from 'svelte/internal';
 	import type { Circuit } from '$lib/models/circuit';
-  import { NandRenderable } from '$lib/fabric/nand_renderable';
-  import { SwitchRenderable } from '$lib/fabric/switch_renderable';
-  import { LedRenderable } from '$lib/fabric/led_renderable';
-  import ComponentDefinition from './component_definition.svelte';
-	import { dataset_dev, xlink_attr } from 'svelte/internal';
-	import type { Circuit, Junction } from '$lib/models/circuit';
+	import { NandRenderable } from '$lib/fabric/nand_renderable';
+	import { SwitchRenderable } from '$lib/fabric/switch_renderable';
+	import { LedRenderable } from '$lib/fabric/led_renderable';
+	import type { Junction } from '$lib/models/circuit';
+	import { createComponent } from '$lib/fabric/component_factory';
+	import { xlink_attr } from 'svelte/internal';
 
 	let circuit: Circuit = $circuitStore;
 	let canvas: fabric.Canvas;
@@ -49,13 +48,13 @@
 
 	$: {
 		circuit = $circuitStore;
-		if(circuit != null){
-		console.log(JSON.stringify(circuit.metadata.rendering));
-		}	
+		if (circuit != null) {
+			console.log(JSON.stringify(circuit.metadata.rendering));
+		}
 		if (canvas != undefined && circuit != null) {
 			clearCanvas();
 			renderCircuit();
-        }
+		}
 	}
 
 	$: {
@@ -104,28 +103,30 @@
 			const junctions = circuit.metadata.rendering.junctions;
 			renderComponents(componentsWithDefinition);
 			renderWires(wires);
-			renderJunctions(junctions)
+			renderJunctions(junctions);
 		} catch (err) {
 			console.log(err);
 			//showErrorNotification(err);
 		}
 	}
 
-	function renderJunctions(junctions: Junction[]){
-		for(const junction of junctions){
-			canvas.add(new fabric.Circle({
-				radius: 4,
-				selectable: false,
-				hasControls: false,
-				hasBorders: false,
-				fill: "black",
-				top: junction.y-4,
-				left: junction.x-4,
-				data:{
-					ref: junction,
-					type: "junction"
-				}
-			}))
+	function renderJunctions(junctions: Junction[]) {
+		for (const junction of junctions) {
+			canvas.add(
+				new fabric.Circle({
+					radius: 4,
+					selectable: false,
+					hasControls: false,
+					hasBorders: false,
+					fill: 'black',
+					top: junction.y - 4,
+					left: junction.x - 4,
+					data: {
+						ref: junction,
+						type: 'junction'
+					}
+				})
+			);
 		}
 	}
 
@@ -138,13 +139,8 @@
 					`Component with id=${component.id} has no entry in circuit components rendering metadata`
 				);
 			}
-			const fabricComponent = new GenericComponentRenderable(
-				renderingData.x,
-				renderingData.y,
-				component
-			).buildFabricObject();
+			const fabricComponent = createComponent(renderingData.x, renderingData.y, component).buildFabricObject();
 			canvas.add(fabricComponent);
-			renderedComponents.set(component.id, fabricComponent);
 		}
 	}
 
@@ -185,7 +181,7 @@
 
 	function attachListeners(canvas: fabric.Canvas) {
 		canvas.on('mouse:down', (mouseEvent) => {
-            console.log(mouseEvent);
+			console.log(mouseEvent);
 			if (mouseEvent.e.altKey === true) {
 				canvas.isDragging = true;
 				canvas.selection = false;
@@ -253,32 +249,34 @@
 
 	function getWiredModeTarget(mouseEvent) {
 		if (wireModeData.currentWire == null) {
-			console.log("Current wire is null");
+			console.log('Current wire is null');
 			return getMouseDownTarget(mouseEvent);
 		} else {
 			const x = wireModeData.currentWire.data.ref.wire.endX;
 			const y = wireModeData.currentWire.data.ref.wire.endY;
 			const id = wireModeData.currentWire.data.ref.wire.id;
-			const hitCircle = new fabric.Circle({top: y-1, left:x-1, fill: null, radius: 1})
+			const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
 			canvas.remove(wireModeData.currentWire);
-			for(const obj of canvas.getObjects()){
-				if (obj.intersectsWithObject(hitCircle,true)) {
-					console.log("Intersection data",x,y,obj);
-					if (obj.data.type == "GenericRenderableComponent"){
-						for(const innerObj of (obj as fabric.Group)._objects){
-							if(innerObj instanceof fabric.Group){
-								const pin = (innerObj as fabric.Group).item(2)
+			for (const obj of canvas.getObjects()) {
+				if (obj.intersectsWithObject(hitCircle, true)) {
+					console.log('Intersection data', x, y, obj);
+					if (obj.data.type == 'component') {
+						console.log(obj);
+						for (const innerObj of (obj as fabric.Group)._objects) {
+							console.log(innerObj);
+							if (innerObj instanceof fabric.Group && innerObj.data?.type == "pinGroup") {
+								const pin = innerObj.data.pin;
 								let matrix = pin.calcTransformMatrix();
-								let pinX= matrix[4]; // translation in X
+								let pinX = matrix[4]; // translation in X
 								let pinY = matrix[5];
-								if(Math.abs(pinX-x) < pin.width && Math.abs(pinY-y) < pin.height){
-									wireModeData.currentWire.data.ref.wire.x = pinX+2;
-									wireModeData.currentWire.data.ref.wire.y = pinY+2;
+								if (Math.abs(pinX - x) < pin.width && Math.abs(pinY - y) < pin.height) {
+									wireModeData.currentWire.data.ref.wire.x = pinX + 2;
+									wireModeData.currentWire.data.ref.wire.y = pinY + 2;
 									return pin;
 								}
 							}
 						}
-					}else if ((obj as any).data.type == 'wire') {
+					} else if ((obj as any).data.type == 'wire') {
 						return obj;
 					}
 				}
@@ -299,7 +297,7 @@
 			wire: wireModeData.currentWire.data.ref.wire
 		});
 		dispatch('addNewJunction', {
-			junction:{
+			junction: {
 				x: wireModeData.currentWire.data.ref.wire.endX,
 				y: wireModeData.currentWire.data.ref.wire.endY,
 				sourceWire: wireModeData.currentWire.data.ref.wire.id
@@ -313,8 +311,6 @@
 			return;
 		}
 
-		
-		
 		const pinType = pin.data.pinType;
 		const sourceConnector: Connector = new Connector();
 		sourceConnector.componentId = pin.data.component.id;

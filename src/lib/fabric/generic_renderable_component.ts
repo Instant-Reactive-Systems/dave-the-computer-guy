@@ -71,7 +71,11 @@ export class GenericComponentRenderable implements RenderableComponent {
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: - 40,
                 top: (pinOffset - lineText.height),
-                subTargetCheck: true
+                subTargetCheck: true,
+                data:{
+                    type: "pinGroup",
+                    pin: pinConnectionPoint
+                }
             })
             pins.left.push(pinGroup);
         }
@@ -103,7 +107,11 @@ export class GenericComponentRenderable implements RenderableComponent {
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: componentWidth,
                 top: (pinOffset - lineText.height),
-                subTargetCheck: true
+                subTargetCheck: true,
+                data:{
+                    type: "pinGroup",
+                    pin: pinConnectionPoint
+                }
             })
             pinGroup.data = 
             pins.right.push(pinGroup);
@@ -139,7 +147,11 @@ export class GenericComponentRenderable implements RenderableComponent {
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
                 top: componentHeight,
-                subTargetCheck: true
+                subTargetCheck: true,
+                data:{
+                    type: "pinGroup",
+                    pin: pinConnectionPoint
+                }
             })
             pins.bottom.push(pinGroup);
         }
@@ -171,7 +183,11 @@ export class GenericComponentRenderable implements RenderableComponent {
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
                 top: -(line.height),
-                subTargetCheck: true
+                subTargetCheck: true,
+                data:{
+                    type: "pinGroup",
+                    pin: pinConnectionPoint
+                }
             })
             
             pins.top.push(pinGroup);
@@ -222,7 +238,7 @@ export class GenericComponentRenderable implements RenderableComponent {
             mtr: false,
         });
         this.fabricObject.data = {
-            type: 'GenericRenderableComponent',
+            type: 'component',
             ref: this
         }
         this.fabricObject.type = "component"

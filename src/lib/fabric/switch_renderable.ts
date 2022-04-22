@@ -1,8 +1,8 @@
 import { fabric } from 'fabric'
 import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/util/fabric_utils';
 import { assert, todo } from '$lib/util/common';
-import type {Component} from '$lib/models/circuit';
 import type {RenderableComponent} from './renderable_component';
+import type { Component } from '$lib/models/component';
 
 export class SwitchRenderable implements RenderableComponent {
     type: 'builtin';
@@ -34,7 +34,7 @@ export class SwitchRenderable implements RenderableComponent {
         });
         normalizeLook(outline);
 
-        let y = createConnector("Y", 2, 75, 35, 'output', this.component, 'right');
+        let y = createConnector("Y", 0, 75, 35, 'output', this.component, 'right');
 
         this.fabricObject = new fabric.Group([outline, y], {
             left: this.left,
@@ -47,7 +47,7 @@ export class SwitchRenderable implements RenderableComponent {
         // Embed metadata
         this.fabricObject.type = 'component';
         this.fabricObject.data = {
-            type: 'SwitchRenderable',
+            type: 'component',
             ref: this
         };
         

@@ -1,8 +1,8 @@
 import { fabric } from 'fabric'
 import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/util/fabric_utils';
 import { assert, todo } from '$lib/util/common';
-import type {Component} from '$lib/models/circuit';
 import type {RenderableComponent} from './renderable_component';
+import type { Component } from '$lib/models/component';
 
 export class NandRenderable implements RenderableComponent {
     type: 'builtin';
@@ -51,7 +51,7 @@ export class NandRenderable implements RenderableComponent {
         // Embed metadata
         this.fabricObject.type = 'component';
         this.fabricObject.data = {
-            type: 'NandRenderable',
+            type: 'component',
             ref: this
         };
         

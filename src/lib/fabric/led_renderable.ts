@@ -1,7 +1,7 @@
 import { fabric } from 'fabric'
 import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/util/fabric_utils';
 import { assert, todo } from '$lib/util/common';
-import type {Component} from '$lib/models/circuit';
+import type { Component } from '../models/component'
 import type {RenderableComponent} from './renderable_component';
 
 export class LedRenderable implements RenderableComponent {
@@ -46,7 +46,7 @@ export class LedRenderable implements RenderableComponent {
         // Embed metadata
         this.fabricObject.type = 'component';
         this.fabricObject.data = {
-            type: 'LedRenderable',
+            type: 'component',
             ref: this
         };
         
