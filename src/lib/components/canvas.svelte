@@ -49,7 +49,7 @@
 	$: {
 		circuit = $circuitStore;
 		if (circuit != null) {
-			console.log(JSON.stringify(circuit.metadata.rendering));
+			console.log("Circuit metadata rendering: ", circuit.metadata.rendering);
 		}
 		if (canvas != undefined && circuit != null) {
 			clearCanvas();

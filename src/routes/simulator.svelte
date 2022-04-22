@@ -184,6 +184,7 @@ import type { Subscription } from 'rxjs';
 	}
 
 	function deductConnectionsFromWires() {
+        const start = window.performance.now();
 		const circuit = $circuitStore;
         circuit.connections = [];
 		const wires = circuit.metadata.rendering.wires;
@@ -217,6 +218,9 @@ import type { Subscription } from 'rxjs';
             }
 		}
         circuitStore.set(circuit);
+        const end = window.performance.now();
+
+        console.log(`Deducting connections takes ${end - start}ms`);
 	}
 
 	function findAllConnectedInputConnectors(wire: Wire,idsToIgnore: number[]): Connector[] {

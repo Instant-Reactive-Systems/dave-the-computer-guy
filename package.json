@@ -39,7 +39,7 @@
 		"@sveltejs/svelte-virtual-list": "^3.0.1",
 		"@types/lodash": "^4.14.181",
 		"axios": "^0.26.1",
-		"digisim": "^0.2.7",
+		"digisim": "^0.2.16",
 		"fabric": "^5.2.1",
 		"lodash": "^4.17.21",
 		"rxjs": "^7.5.5",
