@@ -21,6 +21,7 @@
 	import { Connection } from '$lib/models/connection';
 	import type { Connector } from '$lib/models/connector';
 	import type { Subscription } from 'rxjs';
+	import { circuitStateStore } from '$lib/stores/circuit_state';
 
 	type CircuitTab = {
 		name: string;
@@ -186,47 +187,45 @@
 	}
 
 	function deductConnectionsFromWires() {
-        const start = window.performance.now();
+		const start = window.performance.now();
 		const circuit = $circuitStore;
-        circuit.connections = [];
+		circuit.connections = [];
 		const wires = circuit.metadata.rendering.wires;
 		//find wires that are connected to output pins
 
 		const wiresWithOutputConnectors = [];
 		for (const wire of wires) {
-			const outputConnectors: DirectLink[] = wire.links.filter(
-				(link) => link.type == 'pin' && (link.value as any).type == 'output'
-			).map(link => (link.value as any).conn);
-            if(outputConnectors.length != 0){
-                wiresWithOutputConnectors.push([wire, outputConnectors]);
-            }
+			const outputConnectors: DirectLink[] = wire.links
+				.filter((link) => link.type == 'pin' && (link.value as any).type == 'output')
+				.map((link) => (link.value as any).conn);
+			if (outputConnectors.length != 0) {
+				wiresWithOutputConnectors.push([wire, outputConnectors]);
+			}
 		}
 
-		
 		for (const wireOutpinPinsTuple of wiresWithOutputConnectors) {
 			const wire = wireOutpinPinsTuple[0] as Wire;
 			const outputConnectors = wireOutpinPinsTuple[1];
-			const ignoreIdSet:Set<number> = new Set();
+			const ignoreIdSet: Set<number> = new Set();
 			ignoreIdSet.add(wire.id);
-			const inputConnectors = findAllConnectedInputConnectors(wire,ignoreIdSet);
+			const inputConnectors = findAllConnectedInputConnectors(wire, ignoreIdSet);
 			for (const connector of outputConnectors) {
-                let connection = circuit.connections.find(conn => _.isEqual(connector,conn.from))
-                if(connection == undefined){
-                    connection = new Connection();
-                    connection.from = connector;
-                    connection.to = [...inputConnectors];
-                    circuit.connections.push(connection);
-                    console.log("debug connection making",wire,connection);
-                }else{
-                    connection.to = _.uniq([...connection.to,...inputConnectors]);
-
-                }
-            }
+				let connection = circuit.connections.find((conn) => _.isEqual(connector, conn.from));
+				if (connection == undefined) {
+					connection = new Connection();
+					connection.from = connector;
+					connection.to = [...inputConnectors];
+					circuit.connections.push(connection);
+					console.log('debug connection making', wire, connection);
+				} else {
+					connection.to = _.uniq([...connection.to, ...inputConnectors]);
+				}
+			}
 		}
-        circuitStore.set(circuit);
-        const end = window.performance.now();
+		circuitStore.set(circuit);
+		const end = window.performance.now();
 
-        console.log(`Deducting connections takes ${end - start}ms`);
+		console.log(`Deducting connections takes ${end - start}ms`);
 	}
 
 	function findAllConnectedInputConnectors(wire: Wire, idsToIgnore: Set<number>): Connector[] {
@@ -259,16 +258,15 @@
 
 		start = window.performance.now();
 		const linkedWireIds = (circuit.metadata.rendering.wires as Wire[])
-		.filter(w => w.links.some(link => link.value == wire.id) && !idsToIgnore.has(w.id))
-		.map(w => w.id);
-		linkedWireIds.forEach(id => idsToIgnore.add(id as number));
+			.filter((w) => w.links.some((link) => link.value == wire.id) && !idsToIgnore.has(w.id))
+			.map((w) => w.id);
+		linkedWireIds.forEach((id) => idsToIgnore.add(id as number));
 
-		console.log("Linked wire ids",linkedWireIds);
+		console.log('Linked wire ids', linkedWireIds);
 		//find all wires which are connected to this wire
 		for (const linkedWireId of linkedWireIds) {
 			const linkedWire = circuit.metadata.rendering.wires[linkedWireId as number];
 			connectors.push(...findAllConnectedInputConnectors(linkedWire, idsToIgnore));
-		
 		}
 
 		console.log(
@@ -313,6 +311,11 @@
 		createNewCircuit();
 		serviceSubscriptions.push(
 			simulator.getCircuitStateBehaviourSubject().subscribe((state) => console.log(`state`, state))
+		);
+		serviceSubscriptions.push(
+			simulator.getCircuitStateBehaviourSubject().subscribe((val) => {
+				circuitStateStore.set(val);
+			})
 		);
 	});
 

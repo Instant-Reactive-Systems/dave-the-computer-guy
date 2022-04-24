@@ -5,10 +5,17 @@ import { jsonMember, jsonObject, toJson } from "typedjson";
 export class Connector{
     
     @jsonMember(Number)
-    componentId: Number;
+    componentId: number;
 
     @jsonMember(Number)
     pin: number;
+
+    constructor(componentId:number,pin:number){
+        this.componentId = componentId;
+        this.pin = pin;
+
+    }
+
 
 }
 

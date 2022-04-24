@@ -9,24 +9,25 @@ import { Wire } from "./wire"
 @jsonObject
 export class ComponentRenderingData {
     @jsonMember(Number)
+    id: number
+
+    @jsonMember(Number)
     x: number;
 
     @jsonMember(Number)
     y: number;
-
-    @jsonMember(Number)
-    id: number
 }
-
 
 
 @toJson
 @jsonObject
-export class Junction{
+export class Junction {
     @jsonMember(Number)
     x: number;
+
     @jsonMember(Number)
     y: number;
+
     @jsonMember(Number)
     sourceWire: number
 }
@@ -36,8 +37,10 @@ export class Junction{
 export class RenderingMetadata {
     @jsonArrayMember(ComponentRenderingData)
     components: ComponentRenderingData[];
+
     @jsonArrayMember(Wire)
     wires: Wire[];
+
     @jsonArrayMember(Junction)
     junctions: Junction[]
 }
@@ -51,21 +54,21 @@ export class CircuitMetadata {
     rendering: RenderingMetadata;
     @jsonMember(Date)
     createdAt: Date;
-    @jsonMember(Date) 
+    @jsonMember(Date)
     modifiedAt: Date;
 }
 
 @toJson
 @jsonObject
 export class Component {
-    @jsonMember(Number) 
+    @jsonMember(Number)
     id: number;
 
     @jsonMember(Number)
     definitionId: number;
 
 
-    constructor(id: number,definitionId: number){
+    constructor(id: number, definitionId: number) {
         this.id = id;
         this.definitionId = definitionId;
     }
@@ -93,10 +96,10 @@ export class Circuit {
     @jsonArrayMember(Param)
     params: Param[];
 
-    @jsonMember (CircuitMetadata)
+    @jsonMember(CircuitMetadata)
     metadata: CircuitMetadata;
 
-    constructor(){
+    constructor() {
         this.id = 0;
         this.name = 'test';
         this.description = 'testdesc';

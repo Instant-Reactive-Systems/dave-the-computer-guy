@@ -3,7 +3,7 @@
 
 	import type { RenderableComponent } from '$lib/fabric/renderable_component';
 	import { WireRenderable } from '$lib/fabric/wire_renderable';
-	import _ from 'lodash';
+	import _, { startCase } from 'lodash';
 	import { Component } from '$lib/models/component';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import { Connection } from '$lib/models/connection';
@@ -14,10 +14,10 @@
 	import { eventStore } from '$lib/stores/event_store';
 	import { fabric } from 'fabric';
 	import { onMount } from 'svelte';
-	import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
+	import { COMPONENT_DEFINITION_LOADER_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
 	import { Event } from '$lib/models/event';
 	import { simulationStateStore } from '$lib/stores/simulation_state';
-	import { ConnectableObservable } from 'rxjs';
+	import { connect, ConnectableObservable } from 'rxjs';
 	import { JsonObjectMetadata } from 'typedjson';
 	import { Connector } from '$lib/models/connector';
 	import type { Input } from 'postcss';
@@ -27,9 +27,9 @@
 	import { LedRenderable } from '$lib/fabric/led_renderable';
 	import type { Junction } from '$lib/models/circuit';
 	import { createComponent } from '$lib/fabric/component_factory';
-	import { xlink_attr } from 'svelte/internal';
+	import { circuitStateStore } from '$lib/stores/circuit_state';
+	import type { SimulatorService } from '$lib/services/simulator_service';
 
-	let circuit: Circuit = $circuitStore;
 	let canvas: fabric.Canvas;
 	let canvasElement;
 	let definitionLoaderService: ComponentDefinitionLoaderService = getContext(
@@ -46,12 +46,12 @@
 	} = null;
 	const dispatch = createEventDispatcher();
 
+
 	$: {
-		circuit = $circuitStore;
-		if (circuit != null) {
-			console.log("Circuit metadata rendering: ", circuit.metadata.rendering);
+		if ($circuitStore != null) {
+			console.log('Circuit metadata rendering: ', $circuitStore.metadata.rendering);
 		}
-		if (canvas != undefined && circuit != null) {
+		if (canvas != undefined && $circuitStore != null) {
 			clearCanvas();
 			renderCircuit();
 		}
@@ -84,6 +84,45 @@
 		}
 	}
 
+	$: {
+		const state = $circuitStateStore;
+		if (state != null) {
+			console.log(state);
+			for (const component of renderedComponents.values()) {
+				const componentRef = component.data.ref as RenderableComponent;
+				componentRef.update(state);
+			}
+
+			const wiringState = state.get(4294967295);
+			if (wiringState != undefined) {
+				console.log('Here');
+				renderWiringState(wiringState);
+			}
+		}
+	}
+
+	function renderWiringState(wiringState: { connector: Connector; value: boolean }[]) {
+		for (const entry of wiringState) {
+			getAllWiresLinkedToConnector(new Connector(entry.connector.componentId,entry.connector.pin));
+		}
+	}
+
+	function getAllWiresLinkedToConnector(connector: Connector) {
+		for (const renderedWire of renderedWires.values()) {
+			const wire = (renderedWire.data.ref as WireRenderable).wire;
+			console.log(wire.links);
+			for (const link of wire.links) {
+				if (link.type == 'pin' && _.isEqual((link.value as any).conn, connector)) {
+					console.log('Coloring wire');
+					renderedWire.set("stroke","green");
+					canvas.renderAll()
+				}else{
+					console.log("Link-connector",link,connector);
+				}
+			}
+		}
+	}
+
 	function fetchDefinition(id: number): ComponentDefinition {
 		return definitionLoaderService.getDefinition(id).unwrap();
 	}
@@ -96,11 +135,11 @@
 
 	function renderCircuit() {
 		try {
-			const componentsWithDefinition = circuit.components.map((component) => {
+			const componentsWithDefinition = $circuitStore.components.map((component) => {
 				return new Component(component.id, fetchDefinition(component.definitionId));
 			});
-			const wires = circuit.metadata.rendering.wires;
-			const junctions = circuit.metadata.rendering.junctions;
+			const wires = $circuitStore.metadata.rendering.wires;
+			const junctions = $circuitStore.metadata.rendering.junctions;
 			renderComponents(componentsWithDefinition);
 			renderWires(wires);
 			renderJunctions(junctions);
@@ -133,13 +172,17 @@
 	function renderComponents(components: Component[]) {
 		for (const component of components) {
 			//Add special case here for rendering builtins
-			const renderingData = circuit.metadata.rendering.components[component.id];
+			const renderingData = $circuitStore.metadata.rendering.components[component.id];
 			if (renderingData == undefined) {
 				throw new Error(
 					`Component with id=${component.id} has no entry in circuit components rendering metadata`
 				);
 			}
-			const fabricComponent = createComponent(renderingData.x, renderingData.y, component).buildFabricObject();
+			const fabricComponent = createComponent(
+				renderingData.x,
+				renderingData.y,
+				component
+			).buildFabricObject();
 			canvas.add(fabricComponent);
 		}
 	}
@@ -264,7 +307,7 @@
 						console.log(obj);
 						for (const innerObj of (obj as fabric.Group)._objects) {
 							console.log(innerObj);
-							if (innerObj instanceof fabric.Group && innerObj.data?.type == "pinGroup") {
+							if (innerObj instanceof fabric.Group && innerObj.data?.type == 'pinGroup') {
 								const pin = innerObj.data.pin;
 								let matrix = pin.calcTransformMatrix();
 								let pinX = matrix[4]; // translation in X
@@ -496,6 +539,7 @@
 
 	onMount(() => {
 		prepareCanvas();
+		
 		return () => {
 			canvas.dispose();
 		};
