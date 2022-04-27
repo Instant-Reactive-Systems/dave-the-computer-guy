@@ -19,6 +19,7 @@
 	import { createComponent } from '$lib/fabric/component_factory';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import { todo } from '$lib/util/common';
+	import { editorModeStore } from '$lib/stores/editor_mode';
 
 	let canvas: fabric.Canvas;
 	let canvasElement;
@@ -27,31 +28,35 @@
 	);
 	let renderedComponents: Map<number, fabric.Object> = new Map<number, fabric.Object>();
 	let renderedWires: Map<number, fabric.Object> = new Map<number, fabric.Object>();
-	let inWireMode = false;
-	let wireModeData: {
-		source: DirectLink;
-		lastX: number;
-		lastY: number;
-		currentWire: fabric.Object;
-		currentJunction: fabric.Circle;
-	} = null;
 	const dispatch = createEventDispatcher();
 
 	//handle rerendering when the circuit changes
 	$: {
 		if (canvas != undefined && $circuitStore != null) {
-			clearCanvas();
-			renderCircuit();
-			if(inWireMode){
-				showTemporaryJunction();
-			}
+			rerenderCanvas()
 		}
+	}
+
+	function rerenderCanvas() {
+		clearCanvas();
+		renderCircuit();
+		if ($editorModeStore.type == 'wire') {
+			showTemporaryJunction();
+		}
+	}
+
+	$: {
+		const mode = $editorModeStore;
+		console.log('mode', mode);
 	}
 
 	$: {
 		//disable component dragging when simulation is not stopped or when in wired mode
 		if (canvas != null) {
-			if ((inWireMode || $simulationStateStore != 'STOPPED') && canvas != null) {
+			if (
+				($editorModeStore.type == 'wire' || $simulationStateStore != 'STOPPED') &&
+				canvas != null
+			) {
 				canvas.getObjects().forEach((obj) => {
 					if (obj.data.type == 'component') {
 						obj.selectable = false;
@@ -59,7 +64,7 @@
 						obj.lockMovementY = true;
 					}
 				});
-			} else if (!inWireMode && $simulationStateStore == 'STOPPED') {
+			} else if (!($editorModeStore.type == 'wire') && $simulationStateStore == 'STOPPED') {
 				//enable dragging and selecting components if not in wired mode and not simulating
 				canvas.getObjects().forEach((obj) => {
 					if (obj.data.type == 'component') {
@@ -221,7 +226,7 @@
 					break;
 				}
 				case 'STOPPED': {
-					if (inWireMode) {
+					if ($editorModeStore.type == 'wire') {
 						handleMousedownInWiredMode(mouseEvent);
 					} else {
 						handleMouseDownInEditMode(mouseEvent);
@@ -259,9 +264,8 @@
 				canvas.lastPosY = mouseEvent.e.clientY;
 				return;
 			}
-			if (inWireMode) {
+			if ($editorModeStore.type == 'wire') {
 				showTemporaryWire(mouseEvent);
-
 			}
 		});
 
@@ -301,13 +305,13 @@
 		}
 	}
 	function getWiredModeTarget(mouseEvent) {
-		if (wireModeData.currentWire == null) {
+		if ($editorModeStore.type == 'wire' && $editorModeStore.data.currentWire == null) {
 			return getMouseDownTarget(mouseEvent);
 		} else {
-			const x = wireModeData.currentWire.data.ref.wire.endX;
-			const y = wireModeData.currentWire.data.ref.wire.endY;
+			const x = $editorModeStore.data.currentWire.data.ref.wire.endX;
+			const y = $editorModeStore.data.currentWire.data.ref.wire.endY;
 			const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
-			canvas.remove(wireModeData.currentWire);
+			canvas.remove($editorModeStore.data.currentWire);
 			for (const obj of canvas.getObjects()) {
 				if (obj.intersectsWithObject(hitCircle, true)) {
 					if (obj.data.type == 'component') {
@@ -318,31 +322,34 @@
 								let pinX = matrix[4]; // translation in X
 								let pinY = matrix[5];
 								if (Math.abs(pinX - x) < pin.width && Math.abs(pinY - y) < pin.height) {
-									wireModeData.currentWire.data.ref.wire.x = pinX + 2;
-									wireModeData.currentWire.data.ref.wire.y = pinY + 2;
+									$editorModeStore.data.currentWire.data.ref.wire.x = pinX + 2;
+									$editorModeStore.data.currentWire.data.ref.wire.y = pinY + 2;
+									editorModeStore.set($editorModeStore);
 									return pin;
 								}
 							}
 						}
 					} else if ((obj as any).data.type == 'wire') {
+						editorModeStore.set($editorModeStore);
 						return obj;
 					}
 				}
 			}
+			editorModeStore.set($editorModeStore);
 			return null;
 		}
 	}
 	function processWirePressedInWireMode(wire: fabric.Object, mouseEvent) {
-		if (wireModeData.currentWire == null) {
+		if ($editorModeStore.data.currentWire == null) {
 			console.log('Starting drawing wire from wire');
 			const pt = canvas.getPointer(mouseEvent.evt);
-			wireModeData.lastX = pt.x;
-			wireModeData.lastY = pt.y;
-			wireModeData.source = new DirectLink();
-			wireModeData.source.type = 'wire';
-			wireModeData.source.value = wire.data.ref.wire.id;
-			const junction: Junction = new Junction(pt.x, pt.y,renderedWires.size);
-			wireModeData.currentJunction = new fabric.Circle({
+			$editorModeStore.data.lastX = pt.x;
+			$editorModeStore.data.lastY = pt.y;
+			$editorModeStore.data.source = new DirectLink();
+			$editorModeStore.data.source.type = 'wire';
+			$editorModeStore.data.source.value = wire.data.ref.wire.id;
+			const junction: Junction = new Junction(pt.x, pt.y, renderedWires.size);
+			$editorModeStore.data.currentJunction = new fabric.Circle({
 				radius: 4,
 				selectable: false,
 				lockMovementX: true,
@@ -357,27 +364,29 @@
 					type: 'junction'
 				}
 			});
+			editorModeStore.set($editorModeStore);
 		} else {
 			const link = new DirectLink();
 			link.type = 'wire';
 			link.value = wire.data.ref.wire.id;
-			(wireModeData.currentWire.data.ref.wire as Wire).links.push(link);
+			($editorModeStore.data.currentWire.data.ref.wire as Wire).links.push(link);
 			dispatch('addNewWire', {
-				wire: wireModeData.currentWire.data.ref.wire
+				wire: $editorModeStore.data.currentWire.data.ref.wire
 			});
 			dispatch('addNewJunction', {
 				junction: {
-					x: wireModeData.currentWire.data.ref.wire.endX,
-					y: wireModeData.currentWire.data.ref.wire.endY,
-					sourceWire: wireModeData.currentWire.data.ref.wire.id
+					x: $editorModeStore.data.currentWire.data.ref.wire.endX,
+					y: $editorModeStore.data.currentWire.data.ref.wire.endY,
+					sourceWire: $editorModeStore.data.currentWire.data.ref.wire.id
 				} as Junction
 			});
+			editorModeStore.set($editorModeStore);
 			quitWireMode();
 		}
 	}
 
 	function addEndWire(pin: fabric.Object) {
-		if (wireModeData.currentWire == null) {
+		if ($editorModeStore.data.currentWire == null) {
 			return;
 		}
 
@@ -389,93 +398,98 @@
 			conn: sourceConnector,
 			type: pinType
 		};
-		(wireModeData.currentWire.data.ref.wire as Wire).links.push(link);
+		($editorModeStore.data.currentWire.data.ref.wire as Wire).links.push(link);
 		dispatch('addNewWire', {
-			wire: wireModeData.currentWire.data.ref.wire
+			wire: $editorModeStore.data.currentWire.data.ref.wire
 		});
 		quitWireMode();
 	}
 
 	function addNewWire(evt) {
-		if (wireModeData.currentWire == null) {
+		if ($editorModeStore.data.currentWire == null) {
 			return;
 		}
-		wireModeData.lastX = wireModeData.currentWire.data.ref.wire.endX;
-		wireModeData.lastY = wireModeData.currentWire.data.ref.wire.endY;
-		wireModeData.source = new DirectLink();
-		wireModeData.source.type = 'wire';
-		wireModeData.source.value = renderedWires.size;
+		$editorModeStore.data.lastX = $editorModeStore.data.currentWire.data.ref.wire.endX;
+		$editorModeStore.data.lastY = $editorModeStore.data.currentWire.data.ref.wire.endY;
+		$editorModeStore.data.source = new DirectLink();
+		$editorModeStore.data.source.type = 'wire';
+		$editorModeStore.data.source.value = renderedWires.size;
 		dispatch('addNewWire', {
-			wire: wireModeData.currentWire.data.ref.wire
+			wire: $editorModeStore.data.currentWire.data.ref.wire
 		});
 	}
 
 	function showTemporaryWire(evt) {
-		if (wireModeData.source == null) {
+		if ($editorModeStore.data.source == null) {
 			return;
 		}
 		console.log('Showing wire');
-		let x = wireModeData.lastX;
-		let y = wireModeData.lastY;
+		let x = $editorModeStore.data.lastX;
+		let y = $editorModeStore.data.lastY;
 		if (Math.abs(canvas.getPointer(evt.e).y - y) > Math.abs(canvas.getPointer(evt.e).x - x)) {
 			y = canvas.getPointer(evt.e).y;
 		} else {
 			x = canvas.getPointer(evt.e).x;
 		}
 
-		if (wireModeData.currentWire != null) {
-			canvas.remove(wireModeData.currentWire as fabric.Object);
+		if ($editorModeStore.data.currentWire != null) {
+			canvas.remove($editorModeStore.data.currentWire as fabric.Object);
 		}
 		const wire = new Wire();
-		wire.startX = wireModeData.lastX;
-		wire.startY = wireModeData.lastY;
+		wire.startX = $editorModeStore.data.lastX;
+		wire.startY = $editorModeStore.data.lastY;
 		wire.endX = x;
 		wire.endY = y;
 		wire.id = renderedWires.size;
-		wire.links = [wireModeData.source];
+		wire.links = [$editorModeStore.data.source];
 		const wireRenderable: WireRenderable = new WireRenderable(wire);
-		wireModeData.currentWire = wireRenderable.buildFabricObject();
-		canvas.add(wireModeData.currentWire);
+		const fabricWire = wireRenderable.buildFabricObject();
+		canvas.add(fabricWire);
+		console.log('canvas', canvas._objects);
+		$editorModeStore.data.currentWire = fabricWire;
+		editorModeStore.set($editorModeStore);
 	}
 
-	function showTemporaryJunction(){
-		if(wireModeData.currentJunction == null){
+	function showTemporaryJunction() {
+		if ($editorModeStore.data.currentJunction == null) {
 			return;
 		}
-		if(!canvas.contains(wireModeData.currentJunction)){
-			canvas.add(wireModeData.currentJunction);
+		if (!canvas.contains($editorModeStore.data.currentJunction)) {
+			canvas.add($editorModeStore.data.currentJunction);
 		}
 	}
 
 	function processPinPressedInWireMode(pin) {
-		if (wireModeData.source == null) {
+		if ($editorModeStore.data.source == null) {
 			const pinType = pin.data.pinType;
 			const sourceConnector: Connector = new Connector(pin.data.component.id, pin.data.value.pin);
 			let matrix = pin.calcTransformMatrix();
 			let x = matrix[4]; // translation in X
 			let y = matrix[5];
-			wireModeData.lastX = x;
-			wireModeData.lastY = y;
-			wireModeData.source = new DirectLink();
-			wireModeData.source.type = 'pin';
-			wireModeData.source.value = {
+			$editorModeStore.data.lastX = x;
+			$editorModeStore.data.lastY = y;
+			$editorModeStore.data.source = new DirectLink();
+			$editorModeStore.data.source.type = 'pin';
+			$editorModeStore.data.source.value = {
 				conn: sourceConnector,
 				type: pinType
 			};
+			editorModeStore.set($editorModeStore);
 		} else {
 			addEndWire(pin);
 		}
 	}
 
 	function initWireMode() {
-		inWireMode = true;
-		wireModeData = {
+		$editorModeStore.type = 'wire';
+		$editorModeStore.data = {
 			source: null,
 			lastX: null,
 			lastY: null,
 			currentWire: null,
 			currentJunction: null
 		};
+		editorModeStore.set($editorModeStore);
 	}
 
 	function getMouseDownTarget(event): fabric.Object {
@@ -555,19 +569,19 @@
 
 	function handleKeydown(e) {
 		console.log(e);
-		if (inWireMode && e.key == 'Escape') {
+		if ($editorModeStore.type == 'wire' && e.key == 'Escape') {
 			quitWireMode();
 		}
-		if (!inWireMode && e.key == 'w' && $simulationStateStore == 'STOPPED') {
+		if ($editorModeStore.type != 'wire' && e.key == 'w' && $simulationStateStore == 'STOPPED') {
 			initWireMode();
 		}
 	}
 
 	function quitWireMode() {
-		inWireMode = false;
-		canvas.remove(wireModeData.currentWire,wireModeData.currentJunction);
-		wireModeData = null;
-	
+		$editorModeStore.type = 'edit';
+		canvas.remove($editorModeStore.data.currentWire, $editorModeStore.data.currentJunction);
+		$editorModeStore.data = null;
+		editorModeStore.set($editorModeStore);
 	}
 
 	onMount(() => {

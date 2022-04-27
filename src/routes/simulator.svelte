@@ -6,7 +6,7 @@
 	import ComponentsTab from '$lib/components/components_tab.svelte';
 	import Canvas from '$lib/components/canvas.svelte';
 	import { circuitStore } from '$lib/stores/circuit';
-	import { SIMULATOR_SERVICE } from '$lib/services/service';
+	import { CIRCUIT_LOADER_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import { simulationStateStore } from '$lib/stores/simulation_state';
@@ -21,6 +21,7 @@
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import type { UserEvent } from '$lib/models/user_event';
+	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 
 	type CircuitTab = {
 		name: string;
@@ -31,6 +32,7 @@
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
 	let simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
+	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
 
 	function createNewCircuit() {
@@ -48,7 +50,16 @@
 	}
 
 	function saveCircuit() {
-		console.log('Saving circuit');
+		if ($circuitStore == null) {
+			console.log('Can not save circuit as no circuit is currently loaded.');
+		} else {
+			//showCircuitSaveModalForm();
+			//circuitLoader.insertCircuit($circuit, true);
+		}
+	}
+
+	function showCircuitSaveModalForm(){
+
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
@@ -115,7 +126,7 @@
 
 	function stopSimulation() {
 		simulationStateStore.set('STOPPED');
-		simulator.stopSimulation()
+		simulator.stopSimulation();
 	}
 
 	function handleKeyPress(e: KeyboardEvent) {
