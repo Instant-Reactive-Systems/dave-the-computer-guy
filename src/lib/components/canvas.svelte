@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { GenericComponentRenderable } from '$lib/fabric/generic_renderable_component';
 
 	import type { RenderableComponent } from '$lib/fabric/renderable_component';
 	import { WireRenderable } from '$lib/fabric/wire_renderable';
-	import _, { startCase } from 'lodash';
+	import _ from 'lodash';
 	import { Component } from '$lib/models/component';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
-	import { Connection } from '$lib/models/connection';
 	import { DirectLink, Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 	import { createEventDispatcher, getContext } from 'svelte';
@@ -17,18 +15,10 @@
 	import { COMPONENT_DEFINITION_LOADER_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
 	import { Event } from '$lib/models/event';
 	import { simulationStateStore } from '$lib/stores/simulation_state';
-	import { connect, ConnectableObservable } from 'rxjs';
-	import { JsonObjectMetadata } from 'typedjson';
 	import { Connector } from '$lib/models/connector';
-	import type { Input } from 'postcss';
-	import type { Circuit } from '$lib/models/circuit';
-	import { NandRenderable } from '$lib/fabric/nand_renderable';
-	import { SwitchRenderable } from '$lib/fabric/switch_renderable';
-	import { LedRenderable } from '$lib/fabric/led_renderable';
 	import type { Junction } from '$lib/models/circuit';
 	import { createComponent } from '$lib/fabric/component_factory';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
-	import type { SimulatorService } from '$lib/services/simulator_service';
 
 	let canvas: fabric.Canvas;
 	let canvasElement;
@@ -45,7 +35,6 @@
 		currentWire: fabric.Object;
 	} = null;
 	const dispatch = createEventDispatcher();
-
 
 	$: {
 		if ($circuitStore != null) {
@@ -71,15 +60,19 @@
 		if (inWireMode && canvas != null) {
 			console.log('In Wire mode');
 			canvas.getObjects().forEach((obj) => {
-				obj.selectable = false;
-				obj.lockMovementX = true;
-				obj.lockMovementY = true;
+				if (obj.data.type == 'component') {
+					obj.selectable = false;
+					obj.lockMovementX = true;
+					obj.lockMovementY = true;
+				}
 			});
 		} else if (canvas != null && !inWireMode) {
 			canvas.getObjects().forEach((obj) => {
-				obj.selectable = true;
-				obj.lockMovementX = false;
-				obj.lockMovementY = false;
+				if (obj.data.type == 'component') {
+					obj.selectable = true;
+					obj.lockMovementX = false;
+					obj.lockMovementY = false;
+				}
 			});
 		}
 	}
@@ -87,23 +80,28 @@
 	$: {
 		const state = $circuitStateStore;
 		if (state != null) {
-			console.log(state);
-			for (const component of renderedComponents.values()) {
-				const componentRef = component.data.ref as RenderableComponent;
-				componentRef.update(state);
+			for (const stateEntry of state.entries()) {
+				if (stateEntry[0] == 4294967295) {
+					continue;
+				}
+				console.log('State entry', stateEntry[0], stateEntry[1]);
+				console.log(renderedComponents);
+				const componentRef = renderedComponents.get(stateEntry[0]).data.ref;
+				(componentRef as RenderableComponent).update(stateEntry[1]);
 			}
 
 			const wiringState = state.get(4294967295);
 			if (wiringState != undefined) {
-				console.log('Here');
-				renderWiringState(wiringState);
+				console.log('Rendering wire state');
+				//renderWiringState(wiringState);
 			}
+			canvas.renderAll();
 		}
 	}
 
 	function renderWiringState(wiringState: { connector: Connector; value: boolean }[]) {
 		for (const entry of wiringState) {
-			getAllWiresLinkedToConnector(new Connector(entry.connector.componentId,entry.connector.pin));
+			getAllWiresLinkedToConnector(new Connector(entry.connector.componentId, entry.connector.pin));
 		}
 	}
 
@@ -114,10 +112,10 @@
 			for (const link of wire.links) {
 				if (link.type == 'pin' && _.isEqual((link.value as any).conn, connector)) {
 					console.log('Coloring wire');
-					renderedWire.set("stroke","green");
-					canvas.renderAll()
-				}else{
-					console.log("Link-connector",link,connector);
+					renderedWire.set('stroke', 'green');
+					canvas.renderAll();
+				} else {
+					console.log('Link-connector', link, connector);
 				}
 			}
 		}
@@ -155,6 +153,8 @@
 				new fabric.Circle({
 					radius: 4,
 					selectable: false,
+					lockMovementX: true,
+					lockMovementY: false,
 					hasControls: false,
 					hasBorders: false,
 					fill: 'black',
@@ -184,6 +184,7 @@
 				component
 			).buildFabricObject();
 			canvas.add(fabricComponent);
+			renderedComponents.set(component.id, fabricComponent);
 		}
 	}
 
@@ -245,6 +246,21 @@
 			}
 
 			const target = getMouseDownTarget(mouseEvent);
+
+			if (
+				(target != null && target.data.type == 'component' && $simulationStateStore == 'RUNNING') ||
+				$simulationStateStore == 'PAUSED'
+			) {
+				console.log('Pressed component, generating event');
+				const event = (target.data.ref as RenderableComponent).onClick();
+				if (event != null) {
+					dispatch('userEventGenerated', {
+						event: event
+					});
+				}
+
+				return;
+			}
 
 			if (target == null && $simulationStateStore == 'STOPPED') {
 				processNoTargetMouseDown(mouseEvent);
@@ -464,6 +480,9 @@
 		}
 	}
 	function processObjectDrag(e) {
+		if (e.target.data.type != 'component') {
+			return;
+		}
 		const y = e.target.top;
 		const x = e.target.left;
 		const componentId = e.target.data.ref.component.id;
@@ -539,7 +558,7 @@
 
 	onMount(() => {
 		prepareCanvas();
-		
+
 		return () => {
 			canvas.dispose();
 		};

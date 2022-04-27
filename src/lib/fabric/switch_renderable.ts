@@ -3,6 +3,8 @@ import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/u
 import { assert, todo } from '$lib/util/common';
 import type {RenderableComponent} from './renderable_component';
 import type { Component } from '$lib/models/component';
+import { UserEvent } from '$lib/models/user_event';
+import type { Group } from 'fabric/fabric-impl';
 
 export class SwitchRenderable implements RenderableComponent {
     type: 'builtin';
@@ -17,8 +19,16 @@ export class SwitchRenderable implements RenderableComponent {
         this.component = component;
     }
 
-    onClick() {
-        todo()
+    onClick(): UserEvent{
+        const currentFill = (this.fabricObject as Group).item(0).get("fill");
+        console.log("current fill",currentFill);
+        if(currentFill != "black"){
+            (this.fabricObject as Group).item(0).set("fill","black");
+        }else{
+            (this.fabricObject as Group).item(0).set("fill","transparent");
+        }
+        const event = new UserEvent(this.component.id,"toggle");
+        return event;
     }
 
     update(state: any) {

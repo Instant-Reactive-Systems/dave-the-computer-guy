@@ -14,6 +14,8 @@ export class WireRenderable {
         return new fabric.Line(points, {
             stroke: "black",
             strokeWidth: 1,
+            lockMovementX: true,
+            lockMovementY: true,
             hasControls: false,
             selectable: false,
             data: {

@@ -3,6 +3,7 @@ import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/u
 import { assert, todo } from '$lib/util/common';
 import type { Component } from '../models/component'
 import type {RenderableComponent} from './renderable_component';
+import type { UserEvent } from '$lib/models/user_event';
 
 export class LedRenderable implements RenderableComponent {
     type: 'builtin';
@@ -17,12 +18,14 @@ export class LedRenderable implements RenderableComponent {
         this.component = component;
     }
 
-    onClick() {
-        todo()
+    onClick(): UserEvent {
+        return null;
     }
 
     update(state: any) {
-        todo()
+        const fill = state.value ? "red" : "transparent"
+        console.log("Updating led state",fill);
+        (this.fabricObject as fabric.Group).item(0).set("fill",fill);
     }
 
     buildFabricObject(): fabric.Object {

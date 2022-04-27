@@ -3,6 +3,7 @@ import { fabric } from 'fabric'
 import { skip } from 'rxjs';
 import type { RenderableComponent } from './renderable_component';
 import { ComponentDefinition } from '$lib/models/component_definition';
+import type { UserEvent } from '$lib/models/user_event';
 export class GenericComponentRenderable implements RenderableComponent {
     type: "generic"
     static readonly BASE_SIZE = 150;
@@ -17,9 +18,10 @@ export class GenericComponentRenderable implements RenderableComponent {
         this.top = top;
         this.left = left;
     }
-    onClick() {
-        throw new Error('Method not implemented.');
+    onClick():UserEvent {
+        return null;
     }
+    
     update(state: any) {
         //OVDJE SU UPDATE IZ GET STATE
     }

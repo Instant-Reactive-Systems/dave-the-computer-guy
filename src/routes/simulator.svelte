@@ -17,11 +17,12 @@
 	import { redoStore } from '$lib/stores/redo_store';
 	import _ from 'lodash';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
-	import type { type Wire, DirectLink } from '$lib/models/wire';
+	import type { Wire, DirectLink } from '$lib/models/wire';
 	import { Connection } from '$lib/models/connection';
 	import type { Connector } from '$lib/models/connector';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
+import type { UserEvent } from '$lib/models/user_event';
 
 	type CircuitTab = {
 		name: string;
@@ -101,9 +102,9 @@
 	}
 
 	function pauseSimulation() {
-		if ($simulationStateStore != 'STOPPED') {
+		if ($simulationStateStore != 'PAUSED') {
 			simulator.stopSimulation();
-			simulationStateStore.set('STOPPED');
+			simulationStateStore.set('PAUSED');
 		} else {
 			console.log('Simulation already stopped');
 		}
@@ -111,6 +112,10 @@
 
 	function stepSimulation() {
 		simulator.stepSimulation();
+	}
+
+	function stopSimulation(){
+		simulationStateStore.set("STOPPED");
 	}
 
 	function handleKeyPress(e: KeyboardEvent) {
@@ -294,6 +299,12 @@
 		console.log('Connector disconnecting not implemented');
 	}
 
+	function processUserEvent(e){
+		const event: UserEvent = e.detail.event;
+
+		simulator.insertUserEvent(event);
+	}
+
 	$: {
 		const circuit = currentCircuitTab?.circuit;
 		console.log('Setting current circuit');
@@ -354,6 +365,9 @@
 		<li class="pt-2 ">
 			<button on:click={stepSimulation}>Step</button>
 		</li>
+		<li class="pt-2 ">
+			<button on:click={stopSimulation}>Stop</button>
+		</li>
 	</ul>
 
 	<div />
@@ -368,6 +382,7 @@
 					on:addNewComponent={addNewComponent}
 					on:addNewWire={addNewWire}
 					on:addNewJunction={addNewJunction}
+					on:userEventGenerated={processUserEvent}
 				/>
 			</main>
 			<nav class="shadow-md">

@@ -23,6 +23,7 @@ enum SimulationState {
 let initted = false;
 let simulation: Simulation | undefined = undefined;
 let state: SimulationState = SimulationState.STOPPED;
+let simulationInitted;
 
 init().then(() => {
     set_panic_hook();
@@ -65,6 +66,7 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
 }
 
 function setCircuit(circuit: Circuit) {
+    simulationInitted = false;
     console.log("Setting circuit");
     circuit.description = "";
     circuit.params = undefined;
@@ -78,6 +80,7 @@ function insertDefinition(definition: ComponentDefinition) {
 }
 
 function startSimulation() {
+    simulationInitted = true;
     console.log("Starting simulation.");
     simulation.init();
     state = SimulationState.RUNNING;
@@ -93,8 +96,13 @@ function simulate() {
             simulation.tick();
         }
 
-        const circuitState = simulation!.circuit_state();
-        console.log("Circuit state: ", circuitState);
+        const circuitState = new Map(Object.entries(simulation.circuit_state())
+            .map(val => [parseInt(val[0]), val[1]]));
+        const message: WorkerResponse = {
+            action: "circuitStateUpdate",
+            payload: circuitState
+        }
+        postMessage(message)
         simulate();
     }, 10);
 }
@@ -110,8 +118,13 @@ function stopSimulation() {
 }
 
 function stepSimulation() {
+    if (!simulationInitted) {
+        simulation.init();
+        simulationInitted = true;
+    }
     console.log("Stepping simulation");
     simulation.tick();
+    console.log("Sim state step", simulation.circuit_state())
     const circuitState = new Map(Object.entries(simulation.circuit_state())
         .map(val => [parseInt(val[0]), val[1]]));
     const message: WorkerResponse = {
@@ -124,7 +137,7 @@ function stepSimulation() {
 }
 
 function insertUserEvent(event: UserEvent) {
-    console.log("Inserting user event");
+    console.log("Updating state",event);
     simulation.insert_input_event(event);
 }
 

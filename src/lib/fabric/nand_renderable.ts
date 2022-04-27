@@ -3,6 +3,7 @@ import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/u
 import { assert, todo } from '$lib/util/common';
 import type {RenderableComponent} from './renderable_component';
 import type { Component } from '$lib/models/component';
+import type { UserEvent } from '$lib/models/user_event';
 
 export class NandRenderable implements RenderableComponent {
     type: 'builtin';
@@ -23,8 +24,8 @@ export class NandRenderable implements RenderableComponent {
         this.component = component;
     }
 
-    onClick() {
-        todo()
+    onClick(): UserEvent {
+        return null;
     }
 
     update(state: any) {

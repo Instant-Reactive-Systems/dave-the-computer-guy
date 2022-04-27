@@ -8,4 +8,9 @@ export class UserEvent {
 
     @jsonMember(AnyT)
     payload: any
+
+    constructor(id: number, payload: any) {
+        this.componentId = id;
+        this.payload = payload;
+    }
 }
