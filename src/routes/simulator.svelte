@@ -5,7 +5,6 @@
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
 	import ComponentsTab from '$lib/components/components_tab.svelte';
 	import Canvas from '$lib/components/canvas.svelte';
-	import NewCircuitDialog from '$lib/components/new_circuit_dialog.svelte';
 	import { circuitStore } from '$lib/stores/circuit';
 	import { SIMULATOR_SERVICE } from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
@@ -16,13 +15,12 @@
 	import { undoStore } from '$lib/stores/undo_store';
 	import { redoStore } from '$lib/stores/redo_store';
 	import _ from 'lodash';
-	import type { WireRenderable } from '$lib/fabric/wire_renderable';
 	import type { Wire, DirectLink } from '$lib/models/wire';
 	import { Connection } from '$lib/models/connection';
 	import type { Connector } from '$lib/models/connector';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
-import type { UserEvent } from '$lib/models/user_event';
+	import type { UserEvent } from '$lib/models/user_event';
 
 	type CircuitTab = {
 		name: string;
@@ -112,10 +110,12 @@ import type { UserEvent } from '$lib/models/user_event';
 
 	function stepSimulation() {
 		simulator.stepSimulation();
+		console.log('Step simulation');
 	}
 
-	function stopSimulation(){
-		simulationStateStore.set("STOPPED");
+	function stopSimulation() {
+		simulationStateStore.set('STOPPED');
+		simulator.stopSimulation()
 	}
 
 	function handleKeyPress(e: KeyboardEvent) {
@@ -217,9 +217,7 @@ import type { UserEvent } from '$lib/models/user_event';
 			for (const connector of outputConnectors) {
 				let connection = circuit.connections.find((conn) => _.isEqual(connector, conn.from));
 				if (connection == undefined) {
-					connection = new Connection();
-					connection.from = connector;
-					connection.to = [...inputConnectors];
+					connection = new Connection(connector, [...inputConnectors]);
 					circuit.connections.push(connection);
 					console.log('debug connection making', wire, connection);
 				} else {
@@ -286,11 +284,11 @@ import type { UserEvent } from '$lib/models/user_event';
 
 	function addNewJunction(e) {
 		const circuit = $circuitStore;
-		const junction: Junction = new Junction();
-		console.log('Junction', e);
-		junction.sourceWire = e.detail.junction.sourceWire;
-		junction.x = e.detail.junction.x;
-		junction.y = e.detail.junction.y;
+		const junction: Junction = new Junction(
+			e.detail.junction.x,
+			e.detail.junction.y,
+			e.detail.junction.sourceWire
+		);
 		circuit.metadata.rendering.junctions.push(junction);
 		circuitStore.set(circuit);
 	}
@@ -299,7 +297,7 @@ import type { UserEvent } from '$lib/models/user_event';
 		console.log('Connector disconnecting not implemented');
 	}
 
-	function processUserEvent(e){
+	function processUserEvent(e) {
 		const event: UserEvent = e.detail.event;
 
 		simulator.insertUserEvent(event);

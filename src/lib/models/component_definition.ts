@@ -1,11 +1,7 @@
-import type { Input } from "postcss"
-import type { Option } from "ts-results"
-import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject, JsonObjectMetadata, toJson } from "typedjson"
-import { Circuit, CircuitMetadata } from "./circuit"
+import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson"
+import { Circuit} from "./circuit"
 import type { ComponentType } from "./component_type"
-import { Connection } from "./connection"
 import { Connector } from "./connector"
-import { Param } from "./param"
 
 
 @toJson
@@ -18,8 +14,6 @@ export class Component {
     @jsonMember(Number)
     definitionId: number;
 }
-
-
 
 
 @toJson
@@ -81,8 +75,6 @@ export class ComponentDefinitionMetadata{
     imageUrl: string;
 
 }
-
-
 
 @toJson
 @jsonObject

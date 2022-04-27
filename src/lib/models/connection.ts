@@ -3,11 +3,16 @@ import { Connector } from "./connector"
 
 @toJson
 @jsonObject
-export class Connection{
-    
+export class Connection {
+
     @jsonMember(Connector)
     from: Connector;
 
     @jsonArrayMember(Connector)
     to: Connector[]
+
+    constructor(from: Connector, to: Connector[]) {
+        this.from = from;
+        this.to = to;
+    }
 }

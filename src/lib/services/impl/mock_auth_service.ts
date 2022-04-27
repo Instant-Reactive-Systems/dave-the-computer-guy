@@ -4,14 +4,14 @@ import { Ok, type Result } from "ts-results";
 import type { AuthService } from "../auth_service";
 
 export class MockAuthService implements AuthService {
-    init() {
-    }
-    dispose() {
-    }
     private userBehaviorSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
+    init() {}
+    
+    dispose() {}
+
     async authenticate(username: string, password: string): Promise<Result<string, Error>> {
-        window.localStorage.setItem("token",`${username}-${password}`)
+        window.localStorage.setItem("token", `${username}-${password}`)
         return Ok("MYTOKEN");
     }
 
@@ -21,7 +21,7 @@ export class MockAuthService implements AuthService {
             email: `${username}}@gmail.com`,
             inventory: [],
             balance: 1000,
-            preferences: new Map<string,any>(),
+            preferences: new Map<string, any>(),
             completedQuestIds: []
         };
         this.userBehaviorSubject.next(user);

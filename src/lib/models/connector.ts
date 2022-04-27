@@ -10,7 +10,7 @@ export class Connector{
     @jsonMember(Number)
     pin: number;
 
-    constructor(componentId?:number,pin?:number){
+    constructor(componentId:number,pin:number){
         this.componentId = componentId;
         this.pin = pin;
 

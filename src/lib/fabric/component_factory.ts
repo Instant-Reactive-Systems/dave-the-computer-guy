@@ -1,5 +1,4 @@
 import type { Component } from "$lib/models/component";
-import type { ComponentDefinition } from "$lib/models/component_definition";
 import { GenericComponentRenderable } from "./generic_renderable_component";
 import { LedRenderable } from "./led_renderable";
 import { NandRenderable } from "./nand_renderable";

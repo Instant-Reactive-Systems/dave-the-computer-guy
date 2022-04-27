@@ -30,6 +30,12 @@ export class Junction {
 
     @jsonMember(Number)
     sourceWire: number
+
+    constructor(x: number, y:number, source: number){
+        this.x = x;
+        this.y = y;
+        this.sourceWire = source;
+    }
 }
 
 @toJson
@@ -101,11 +107,11 @@ export class Circuit {
 
     constructor() {
         this.id = 0;
-        this.name = 'test';
-        this.description = 'testdesc';
+        this.name = "";
+        this.description = "";
         this.components = [];
         this.connections = [];
-        this.params = [];
+        this.params = undefined;
         const metadata: CircuitMetadata = new CircuitMetadata();
         metadata.createdAt = new Date();
         metadata.modifiedAt = new Date();
