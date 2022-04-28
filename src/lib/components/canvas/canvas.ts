@@ -23,17 +23,11 @@ export class Canvas {
     public wires: Map<number, fabric.Object>;
     private tempWire?: fabric.Object;
     private tempJunction?: fabric.Object;
-    public isDragging: boolean;
-	public selection: boolean;
-	public lastPosX: number;
-	public lastPosY: number;
-    public viewportTransform: number[];
 
     public constructor(canvas: fabric.Canvas, size: Size) {
         this.canvas = canvas;
         this.components = new Map();
         this.wires = new Map();
-        this.viewportTransform = this.canvas.viewportTransform!;
 
 		this.setupZoom();
 		this.resize(size);
@@ -134,9 +128,48 @@ export class Canvas {
         this.canvas.requestRenderAll();
     }
 
+    public get isDragging(): boolean {
+        return this.canvas.isDragging;
+    }
+    
+    public set isDragging(value) {
+        this.canvas.isDragging = value;
+    }
+
+    public get selection(): boolean {
+        return this.canvas.selection;
+    }
+    
+    public set selection(value) {
+        this.canvas.selection = value;
+    }
+
+    public get lastPosX(): number {
+        return this.canvas.lastPosX;
+    }
+    
+    public set lastPosX(value) {
+        this.canvas.lastPosX = value;
+    }
+
+    public get lastPosY(): number {
+        return this.canvas.lastPosY;
+    }
+    
+    public set lastPosY(value) {
+        this.canvas.lastPosY = value;
+    }
+
+    public get viewportTransform(): number[] {
+        return this.canvas.viewportTransform;
+    }
+    
+    public set viewportTransform(value) {
+        this.canvas.viewportTransform = value;
+    }
+
     public setViewportTransform(transform: number[]) {
         this.canvas.setViewportTransform(transform);
-        this.viewportTransform = this.canvas.viewportTransform!;
     }
 
     private clear() {
