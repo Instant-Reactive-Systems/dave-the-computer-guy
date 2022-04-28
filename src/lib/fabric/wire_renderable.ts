@@ -2,6 +2,8 @@ import type { Wire } from "$lib/models/wire";
 import { fabric } from 'fabric'
 
 
+
+
 export class WireRenderable {
     wire: Wire;
 
@@ -10,6 +12,7 @@ export class WireRenderable {
     }
 
     buildFabricObject(): fabric.Object {
+        /*
         const points = [this.wire.startX, this.wire.startY, this.wire.endX, this.wire.endY]
         return new fabric.Line(points, {
             stroke: "black",
@@ -26,6 +29,9 @@ export class WireRenderable {
             perPixelTargetFind: false,
             fill: "black"
         });
+        */
+
+        
     }
 
 
