@@ -22,6 +22,7 @@
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import type { UserEvent } from '$lib/models/user_event';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
+	import { editorModeStore } from '$lib/stores/editor_mode';
 
 	type CircuitTab = {
 		name: string;
@@ -91,7 +92,9 @@
 		}
 		undoStore.set(commandStack);
 		const redoStack = get(redoStore);
-		redoStack.push(commandToUndo);
+		if(commandToUndo.redoable){
+			redoStack.push(commandToUndo);
+		}
 		redoStore.set(redoStack);
 	}
 
@@ -165,7 +168,8 @@
 				circuit.metadata.rendering.components.pop();
 				circuit.components.pop();
 				circuitStore.set(circuit);
-			}
+			},
+			redoable: true
 		};
 		addNewComponentCommand.do();
 		const undoCommandsStack = get(undoStore);
@@ -194,12 +198,45 @@
 
 	//TODO handle undo and redo
 	function addNewWire(e) {
-		console.log('Adding new wire');
 		const circuit = $circuitStore;
-		const wire: Wire = e.detail.wire;
-		circuit.metadata.rendering.wires.push(wire);
-		circuitStore.set(circuit);
-		deductConnectionsFromWires();
+		const addNewWireCommand: Command = {
+			name: 'Add new wire',
+			do: () => {
+				const mode = $editorModeStore
+				const wire: Wire = e.detail.wire;
+				circuit.metadata.rendering.wires.push(wire);
+				const junction: Junction = e.detail.junction;
+				if(junction != null){
+					circuit.metadata.rendering.junctions.push(junction);
+				}
+				if(mode.type == 'wire'){
+					mode.data.lastX = wire.endX;
+					mode.data.lastY = wire.endY;
+				}
+				circuitStore.set(circuit);
+				deductConnectionsFromWires();
+			},
+			undo: () => {
+				const mode = $editorModeStore
+				const wire = circuit.metadata.rendering.wires.pop()
+				const junction: Junction = e.detail.junction;
+				if(junction != null){
+					circuit.metadata.rendering.junctions.pop();
+				}
+				circuitStore.set(circuit);
+				if(mode.type == 'wire'){
+					mode.data.lastX = wire.startX;
+					mode.data.lastY = wire.startY;
+				}
+				deductConnectionsFromWires();
+			},
+			redoable: false
+		};
+		addNewWireCommand.do();
+		const undoCommandsStack = get(undoStore);
+		undoCommandsStack.push(addNewWireCommand);
+		undoStore.set(undoCommandsStack);
+
 	}
 
 	function deductConnectionsFromWires() {
@@ -293,16 +330,7 @@
 		return uniq;
 	}
 
-	function addNewJunction(e) {
-		const circuit = $circuitStore;
-		const junction: Junction = new Junction(
-			e.detail.junction.x,
-			e.detail.junction.y,
-			e.detail.junction.sourceWire
-		);
-		circuit.metadata.rendering.junctions.push(junction);
-		circuitStore.set(circuit);
-	}
+
 
 	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
@@ -379,6 +407,12 @@
 		</li>
 	</ul>
 
+
+	<ul class="h-10 space-x-3">
+		<p>{$editorModeStore.type}</p>
+
+	</ul>
+
 	<div />
 </nav>
 
@@ -390,7 +424,6 @@
 					on:componentMove={moveComponent}
 					on:addNewComponent={addNewComponent}
 					on:addNewWire={addNewWire}
-					on:addNewJunction={addNewJunction}
 					on:userEventGenerated={processUserEvent}
 				/>
 			</main>
