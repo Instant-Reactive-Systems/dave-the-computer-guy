@@ -8,11 +8,10 @@ import type { ComponentDefinitionLoaderService } from "../component_definition_l
 export class MockComponentDefinitonLoaderService implements ComponentDefinitionLoaderService {
 
     private definitionsBehaviourSubject: BehaviorSubject<Map<number, ComponentDefinition>> = new BehaviorSubject<Map<number, ComponentDefinition>>(new Map());
-    async loadDefinitions(user: User, offset: number, limit: number): Promise<Result<Map<number, ComponentDefinition>, Error>> {
-        this.definitionsBehaviourSubject.next(this.loadBuiltinDefinitions())
-        return Ok(this.definitionsBehaviourSubject.getValue());
+    async loadDefinitions(user: User, offset: number, limit: number): Promise<Map<number, ComponentDefinition>> {
+        this.definitionsBehaviourSubject.next(this.loadBuiltinDefinitions());
+        return this.definitionsBehaviourSubject.getValue();
     }
-
    
     init() {
         this.loadDefinitions(null, null, null);
@@ -31,12 +30,11 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
         return builtins;
     }
 
-    deleteDefinition(id: number): Promise<Result<ComponentDefinition, Error>> {
+    deleteDefinition(id: number): Promise<ComponentDefinition> {
         throw new Error("Method not implemented.");
     }
 
-
-    insertDefinition(definition: ComponentDefinition, force: boolean): Promise<Result<void, Error>> {
+    insertDefinition(definition: ComponentDefinition, force: boolean): Promise<void> {
         return null;
     }
 
@@ -44,15 +42,22 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
         return this.definitionsBehaviourSubject;
     }
 
-    getDefinition(id: number): Result<ComponentDefinition, Error> {
-        const def = this.definitionsBehaviourSubject.getValue().get(id)
+    getDefinition(id: number): ComponentDefinition {
+        const def = this.definitionsBehaviourSubject.getValue().get(id);
         if(def != undefined){
-            return Ok(def) 
+            return def;
         }else{
-            return Err(new Error(`No definition with id=${id}`));
+            throw new Error(`No definition with id=${id}`);
         }
     }
 
+    getDefinitions(ids: number[]): Map<number, ComponentDefinition> {
+        const map = new Map();
+        for (const id of ids) {
+            map.set(id, this.getDefinition(id));
+        }
+        return map;
+    }
 }
 
 

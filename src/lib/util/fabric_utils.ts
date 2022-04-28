@@ -14,10 +14,12 @@ export function loadSvg(str: string): fabric.Object {
     return objs[0];
 }
 
-/// Removes the default Fabric object look (border, interact parts, ...).
-export function normalizeLook(obj: fabric.Object) {
+/// Disables interactivity on a Fabric Object
+export function disableInteractivity(obj: fabric.Object) {
     obj.hasControls = false;
     obj.hasBorders = false;
+	obj.lockMovementX = true,
+	obj.lockMovementY = true,
     obj.setControlsVisibility({
         mt: false,
         mb: false,
@@ -29,6 +31,11 @@ export function normalizeLook(obj: fabric.Object) {
         tr: false,
         mtr: false,
     });
+}
+
+/// Removes the default Fabric object look (border, interact parts, ...).
+export function normalizeLook(obj: fabric.Object) {
+    disableInteractivity(obj);
     obj.stroke = "black";
     obj.strokeWidth = 1;
 }

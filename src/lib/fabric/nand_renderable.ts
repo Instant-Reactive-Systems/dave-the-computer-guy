@@ -50,7 +50,6 @@ export class NandRenderable implements RenderableComponent {
         normalizeLook(this.fabricObject);
 
         // Embed metadata
-        this.fabricObject.type = 'component';
         this.fabricObject.data = {
             type: 'component',
             ref: this

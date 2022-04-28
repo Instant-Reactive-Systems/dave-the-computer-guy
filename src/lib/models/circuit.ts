@@ -3,6 +3,7 @@ import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } 
 import { Connection } from "./connection"
 import { Param } from "./param"
 import { Wire } from "./wire"
+import { ComponentRef } from "./component_ref"
 
 
 @toJson
@@ -66,23 +67,6 @@ export class CircuitMetadata {
 
 @toJson
 @jsonObject
-export class Component {
-    @jsonMember(Number)
-    id: number;
-
-    @jsonMember(Number)
-    definitionId: number;
-
-
-    constructor(id: number, definitionId: number) {
-        this.id = id;
-        this.definitionId = definitionId;
-    }
-}
-
-
-@toJson
-@jsonObject
 export class Circuit {
     @jsonMember(Number)
     id: number;
@@ -93,8 +77,8 @@ export class Circuit {
     @jsonMember(String)
     description: string;
 
-    @jsonArrayMember(Component)
-    components: Component[];
+    @jsonArrayMember(ComponentRef)
+    components: ComponentRef[];
 
     @jsonMember(Connection)
     connections: Connection[];

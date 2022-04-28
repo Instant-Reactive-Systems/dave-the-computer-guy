@@ -20,32 +20,38 @@
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import { todo } from '$lib/util/common';
 	import { editorModeStore } from '$lib/stores/editor_mode';
+    import { Canvas } from './canvas/canvas';
+    import { JunctionRenderable } from '$lib/fabric/junction_renderable';
 
-	let canvas: fabric.Canvas;
+	let canvas: Canvas;
 	let canvasElement;
 	let definitionLoaderService: ComponentDefinitionLoaderService = getContext(
 		COMPONENT_DEFINITION_LOADER_SERVICE
 	);
-	let renderedComponents: Map<number, fabric.Object> = new Map<number, fabric.Object>();
-	let renderedWires: Map<number, fabric.Object> = new Map<number, fabric.Object>();
 	let mode = $editorModeStore;
 	const dispatch = createEventDispatcher();
 
-	//handle rerendering when the circuit changes
+    // Renders the circuit when it changes
 	$: {
 		if (canvas != undefined && $circuitStore != null) {
-			rerenderCanvas()
+			const circuit = $circuitStore;
+            const definitionIds = circuit.components.map((c) => c.definitionId);
+            const definitions = definitionLoaderService.getDefinitions(definitionIds);
+
+            canvas.render(circuit, definitions);
 		}
 	}
+    
+    // Renders the circuit when it changes
+    $: {
+		if (canvas != undefined && $circuitStore != null && $editorModeStore != null) {
+            const circuit = $circuitStore;
+            const definitionIds = circuit.components.map((c) => c.definitionId);
+            const definitions = definitionLoaderService.getDefinitions(definitionIds);
 
-	function rerenderCanvas() {
-		clearCanvas();
-		renderCircuit();
-		if (mode.type == 'wire') {
-			showTemporaryJunction();
+            canvas.render(circuit, definitions);
 		}
 	}
-
 
 	$: {
 		//disable component dragging when simulation is not stopped or when in wired mode
@@ -91,113 +97,17 @@
 		}
 	}
 
-	function renderWiringState(wiringState: { connector: Connector; value: boolean }[]) {
-		todo();
+	function prepareCanvas(): void {        
+		const width = canvasElement.clientWidth;
+		const height = canvasElement.clientHeight;
+
+        const fabricCanvas = new fabric.Canvas(canvasElement);
+        const size = { width, height };
+		canvas = new Canvas(fabricCanvas, size);
+		attachListeners();
 	}
 
-	function fetchDefinition(id: number): ComponentDefinition {
-		return definitionLoaderService.getDefinition(id).unwrap();
-	}
-
-	function clearCanvas() {
-		canvas.clear();
-		renderedComponents = new Map<number, fabric.Object>();
-		renderedWires = new Map<number, fabric.Object>();
-	}
-
-	function renderCircuit() {
-		try {
-			const componentsWithDefinition = $circuitStore.components.map((component) => {
-				return new Component(component.id, fetchDefinition(component.definitionId));
-			});
-			const wires = $circuitStore.metadata.rendering.wires;
-			const junctions = $circuitStore.metadata.rendering.junctions;
-			renderComponents(componentsWithDefinition);
-			renderWires(wires);
-			renderJunctions(junctions);
-		} catch (err) {
-			console.error(err);
-			//showErrorNotification(err);
-		}
-	}
-
-	function renderJunctions(junctions: Junction[]) {
-		for (const junction of junctions) {
-			canvas.add(
-				new fabric.Circle({
-					radius: 4,
-					selectable: false,
-					lockMovementX: true,
-					lockMovementY: true,
-					hasControls: false,
-					hasBorders: false,
-					fill: 'black',
-					top: junction.y - 4,
-					left: junction.x - 4,
-					data: {
-						ref: junction,
-						type: 'junction'
-					}
-				})
-			);
-		}
-	}
-
-	function renderComponents(components: Component[]) {
-		for (const component of components) {
-			//Add special case here for rendering builtins
-			const renderingData = $circuitStore.metadata.rendering.components[component.id];
-			if (renderingData == undefined) {
-				throw new Error(
-					`Component with id=${component.id} has no entry in circuit components rendering metadata`
-				);
-			}
-			const fabricComponent = createComponent(
-				renderingData.x,
-				renderingData.y,
-				component
-			).buildFabricObject();
-			canvas.add(fabricComponent);
-			renderedComponents.set(component.id, fabricComponent);
-		}
-	}
-
-	function renderWire(wire: Wire) {
-		const wireRenderable: WireRenderable = new WireRenderable(wire);
-		const fabricWire = wireRenderable.buildFabricObject();
-		canvas.add(fabricWire);
-		renderedWires.set(wire.id, fabricWire);
-	}
-
-	function renderWires(wires: Wire[]) {
-		for (const wire of wires) {
-			renderWire(wire);
-		}
-	}
-
-	function resizeCanvas() {
-		const parent = document.getElementById('canvas-wrapper');
-
-		const containerWidth = parent.clientWidth;
-		const containerHeight = parent.clientHeight;
-
-		// const scale = containerWidth / canvas.getWidth();
-		// const zoom  = canvas.getZoom() * scale;
-		canvas.setDimensions({
-			width: containerWidth,
-			height: containerHeight
-		});
-		// canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-	}
-
-	function prepareCanvas(): void {
-		canvas = new fabric.Canvas(canvasElement);
-		setupZoom(canvas);
-		attachListeners(canvas);
-		resizeCanvas();
-	}
-
-	function attachListeners(canvas: fabric.Canvas) {
+	function attachListeners() {
 		canvas.on('mouse:down', (mouseEvent) => {
 			//handle drag
 			if (mouseEvent.e.altKey === true) {
@@ -345,22 +255,9 @@
 			mode.data.source = new DirectLink();
 			mode.data.source.type = 'wire';
 			mode.data.source.value = wire.data.ref.wire.id;
+
 			const junction: Junction = new Junction(pt.x, pt.y, renderedWires.size);
-			mode.data.currentJunction = new fabric.Circle({
-				radius: 4,
-				selectable: false,
-				lockMovementX: true,
-				lockMovementY: true,
-				hasControls: false,
-				hasBorders: false,
-				fill: 'black',
-				top: pt.y - 4,
-				left: pt.x - 4,
-				data: {
-					ref: junction,
-					type: 'junction'
-				}
-			});
+			mode.data.currentJunction = new JunctionRenderable(junction);
 			editorModeStore.set(mode);
 		} else {
 			const link = new DirectLink();
@@ -554,19 +451,6 @@
 			componentDefinition: componentDefinition,
 			x: x,
 			y: y
-		});
-	}
-
-	function setupZoom(canvas: fabric.Canvas) {
-		canvas.on('mouse:wheel', (opt) => {
-			var delta = opt.e.deltaY;
-			var zoom = canvas.getZoom();
-			zoom *= 0.999 ** delta;
-			if (zoom > 20) zoom = 20;
-			if (zoom < 0.01) zoom = 0.01;
-			canvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
-			opt.e.preventDefault();
-			opt.e.stopPropagation();
 		});
 	}
 

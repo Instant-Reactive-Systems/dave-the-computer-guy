@@ -55,7 +55,6 @@ export class SwitchRenderable implements RenderableComponent {
         normalizeLook(this.fabricObject);
 
         // Embed metadata
-        this.fabricObject.type = 'component';
         this.fabricObject.data = {
             type: 'component',
             ref: this
