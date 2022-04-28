@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, Component, ComponentRenderingData, Junction } from '$lib/models/circuit';
+	import { Circuit, ComponentRenderingData, Junction } from '$lib/models/circuit';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -23,6 +23,7 @@
 	import type { UserEvent } from '$lib/models/user_event';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
+    import { ComponentRef } from '$lib/models/component_ref';
 
 	type CircuitTab = {
 		name: string;
@@ -149,7 +150,7 @@
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
 		const id = getNewComponentId();
-		const component = new Component(id, definition.id);
+		const component = new ComponentRef(id, definition.id);
 
 		const addNewComponentCommand: Command = {
 			name: 'Add new component',

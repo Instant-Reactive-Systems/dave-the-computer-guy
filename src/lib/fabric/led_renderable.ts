@@ -1,16 +1,16 @@
 import { fabric } from 'fabric'
-import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/util/fabric_utils';
-import { assert, todo } from '$lib/util/common';
+import { createConnector, normalizeLook } from '$lib/util/fabric_utils';
 import type { Component } from '../models/component'
-import type {RenderableComponent} from './renderable_component';
+import type { RenderableComponent } from './renderable_component';
 import type { UserEvent } from '$lib/models/user_event';
 
 export class LedRenderable implements RenderableComponent {
-    type: 'builtin';
     component: Component;
     left: number;
     top: number;
     fabricObject: fabric.Object;
+    outline: fabric.Object;
+    pins: fabric.Object[];
 
     constructor(left: number, top: number, component: Component) {
         this.left = left;
@@ -23,9 +23,8 @@ export class LedRenderable implements RenderableComponent {
     }
 
     update(state: any) {
-        const fill = state.value ? "red" : "transparent"
-        console.log("Updating led state",fill);
-        (this.fabricObject as fabric.Group).item(0).set("fill",fill);
+        const fill = state.value ? 'red' : 'transparent';
+        this.outline.set("fill", fill);
     }
 
     buildFabricObject(): fabric.Object {
@@ -35,8 +34,10 @@ export class LedRenderable implements RenderableComponent {
             strokeUniform: true,
         });
         normalizeLook(outline);
+        this.outline = outline;
 
         let a = createConnector("A", 0, -35, 16.5, 'input', this.component, 'left');
+        this.pins = [a.item(1)];
 
         this.fabricObject = new fabric.Group([outline, a], {
             left: this.left,

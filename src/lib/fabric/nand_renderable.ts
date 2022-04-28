@@ -6,11 +6,11 @@ import type { Component } from '$lib/models/component';
 import type { UserEvent } from '$lib/models/user_event';
 
 export class NandRenderable implements RenderableComponent {
-    type: 'builtin';
     component: Component;
     left: number;
     top: number;
     fabricObject: fabric.Object;
+    pins: fabric.Object[];
 
     static readonly SVG: string = `
     <svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0' y='0' width='30' height='30' viewPort='0 0 30 30'>
@@ -29,7 +29,7 @@ export class NandRenderable implements RenderableComponent {
     }
 
     update(state: any) {
-        todo()
+        // none
     }
 
     buildFabricObject(): fabric.Object {
@@ -40,6 +40,7 @@ export class NandRenderable implements RenderableComponent {
         let a = createConnector("A", 0, -24, 40, 'input', this.component, 'left');
         let b = createConnector("B", 1, -24, 110, 'input', this.component, 'left');
         let y = createConnector("Y", 2, 123, 72, 'output', this.component, 'right');
+        this.pins = [a.item(1), b.item(1), y.item(1)];
 
         this.fabricObject = new fabric.Group([outline, a, b, y], {
             left: this.left,

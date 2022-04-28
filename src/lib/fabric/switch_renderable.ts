@@ -7,11 +7,12 @@ import { UserEvent } from '$lib/models/user_event';
 import type { Group } from 'fabric/fabric-impl';
 
 export class SwitchRenderable implements RenderableComponent {
-    type: 'builtin';
     component: Component;
     left: number;
     top: number;
     fabricObject: fabric.Object;
+    outline: fabric.Object;
+    pins: fabric.Object[];
 
     constructor(left: number, top: number, component: Component) {
         this.left = left;
@@ -19,20 +20,21 @@ export class SwitchRenderable implements RenderableComponent {
         this.component = component;
     }
 
-    onClick(): UserEvent{
-        const currentFill = (this.fabricObject as Group).item(0).get("fill");
-        console.log("current fill",currentFill);
+    onClick(): UserEvent {
+        const currentFill = this.outline.get("fill");
+        console.log("current fill", currentFill);
         if(currentFill != "black"){
-            (this.fabricObject as Group).item(0).set("fill","black");
+            this.outline.set("fill", "black");
         }else{
-            (this.fabricObject as Group).item(0).set("fill","transparent");
+            this.outline.set("fill", "transparent");
         }
-        const event = new UserEvent(this.component.id,"toggle");
+
+        const event = new UserEvent(this.component.id, "toggle");
         return event;
     }
 
     update(state: any) {
-        todo()
+        // none
     }
 
     buildFabricObject(): fabric.Object {
@@ -43,8 +45,10 @@ export class SwitchRenderable implements RenderableComponent {
             strokeUniform: true,
         });
         normalizeLook(outline);
+        this.outline = outline;
 
         let y = createConnector("Y", 0, 75, 35, 'output', this.component, 'right');
+        this.pins = [y.item(1)];
 
         this.fabricObject = new fabric.Group([outline, y], {
             left: this.left,

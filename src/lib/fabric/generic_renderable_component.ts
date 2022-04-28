@@ -1,29 +1,32 @@
-import type { Component } from '../models/component'
+import type { Component } from '$lib/models/component'
 import { fabric } from 'fabric'
-import { skip } from 'rxjs';
 import type { RenderableComponent } from './renderable_component';
-import { ComponentDefinition } from '$lib/models/component_definition';
 import type { UserEvent } from '$lib/models/user_event';
+
+
+
 export class GenericComponentRenderable implements RenderableComponent {
-    type: "generic"
     static readonly BASE_SIZE = 150;
     component: Component;
     fabricObject: fabric.Object;
     canvas: fabric.Canvas;
     left: number;
     top: number;
+    pins: fabric.Object[];
 
     constructor(left: number, top: number, component: Component) {
         this.component = component;
         this.top = top;
         this.left = left;
+        this.pins = [];
     }
-    onClick():UserEvent {
+
+    onClick(): UserEvent {
         return null;
     }
     
     update(state: any) {
-        //OVDJE SU UPDATE IZ GET STATE
+        // OVDJE SU UPDATE IZ GET STATE
     }
 
     calculateDimensions() {
@@ -68,7 +71,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "component": this.component,
                     "location": "left"
                 }
-            })
+            });
 
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: - 40,
@@ -78,8 +81,10 @@ export class GenericComponentRenderable implements RenderableComponent {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
-            })
+            });
+
             pins.left.push(pinGroup);
+            this.pins.push(pinConnectionPoint);
         }
 
         for (const namePinPair of pinLocationMapping.right) {
@@ -105,7 +110,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "component": this.component,
                     "location": "right"
                 }
-            })
+            });
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: componentWidth,
                 top: (pinOffset - lineText.height),
@@ -114,14 +119,14 @@ export class GenericComponentRenderable implements RenderableComponent {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
-            })
-            pinGroup.data = 
-            pins.right.push(pinGroup);
+            });
 
+            pins.right.push(pinGroup);
+            this.pins.push(pinConnectionPoint);
         }
 
         for (const namePinPair of pinLocationMapping.bottom) {
-            const baseOffset = componentWidth / (pinLocationMapping.bottom.length + 1)
+            const baseOffset = componentWidth / (pinLocationMapping.bottom.length + 1);
             const line = new fabric.Line([0, 0, 0, -40], { stroke: 'black' });
             const pinIndex = pinLocationMapping.bottom.indexOf(namePinPair);
             const pinOffset = (pinIndex + 1) * baseOffset;
@@ -145,7 +150,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "component": this.component,
                     "location": "bottom"
                 }
-            })
+            });
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
                 top: componentHeight,
@@ -154,12 +159,14 @@ export class GenericComponentRenderable implements RenderableComponent {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
-            })
+            });
+
             pins.bottom.push(pinGroup);
+            this.pins.push(pinConnectionPoint);
         }
 
         for (const namePinPair of pinLocationMapping.top) {
-            const baseOffset = componentWidth / (pinLocationMapping.top.length + 1)
+            const baseOffset = componentWidth / (pinLocationMapping.top.length + 1);
             const line = new fabric.Line([0, 0, 0, -40], { stroke: 'black' });
             const pinIndex = pinLocationMapping.top.indexOf(namePinPair);
             const pinOffset = (pinIndex + 1) * baseOffset;
@@ -181,7 +188,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "component": this.component,
                     "location": "bottom"
                 }
-            })
+            });
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
                 top: -(line.height),
@@ -190,17 +197,16 @@ export class GenericComponentRenderable implements RenderableComponent {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
-            })
+            });
             
             pins.top.push(pinGroup);
+            this.pins.push(pinConnectionPoint);
         }
 
         return pins;
     }
 
     buildFabricObject(): fabric.Object {
-
-
         let dimensions = this.calculateDimensions();
         let componentOutline = new fabric.Rect({
             height: dimensions.height,
@@ -227,7 +233,7 @@ export class GenericComponentRenderable implements RenderableComponent {
             top: this.top,
             subTargetCheck: true,
 
-        })
+        });
         this.fabricObject.setControlsVisibility({
             mt: false,
             mb: false,
@@ -243,7 +249,7 @@ export class GenericComponentRenderable implements RenderableComponent {
             type: 'component',
             ref: this
         }
-        this.fabricObject.type = "component"
+
         return this.fabricObject;
     }
 

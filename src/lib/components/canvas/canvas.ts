@@ -10,44 +10,44 @@ import type {WiringState} from '$lib/models/wiring_state';
 import {assert, todo} from '$lib/util/common';
 import type { fabric } from 'fabric';
 import type { EditorMode } from '$lib/models/editor_mode';
+import type {RenderableComponent} from '$lib/fabric/renderable_component';
+import type {Point} from '$lib/models/point';
 
 type EventHandlerType = (event: fabric.IEvent) => void;
 
-type RenderingContext = {
-    mode: EditorMode,
-};
+
 
 export class Canvas {
     private canvas: fabric.Canvas;
     public components: Map<number, fabric.Object>;
     public wires: Map<number, fabric.Object>;
+    private tempWire?: fabric.Object;
+    private tempJunction?: fabric.Object;
+    public isDragging: boolean;
+	public selection: boolean;
+	public lastPosX: number;
+	public lastPosY: number;
+    public viewportTransform: number[];
 
     public constructor(canvas: fabric.Canvas, size: Size) {
         this.canvas = canvas;
         this.components = new Map();
         this.wires = new Map();
+        this.viewportTransform = this.canvas.viewportTransform!;
 
 		this.setupZoom();
 		this.resize(size);
     }
 
-    public render(circuit: Circuit, definitions: Map<number, ComponentDefinition>, ctx: RenderingContext) {
+    public render(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
         this.clear();
-		const components = circuit.components.map((c) => {
-            return new Component(c.id, definitions.get(c.definitionId));
-        });
+		const components = circuit.components.map((c) => new Component(c.id, definitions.get(c.definitionId)));
 		const wires = circuit.metadata.rendering.wires;
 		const junctions = circuit.metadata.rendering.junctions;
 
 		this.renderComponents(circuit, components);
 		this.renderWires(wires);
 		this.renderJunctions(junctions);
-
-
-        // TODO: Handle wire
-        // if (mode.type == 'wire') {
-		//  showTemporaryJunction();
-	    // }
     }
 
     public resize(size: Size) {
@@ -58,10 +58,93 @@ export class Canvas {
         this.canvas.on(eventName, handler);
     }
 
+    public renderEditorMode(mode: EditorMode) {
+        switch (mode.type) {
+            case 'wire': {
+                if (mode.data.currentWire != null) {
+                    if (this.tempWire != null) this.canvas.remove(this.tempWire!);
+                    const fabricWire = new WireRenderable(mode.data.currentWire).buildFabricObject();
+                    this.tempWire = fabricWire;
+                    this.canvas.add(this.tempWire);
+                }
+                if (mode.data.currentJunction != null) {
+                    if (this.tempJunction != null) this.canvas.remove(this.tempJunction!);
+                    const fabricJunction = new JunctionRenderable(mode.data.currentJunction).buildFabricObject();
+                    this.tempJunction = fabricJunction;
+                    this.canvas.add(this.tempJunction);
+                }
+
+                break;
+            }
+            default: {
+                if (this.tempWire != null) this.canvas.remove(this.tempWire!);
+                if (this.tempJunction != null) this.canvas.remove(this.tempJunction!);
+                this.tempWire = null;
+                this.tempJunction = null;
+            }
+        }
+    }
+
+    public lockComponents() {
+        this.canvas.getObjects().forEach((obj) => {
+			if (obj.data.type == 'component') {
+				obj.selectable = false;
+				obj.lockMovementX = true;
+				obj.lockMovementY = true;
+			}
+		});
+    }
+
+    public unlockComponents() {
+        this.canvas.getObjects().forEach((obj) => {
+			if (obj.data.type == 'component') {
+				obj.selectable = true;
+				obj.lockMovementX = false;
+				obj.lockMovementY = false;
+			}
+		});
+    }
+
+    public updateComponent(id: number, state: any) {
+        const component = this.components.get(id).data.ref as RenderableComponent;
+        component.update(state);
+    }
+
+    public refresh() {
+        this.canvas.renderAll();
+    }
+
+    public getComponents(): RenderableComponent[] {
+        return Array.from(this.components.values()).map((c) => c.data.ref);
+    }
+
+    public getObjects(): fabric.Object[] {
+        return this.canvas.getObjects();
+    }
+
+    public getPointer(event: Event): Point {
+        return this.canvas.getPointer(event);
+    }
+
+    public dispose() {
+        this.canvas.dispose();
+    }
+
+    public requestRenderAll() {
+        this.canvas.requestRenderAll();
+    }
+
+    public setViewportTransform(transform: number[]) {
+        this.canvas.setViewportTransform(transform);
+        this.viewportTransform = this.canvas.viewportTransform!;
+    }
+
     private clear() {
         this.canvas.clear();
         this.components = new Map();
         this.wires = new Map();
+        this.tempWire = null;
+        this.tempJunction = null;
     }
 
     private renderComponents(circuit: Circuit, components: Component[]) {
@@ -110,18 +193,5 @@ export class Canvas {
 			opt.e.stopPropagation();
 		});
 	}
-
-    private renderEditorMode(mode: EditorMode) {
-        if (mode == null) return;
-
-        switch (mode.type) {
-            case 'wire': {
-                if (mode.data.currentWire != null) this.canvas.add(mode.data.currentWire);
-                if (mode.data.currentJunction != null) this.canvas.add(mode.data.currentJunction);
-
-                break;
-            }
-        }
-    }
 }
 

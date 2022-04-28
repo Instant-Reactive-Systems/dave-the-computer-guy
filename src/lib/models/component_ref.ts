@@ -8,5 +8,10 @@ export class ComponentRef {
 
     @jsonMember(Number)
     definitionId: number;
+
+    constructor(id: number, definitionId: number) {
+        this.id = id;
+        this.definitionId = definitionId;
+    }
 }
 

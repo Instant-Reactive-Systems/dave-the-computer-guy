@@ -69,7 +69,7 @@ export function createTextObject(text: string, x: number, y: number) {
     return lineText;
 }
 
-export function createConnector(name: string, id: number, x: number, y: number, type: PinType, component: Component, direction: Direction): fabric.Object {
+export function createConnector(name: string, id: number, x: number, y: number, type: PinType, component: Component, direction: Direction): fabric.Group {
     let lineCoords: number[];
     switch (direction) {
         case 'left': lineCoords = [0, 0, -30, 0]; break;
@@ -81,8 +81,6 @@ export function createConnector(name: string, id: number, x: number, y: number, 
     connectorWire.setCoords();
     normalizeLook(connectorWire);
 
-
-
     let pinCoords: fabric.Point;
     switch (direction) {
         case 'left': pinCoords = connectorWire.oCoords.ml; pinCoords.x -= 5; pinCoords.y -= 3.5; break;
@@ -91,8 +89,6 @@ export function createConnector(name: string, id: number, x: number, y: number, 
         case 'down': pinCoords = connectorWire.oCoords.mb; pinCoords.x -= 5; pinCoords.y -= 3.5; break;
     }
     const pin = createPinObject(name, id, pinCoords.x, pinCoords.y, type, component);
-
-    
 
     const obj = new fabric.Group([connectorWire,pin], {
         left: x,

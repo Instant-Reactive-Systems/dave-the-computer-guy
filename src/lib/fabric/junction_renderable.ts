@@ -1,6 +1,7 @@
 import type { Junction } from "$lib/models/circuit";
-import {disableInteractivity, normalizeLook} from "$lib/util/fabric_utils";
+import { normalizeLook } from "$lib/util/fabric_utils";
 import { fabric } from 'fabric'
+
 
 
 export class JunctionRenderable {
