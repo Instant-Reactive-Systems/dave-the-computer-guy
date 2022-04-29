@@ -38,15 +38,6 @@
 		}
 	}
 
-	function rerenderCanvas() {
-		clearCanvas();
-		renderCircuit();
-		if (mode.type == 'wire') {
-			showTemporaryJunction();
-		}
-	}
-
-
 	$: {
 		//disable component dragging when simulation is not stopped or when in wired mode
 		if (canvas != null) {

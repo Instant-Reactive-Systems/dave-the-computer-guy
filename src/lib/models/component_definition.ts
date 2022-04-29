@@ -1,25 +1,11 @@
-import { jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson"
-import { Circuit} from "./circuit"
-import type { ComponentType } from "./component_type"
-import { Connector } from "./connector"
-
-
-@toJson
-@jsonObject
-export class Component {
-
-    @jsonMember(Number)
-    id: number;
-
-    @jsonMember(Number)
-    definitionId: number;
-}
-
+import { jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson";
+import { Circuit} from "./circuit";
+import type { ComponentType } from "./component_type";
+import { Connector } from "./connector";
 
 @toJson
 @jsonObject
 export class PinsMapping {
-
     @jsonArrayMember(Connector, { dimensions: 2 })
     input: Connector[][];
 

@@ -1,55 +1,6 @@
 import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson";
 import { Connector, type ConnectorType } from "./connector";
-import {Point} from "./point";
-
-/*
-@toJson
-@jsonObject
-export class DirectLink {
-    @jsonMember(String)
-    type: 'pin' | 'wire';
-
-    @jsonMember(AnyT)
-    value: {conn: Connector, type: 'input' | 'output'} | number
-}
-
-@toJson
-@jsonObject
-export class ConnectorRef {
-    @jsonMember(Connector)
-    value: Connector;
-
-    @jsonMember(String)
-    type: ConnectorType;
-}
-
-@toJson
-@jsonObject
-export class Junction {
-    @jsonMapMember(Number, ConnectorRef)
-    segments: Map<number, ConnectorRef>;
-}
-
-@toJson
-@jsonObject
-export class Segment {
-    @jsonMember(Number)
-    id: number;
-
-    @jsonMember(Point)
-    from: Point;
-
-    @jsonMember(Point)
-    to: Point;   
-}
-
-export class Wire {
-    id: number;
-    inputConnectors: ConnectorRef[];
-    outputConnectors: ConnectorRef[];
-    junctions: Junction 
-}
-*/
+import type { Point } from "./point";
 
 @toJson
 @jsonObject
