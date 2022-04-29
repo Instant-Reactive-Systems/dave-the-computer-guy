@@ -1,8 +1,9 @@
 import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson"
 import { Connection } from "./connection"
 import { Param } from "./param"
-import { Wire } from "./wire"
+import { DirectLink, Wire } from "./wire"
 import { ComponentRef } from "./component_ref"
+import { Connector } from "./connector"
 
 
 @toJson
@@ -40,6 +41,15 @@ export class Junction {
 
 @toJson
 @jsonObject
+export class WiringRenderingEntry{
+ 
+    @jsonArrayMember(Number)
+    wires: number[]
+
+}
+
+@toJson
+@jsonObject
 export class RenderingMetadata {
     @jsonArrayMember(ComponentRenderingData)
     components: ComponentRenderingData[];
@@ -49,6 +59,9 @@ export class RenderingMetadata {
 
     @jsonArrayMember(Junction)
     junctions: Junction[]
+
+    @jsonMapMember(String,WiringRenderingEntry)
+    wiringRendering: Map<string,WiringRenderingEntry>
 }
 
 
@@ -62,6 +75,7 @@ export class CircuitMetadata {
     createdAt: Date;
     @jsonMember(Date)
     modifiedAt: Date;
+
 }
 
 @toJson
@@ -88,6 +102,7 @@ export class Circuit {
     @jsonMember(CircuitMetadata)
     metadata: CircuitMetadata;
 
+
     constructor() {
         this.id = 0;
         this.name = "";
@@ -102,6 +117,7 @@ export class Circuit {
         rendering.components = [];
         rendering.wires = [];
         rendering.junctions = [];
+        rendering.wiringRendering = new Map();
         metadata.rendering = rendering;
         this.metadata = metadata;
     }

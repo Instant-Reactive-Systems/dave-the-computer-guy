@@ -16,38 +16,37 @@
 	import { Circuit, Junction } from '$lib/models/circuit';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import { editorModeStore } from '$lib/stores/editor_mode';
-    import { Canvas } from './canvas/canvas';
+	import { Canvas } from './canvas/canvas';
 
 	let canvas: Canvas;
 	let canvasElement;
 	let definitionLoaderService: ComponentDefinitionLoaderService = getContext(
 		COMPONENT_DEFINITION_LOADER_SERVICE
-	);	const dispatch = createEventDispatcher();
-
+	);
+	const dispatch = createEventDispatcher();
 
 	$: {
-		
-		if($circuitStore != null){
-			console.log("Called",$circuitStore);
+		if ($circuitStore != null) {
+			console.log('Called', $circuitStore);
 			const circuit = $circuitStore;
-            const definitionIds = circuit.components.map((c) => c.definitionId);
-            const definitions = getDefinitions(definitionIds);
-            renderCircuit(circuit,definitions);
-		}
-	}
-    
-    // Renders the editor mode changes and custom objects
-    $: {
-		if (canvas != undefined) {
-            canvas.renderEditorMode($editorModeStore);
+			const definitionIds = circuit.components.map((c) => c.definitionId);
+			const definitions = getDefinitions(definitionIds);
+			renderCircuit(circuit, definitions);
 		}
 	}
 
-    // Locking/unlocking components based on state
+	// Renders the editor mode changes and custom objects
+	$: {
+		if (canvas != undefined) {
+			canvas.renderEditorMode($editorModeStore);
+		}
+	}
+
+	// Locking/unlocking components based on state
 	$: {
 		if (canvas != undefined) {
 			if ($editorModeStore.type == 'wire' || $simulationStateStore != 'STOPPED') {
-		        // Disable component dragging when simulation is not stopped or when in wired mode
+				// Disable component dragging when simulation is not stopped or when in wired mode
 				canvas.lockComponents();
 			} else if ($simulationStateStore == 'STOPPED') {
 				// Enable dragging and selecting components if not in wired mode and not simulating
@@ -61,11 +60,11 @@
 		const state = $circuitStateStore;
 		if (state != null) {
 			for (const stateEntry of state.entries()) {
-                // If the component is the Wiring component (u32::MAX)
+				// If the component is the Wiring component (u32::MAX)
 				if (stateEntry[0] == 4294967295) {
-					//renderWiringState(stateEntry);
+					canvas.renderWiringState(stateEntry[1],$circuitStore.metadata.rendering.wiringRendering);
 				} else {
-                    canvas.updateComponent(stateEntry[0], stateEntry[1]);
+					canvas.updateComponent(stateEntry[0], stateEntry[1]);
 				}
 			}
 
@@ -74,32 +73,31 @@
 	}
 
 	$: {
-		console.log("mode is",$editorModeStore);
+		console.log('mode is', $editorModeStore);
 	}
 
-	function prepareCanvas(): void {        
-        const parent = document.getElementById('canvas-wrapper');
+	function prepareCanvas(): void {
+		const parent = document.getElementById('canvas-wrapper');
 		const width = parent.clientWidth;
 		const height = parent.clientHeight;
 
-        const fabricCanvas = new fabric.Canvas(canvasElement);
-        const size = { width, height };
+		const fabricCanvas = new fabric.Canvas(canvasElement);
+		const size = { width, height };
 		canvas = new Canvas(fabricCanvas, size);
 		attachListeners();
 	}
 
-	function getDefinitions(definitionIds: number[]){
+	function getDefinitions(definitionIds: number[]) {
 		return definitionLoaderService.getDefinitions(definitionIds);
 	}
 
-	function renderCircuit(circuit: Circuit, definitions: Map<number,ComponentDefinition>){
+	function renderCircuit(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
 		canvas.render(circuit, definitions);
-
 	}
 
 	function attachListeners() {
 		canvas.on('mouse:down', (mouseEvent) => {
-			console.log("mouse down");
+			console.log('mouse down');
 			//handle drag
 			if (mouseEvent.e.altKey === true) {
 				canvas.isDragging = true;
@@ -180,7 +178,7 @@
 	function handleMousedownInWiredMode(mouseEvent) {
 		const target = getWiredModeTarget(mouseEvent);
 		if (target == null) {
-			console.log("Adding new wire");
+			console.log('Adding new wire');
 			addNewWire(mouseEvent);
 		} else if (target.data.type == 'wire') {
 			processWirePressedInWireMode(target, mouseEvent);
@@ -190,7 +188,7 @@
 	}
 
 	function generateUserEvent(component: RenderableComponent) {
-		console.log("Generating user event");
+		console.log('Generating user event');
 		const event = component.onClick();
 		if (event != null) {
 			dispatch('userEventGenerated', {
@@ -207,24 +205,24 @@
 	}
 
 	function getWiredModeTarget(mouseEvent) {
-		const mode = _.cloneDeep($editorModeStore)
+		const mode = _.cloneDeep($editorModeStore);
 
 		if (mode.data.currentWire == null) {
-			console.log("Current wire is null");
+			console.log('Current wire is null');
 			return getMouseDownTarget(mouseEvent);
-		} 
+		}
 
 		const x = mode.data.currentWire.endX;
 		const y = mode.data.currentWire.endY;
-        const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
+		const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
 
 		for (const obj of canvas.getObjects()) {
 			if (obj.intersectsWithObject(hitCircle, true)) {
-                switch (obj.data.type) {
-                    case 'component': {
-                        const component = obj.data.ref;
-                        for (const pin of component.pins) {
-                            let matrix = pin.calcTransformMatrix();
+				switch (obj.data.type) {
+					case 'component': {
+						const component = obj.data.ref;
+						for (const pin of component.pins) {
+							let matrix = pin.calcTransformMatrix();
 							let pinX = matrix[4]; // translation in X
 							let pinY = matrix[5];
 							if (Math.abs(pinX - x) < pin.width && Math.abs(pinY - y) < pin.height) {
@@ -233,16 +231,17 @@
 								editorModeStore.set(mode);
 								return pin;
 							}
-                        }
-                        break;
-                    }
-                    case 'wire': {
-						if(!obj.data.isTemp){
+						}
+						break;
+					}
+					case 'wire': {
+						if (!obj.data.isTemp) {
 							return obj;
 						}
-                    }
-                    default: {}
-                }
+					}
+					default: {
+					}
+				}
 			}
 		}
 
@@ -266,16 +265,16 @@
 			const link = new DirectLink();
 			link.type = 'wire';
 			link.value = wire.data.ref.wire.id;
-            
-            const currentWire = mode.data.currentWire as Wire;
+
+			const currentWire = mode.data.currentWire as Wire;
 			currentWire.links.push(link);
 
 			const junction = new Junction(currentWire.endX, currentWire.endY, currentWire.id);
 			dispatch('addNewWire', {
 				wire: currentWire,
-				junction: [junction,mode.data.currentJunction]
+				junction: [junction, mode.data.currentJunction]
 			});
-			
+
 			quitWireMode();
 		}
 	}
@@ -293,13 +292,13 @@
 			type: pinType
 		};
 
-        const currentWire = mode.data.currentWire as Wire;
+		const currentWire = mode.data.currentWire as Wire;
 		currentWire.links.push(link);
 		dispatch('addNewWire', {
 			wire: currentWire,
 			junction: [mode.data.currentJunction]
 		});
-	
+
 		quitWireMode();
 	}
 
@@ -307,7 +306,7 @@
 		const mode = _.cloneDeep($editorModeStore);
 		if (mode.data.currentWire == null) return;
 
-        const currentWire = mode.data.currentWire as Wire;
+		const currentWire = mode.data.currentWire as Wire;
 		mode.data.lastX = currentWire.endX;
 		mode.data.lastY = currentWire.endY;
 		mode.data.source = new DirectLink();
@@ -392,7 +391,7 @@
 
 		if (event.subTargets.length >= 1) {
 			if (event.subTargets[0].data != undefined && event.subTargets[0].data.type == 'pin') {
-				console.log('Pressed pin',event,$editorModeStore);
+				console.log('Pressed pin', event, $editorModeStore);
 				return event.subTargets[0];
 			}
 		}
@@ -428,7 +427,7 @@
 				new Event('Canvas', 'click', {
 					x: x,
 					y: y,
-                    target: null,
+					target: null
 				})
 			);
 
@@ -440,19 +439,19 @@
 		dispatch('addNewComponent', {
 			componentDefinition: def,
 			x: x,
-			y: y,
+			y: y
 		});
 	}
 
 	function handleKeydown(e) {
 		if ($editorModeStore.type == 'wire' && e.key == 'Escape') {
 			quitWireMode();
-            return;
+			return;
 		}
 
 		if ($editorModeStore.type != 'wire' && e.key == 'w' && $simulationStateStore == 'STOPPED') {
 			initWireMode();
-            return;
+			return;
 		}
 	}
 
@@ -460,21 +459,21 @@
 		const mode = _.cloneDeep($editorModeStore);
 		mode.type = 'edit';
 		mode.data = null;
-		console.log("Quitting wire mode")
+		console.log('Quitting wire mode');
 		editorModeStore.set(mode);
 	}
 
-    function resizeCanvas(_event) {
-        const parent = document.getElementById('canvas-wrapper');
-        const width = parent.clientWidth;
+	function resizeCanvas(_event) {
+		const parent = document.getElementById('canvas-wrapper');
+		const width = parent.clientWidth;
 		const height = parent.clientHeight;
 
-        const size = { width, height };
-        canvas.resize(size);
-    }
+		const size = { width, height };
+		canvas.resize(size);
+	}
 
 	onMount(() => {
-		console.log("Mounted canvas");
+		console.log('Mounted canvas');
 		prepareCanvas();
 
 		return () => {

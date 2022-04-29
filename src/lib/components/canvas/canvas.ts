@@ -1,14 +1,14 @@
 import { createComponent } from '$lib/fabric/component_factory';
 import { JunctionRenderable } from '$lib/fabric/junction_renderable';
 import { WireRenderable } from '$lib/fabric/wire_renderable';
-import type { Circuit, Junction } from '$lib/models/circuit';
+import type { Circuit, Junction, WiringRenderingEntry } from '$lib/models/circuit';
 import { Component } from '$lib/models/component';
 import type { ComponentDefinition } from '$lib/models/component_definition';
 import type { Size } from '$lib/models/size';
 import type { Wire } from '$lib/models/wire';
 import type { WiringState } from '$lib/models/wiring_state';
 import { todo } from '$lib/util/common';
-import { fabric } from 'fabric';
+import type { fabric } from 'fabric';
 import type { EditorMode } from '$lib/models/editor_mode';
 import type { RenderableComponent } from '$lib/fabric/renderable_component';
 import type { Point } from '$lib/models/point';
@@ -213,8 +213,18 @@ export class Canvas {
         }
     }
 
-    private renderWiringState(state: WiringState) {
-        todo();
+    public renderWiringState(state: WiringState,wiringRenderingEntries: Map<string,WiringRenderingEntry>) {
+        console.log("Rendering wire state");
+        for(const stateEntry of state){
+            const json = JSON.stringify(stateEntry.connector);
+            const wiringEntry = wiringRenderingEntries.get(json);
+            if(wiringEntry == undefined){
+                continue;
+            }
+            for(const wireId of wiringEntry.wires){
+                this.wires.get(wireId).data.ref.update(stateEntry.value);
+            }
+        }
     }
 
     private setupZoom() {

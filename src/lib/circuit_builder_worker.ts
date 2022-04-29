@@ -1,5 +1,5 @@
 import _ from "lodash";
-import type { Circuit } from "./models/circuit";
+import { WiringRenderingEntry, type Circuit } from "./models/circuit";
 import { Connection } from "./models/connection";
 import type { Connector } from "./models/connector";
 import type { DirectLink, Wire } from "./models/wire";
@@ -73,6 +73,11 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
                 connection.to = _.uniq([...connection.to, ...inputConnectors]);
             }
         }
+
+        const entry = new WiringRenderingEntry();
+        const conn = wireOutpinPinsTuple[1][0];
+        entry.wires = Array.from(ignoreIdSet);
+        circuit.metadata.rendering.wiringRendering.set(JSON.stringify(conn),entry)
     }
     const end = performance.now();
 
