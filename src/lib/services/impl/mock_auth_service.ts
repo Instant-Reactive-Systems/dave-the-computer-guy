@@ -1,6 +1,5 @@
 import type { User } from "$lib/models/user";
 import { BehaviorSubject } from "rxjs";
-import { Ok, type Result } from "ts-results";
 import type { AuthService } from "../auth_service";
 
 export class MockAuthService implements AuthService {
@@ -10,12 +9,12 @@ export class MockAuthService implements AuthService {
     
     dispose() {}
 
-    async authenticate(username: string, password: string): Promise<Result<string, Error>> {
+    async authenticate(username: string, password: string): Promise<string> {
         window.localStorage.setItem("token", `${username}-${password}`)
-        return Ok("MYTOKEN");
+        return `${username}-${password}`
     }
 
-    async getUserData(username): Promise<Result<User, Error>> {
+    async getUserData(username): Promise<User> {
         const user = {
             username: username,
             email: `${username}}@gmail.com`,
@@ -25,7 +24,7 @@ export class MockAuthService implements AuthService {
             completedQuestIds: []
         };
         this.userBehaviorSubject.next(user);
-        return Ok(user);
+        return user;
     }
 
     getUserBehaviourSubject(): BehaviorSubject<User> {

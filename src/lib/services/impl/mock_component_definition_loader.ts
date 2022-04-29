@@ -1,8 +1,6 @@
-import type { Component } from "$lib/models/circuit";
-import type { ComponentDefinitionMetadata, ComponentDefinition } from "$lib/models/component_definition";
+import type {  ComponentDefinition } from "$lib/models/component_definition";
 import type { User } from "$lib/models/user";
 import { BehaviorSubject } from "rxjs";
-import { Err, Ok, type Result } from "ts-results";
 import type { ComponentDefinitionLoaderService } from "../component_definition_loader_service";
 
 export class MockComponentDefinitonLoaderService implements ComponentDefinitionLoaderService {

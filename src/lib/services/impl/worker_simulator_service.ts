@@ -1,7 +1,7 @@
 import type { Circuit } from "$lib/models/circuit";
 import type { ComponentDefinition } from "$lib/models/component_definition";
 import type { UserEvent } from "$lib/models/user_event";
-import type { WorkerMessage, WorkerResponse } from "$lib/worker";
+import type { WorkerMessage, WorkerResponse } from "$lib/simulator_worker";
 import Worker from "$lib/worker?worker";
 import { BehaviorSubject } from "rxjs";
 import type { SimulatorService } from "../simulator_service";

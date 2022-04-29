@@ -45,7 +45,6 @@
 		"lodash": "^4.17.21",
 		"rxjs": "^7.5.5",
 		"svelte-forms-lib": "^2.0.1",
-		"ts-results": "^3.3.0",
 		"vite-plugin-wasm-pack": "^0.1.10"
 	}
 }
