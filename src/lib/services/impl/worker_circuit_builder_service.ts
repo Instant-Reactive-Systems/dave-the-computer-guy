@@ -1,8 +1,10 @@
-import type { Circuit } from "$lib/models/circuit";
+import { ComponentRenderingData, type Circuit } from "$lib/models/circuit";
 import type { CircuitBuilderService } from "../circuit_builder_serivce";
 import Worker from "$lib/circuit_builder_worker?worker";
 import type { WorkerResponse, WorkerMessage } from "$lib/circuit_builder_worker";
-
+import type { ComponentDefinition } from "$lib/models/component_definition";
+import _ from "lodash"
+import { ComponentRef } from "$lib/models/component_ref";
 export class WorkerCircuitBuilderService implements CircuitBuilderService {
     private worker: Worker;
     private resolves = {};
@@ -70,6 +72,19 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
             this.rejects[msgId] = reject;
             this.worker.postMessage(msg);
         })
+    }
+    
+    async addNewComponent(circuit: Circuit, definition: ComponentDefinition, x: number, y: number): Promise<Circuit> {
+        const circuitCopy = _.cloneDeep(circuit)
+        const componentRenderingData = new ComponentRenderingData();
+        const id = circuitCopy.components.length;
+        const component = new ComponentRef(id, definition.id);
+        componentRenderingData.x = x;
+        componentRenderingData.y = y;
+        componentRenderingData.id = circuitCopy.components.length;
+        circuitCopy.metadata.rendering.components.push(componentRenderingData);
+        circuitCopy.components.push(component);
+        return circuitCopy;
     }
 
 }

@@ -158,19 +158,15 @@
 		const definition: ComponentDefinition = event.detail.componentDefinition;
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
-		const id = getNewComponentId();
-		const component = new ComponentRef(id, definition.id);
 
 		const addNewComponentCommand: Command = {
 			name: 'Add new component',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
-				const componentRenderingData = new ComponentRenderingData();
-				componentRenderingData.x = x;
-				componentRenderingData.y = y;
-				componentRenderingData.id = id;
-				circuit.metadata.rendering.components.push(componentRenderingData);
-				circuit.components.push(component);
+				circuitBuilder.addNewComponent(circuit, definition, x, y)
+					.then((circuit) => circuitStore.set(circuit))
+				
+				
 				circuitStore.set(circuit);
 			},
 			undo: () => {
