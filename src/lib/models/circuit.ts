@@ -1,4 +1,3 @@
-import type { Option } from "ts-results"
 import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } from "typedjson"
 import { Connection } from "./connection"
 import { Param } from "./param"

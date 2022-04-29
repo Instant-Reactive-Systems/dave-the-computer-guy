@@ -6,7 +6,11 @@
 	import ComponentsTab from '$lib/components/components_tab.svelte';
 	import Canvas from '$lib/components/canvas.svelte';
 	import { circuitStore } from '$lib/stores/circuit';
-	import { CIRCUIT_LOADER_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
+	import {
+		CIRCUIT_BUILDER_SERVICE,
+		CIRCUIT_LOADER_SERVICE,
+		SIMULATOR_SERVICE
+	} from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import { simulationStateStore } from '$lib/stores/simulation_state';
@@ -23,7 +27,8 @@
 	import type { UserEvent } from '$lib/models/user_event';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
-    import { ComponentRef } from '$lib/models/component_ref';
+	import { ComponentRef } from '$lib/models/component_ref';
+	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 
 	type CircuitTab = {
 		name: string;
@@ -35,7 +40,9 @@
 	let currentCircuitTab: CircuitTab;
 	let simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
 	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
+	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
+	let circuitDirty = true;
 
 	function createNewCircuit() {
 		console.log('Creating new circuit');
@@ -51,6 +58,10 @@
 		circuit = $circuitStore;
 	}
 
+	setInterval(() => {
+		rebuildCircuit();
+	});
+
 	function saveCircuit() {
 		if ($circuitStore == null) {
 			console.log('Can not save circuit as no circuit is currently loaded.');
@@ -60,9 +71,7 @@
 		}
 	}
 
-	function showCircuitSaveModalForm(){
-
-	}
+	function showCircuitSaveModalForm() {}
 
 	function switchCircuitTab(tab: CircuitTab) {
 		console.log('Switching circuit tab');
@@ -93,7 +102,7 @@
 		}
 		undoStore.set(commandStack);
 		const redoStack = get(redoStore);
-		if(commandToUndo.redoable){
+		if (commandToUndo.redoable) {
 			redoStack.push(commandToUndo);
 		}
 		redoStore.set(redoStack);
@@ -203,14 +212,14 @@
 		const addNewWireCommand: Command = {
 			name: 'Add new wire',
 			do: () => {
-				const mode = $editorModeStore
+				const mode = $editorModeStore;
 				const wire: Wire = e.detail.wire;
 				circuit.metadata.rendering.wires.push(wire);
 				const junction: Junction = e.detail.junction;
-				if(junction != null){
+				if (junction != null) {
 					circuit.metadata.rendering.junctions.push(junction);
 				}
-				if(mode.type == 'wire'){
+				if (mode.type == 'wire') {
 					mode.data.lastX = wire.endX;
 					mode.data.lastY = wire.endY;
 				}
@@ -218,14 +227,14 @@
 				deductConnectionsFromWires();
 			},
 			undo: () => {
-				const mode = $editorModeStore
-				const wire = circuit.metadata.rendering.wires.pop()
+				const mode = $editorModeStore;
+				const wire = circuit.metadata.rendering.wires.pop();
 				const junction: Junction = e.detail.junction;
-				if(junction != null){
+				if (junction != null) {
 					circuit.metadata.rendering.junctions.pop();
 				}
 				circuitStore.set(circuit);
-				if(mode.type == 'wire'){
+				if (mode.type == 'wire') {
 					mode.data.lastX = wire.startX;
 					mode.data.lastY = wire.startY;
 				}
@@ -237,101 +246,14 @@
 		const undoCommandsStack = get(undoStore);
 		undoCommandsStack.push(addNewWireCommand);
 		undoStore.set(undoCommandsStack);
-
 	}
 
-	function deductConnectionsFromWires() {
-		const start = window.performance.now();
+	function rebuildCircuit() {
 		const circuit = $circuitStore;
-		circuit.connections = [];
-		const wires = circuit.metadata.rendering.wires;
-		//find wires that are connected to output pins
-
-		const wiresWithOutputConnectors = [];
-		for (const wire of wires) {
-			const outputConnectors: DirectLink[] = wire.links
-				.filter((link) => link.type == 'pin' && (link.value as any).type == 'output')
-				.map((link) => (link.value as any).conn);
-			if (outputConnectors.length != 0) {
-				wiresWithOutputConnectors.push([wire, outputConnectors]);
-			}
+		if (circuitDirty && circuit != null) {
+			deductConnectionsFromWires();
 		}
-
-		for (const wireOutpinPinsTuple of wiresWithOutputConnectors) {
-			const wire = wireOutpinPinsTuple[0] as Wire;
-			const outputConnectors = wireOutpinPinsTuple[1];
-			const ignoreIdSet: Set<number> = new Set();
-			ignoreIdSet.add(wire.id);
-			const inputConnectors = findAllConnectedInputConnectors(wire, ignoreIdSet);
-			for (const connector of outputConnectors) {
-				let connection = circuit.connections.find((conn) => _.isEqual(connector, conn.from));
-				if (connection == undefined) {
-					connection = new Connection(connector, [...inputConnectors]);
-					circuit.connections.push(connection);
-					console.log('debug connection making', wire, connection);
-				} else {
-					connection.to = _.uniq([...connection.to, ...inputConnectors]);
-				}
-			}
-		}
-		circuitStore.set(circuit);
-		const end = window.performance.now();
-
-		console.log(`Deducting connections takes ${end - start}ms`);
 	}
-
-	function findAllConnectedInputConnectors(wire: Wire, idsToIgnore: Set<number>): Connector[] {
-		console.log('Called');
-		const connectors: Connector[] = [];
-		console.log('Ids to ignore', idsToIgnore);
-
-		//find all wires or pins this component is connected to
-		let start = window.performance.now();
-
-		for (const link of wire.links) {
-			if (link.type == 'pin' && (link.value as any).type == 'input') {
-				connectors.push((link.value as any).conn);
-			} else if (link.type == 'wire' && !idsToIgnore.has(link.value as number)) {
-				idsToIgnore.add(link.value as number);
-				connectors.push(
-					...findAllConnectedInputConnectors(
-						circuit.metadata.rendering.wires[link.value as number],
-						idsToIgnore
-					)
-				);
-			}
-		}
-
-		console.log(
-			`Finding all wires or pins that connection is connected to takes ${
-				window.performance.now() - start
-			}ms`
-		);
-
-		start = window.performance.now();
-		const linkedWireIds = (circuit.metadata.rendering.wires as Wire[])
-			.filter((w) => w.links.some((link) => link.value == wire.id) && !idsToIgnore.has(w.id))
-			.map((w) => w.id);
-		linkedWireIds.forEach((id) => idsToIgnore.add(id as number));
-
-		console.log('Linked wire ids', linkedWireIds);
-		//find all wires which are connected to this wire
-		for (const linkedWireId of linkedWireIds) {
-			const linkedWire = circuit.metadata.rendering.wires[linkedWireId as number];
-			connectors.push(...findAllConnectedInputConnectors(linkedWire, idsToIgnore));
-		}
-
-		console.log(
-			`Finding all linkedWire connection is connected to takes ${
-				window.performance.now() - start
-			}ms`
-		);
-		const uniq = _.uniq(connectors);
-
-		return uniq;
-	}
-
-
 
 	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
@@ -408,10 +330,8 @@
 		</li>
 	</ul>
 
-
 	<ul class="h-10 space-x-3">
 		<p>{$editorModeStore.type}</p>
-
 	</ul>
 
 	<div />
