@@ -29,6 +29,9 @@
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { ComponentRef } from '$lib/models/component_ref';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
+    import { bind } from 'svelte-simple-modal';
+    import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
+    import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
 
 	type CircuitTab = {
 		name: string;
@@ -43,6 +46,23 @@
 	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
 	let circuitDirty = true;
+
+    
+    const { open } = getContext('simple-modal');
+    const openSaveCircuitModal = () => open(SaveCircuit, { onSend: (name: string, description: string) => {
+        circuit.name = name;
+        circuit.description = description;
+        circuitLoader.insertCircuit(circuit, true);
+    }});
+    const openLoadCircuitModal = () => open(LoadCircuit, { onLoad: (circuit: Circuit) => {
+        let newCircuitTab = {
+			name: Math.random().toString(36).slice(-5),
+			circuit: circuit,
+		};
+		circuitTabs = [...circuitTabs, newCircuitTab];
+		currentCircuitTab = newCircuitTab;
+        circuitStore.set(circuit);
+    }});
 
 	function createNewCircuit() {
 		console.log('Creating new circuit');
@@ -62,6 +82,7 @@
 		if ($circuitStore == null) {
 			console.log('Can not save circuit as no circuit is currently loaded.');
 		} else {
+
 			//showCircuitSaveModalForm();
 			//circuitLoader.insertCircuit($circuit, true);
 		}
@@ -293,10 +314,10 @@
 						<button on:click={createNewCircuit}>New circuit</button>
 					</li>
 					<li>
-						<button on:click={saveCircuit}>Save circuit</button>
+						<button on:click={openSaveCircuitModal}>Save circuit</button>
 					</li>
 					<li>
-						<button on:click={loadCircuit}>Load circuit</button>
+						<button on:click={openLoadCircuitModal}>Load circuit</button>
 					</li>
 				</ul>
 			</div>

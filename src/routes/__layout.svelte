@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount, setContext } from 'svelte';
+	import { onDestroy, onMount, setContext, getContext } from 'svelte';
 	import '../app.css';
 	import { Connector } from '$lib/models/connector';
 	import { TypedJSON } from 'typedjson';
@@ -21,6 +21,7 @@
 	import { WorkerSimulatorService } from '$lib/services/impl/worker_simulator_service';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import { WorkerCircuitBuilderService } from '$lib/services/impl/worker_circuit_builder_service';
+    import Modal from 'svelte-simple-modal';
 
 	let authService: AuthService = new MockAuthService();
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
@@ -56,4 +57,6 @@
 	});
 </script>
 
-<slot />
+<Modal>
+    <slot />
+</Modal>
