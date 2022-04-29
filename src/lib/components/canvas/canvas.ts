@@ -8,7 +8,7 @@ import type { Size } from '$lib/models/size';
 import type { Wire } from '$lib/models/wire';
 import type { WiringState } from '$lib/models/wiring_state';
 import { todo } from '$lib/util/common';
-import type { fabric } from 'fabric';
+import { fabric } from 'fabric';
 import type { EditorMode } from '$lib/models/editor_mode';
 import type { RenderableComponent } from '$lib/fabric/renderable_component';
 import type { Point } from '$lib/models/point';
@@ -34,6 +34,7 @@ export class Canvas {
     }
 
     public render(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
+        console.log("Rerendering whole circuit");
         this.clear();
         const components = circuit.components.map((c) => new Component(c.id, definitions.get(c.definitionId)));
         const wires = circuit.metadata.rendering.wires;
@@ -58,12 +59,14 @@ export class Canvas {
                 if (mode.data.currentWire != null) {
                     if (this.tempWire != null) this.canvas.remove(this.tempWire!);
                     const fabricWire = new WireRenderable(mode.data.currentWire).buildFabricObject();
+                    fabricWire.data.isTemp = true;
                     this.tempWire = fabricWire;
                     this.canvas.add(this.tempWire);
                 }
                 if (mode.data.currentJunction != null) {
                     if (this.tempJunction != null) this.canvas.remove(this.tempJunction!);
                     const fabricJunction = new JunctionRenderable(mode.data.currentJunction).buildFabricObject();
+                    fabricJunction.data.isTemp = true
                     this.tempJunction = fabricJunction;
                     this.canvas.add(this.tempJunction);
                 }
@@ -105,7 +108,7 @@ export class Canvas {
     }
 
     public refresh() {
-        this.canvas.renderAll();
+        this.canvas.requestRenderAll();
     }
 
     public getComponents(): RenderableComponent[] {

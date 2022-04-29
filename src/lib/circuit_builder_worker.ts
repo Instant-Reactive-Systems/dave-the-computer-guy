@@ -43,7 +43,7 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
 }
 
 function deductConnectionsFromWires(circuit: Circuit): Circuit {
-    const start = window.performance.now();
+    const start = performance.now();
         circuit.connections = [];
     const wires = circuit.metadata.rendering.wires;
     //find wires that are connected to output pins
@@ -74,7 +74,7 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
             }
         }
     }
-    const end = window.performance.now();
+    const end = performance.now();
 
     console.log(`Deducting connections takes ${end - start}ms`);
     return circuit;
@@ -86,7 +86,7 @@ function findAllConnectedInputConnectors(circuit: Circuit,wire: Wire, idsToIgnor
     console.log('Ids to ignore', idsToIgnore);
 
     //find all wires or pins this component is connected to
-    let start = window.performance.now();
+    let start = performance.now();
 
     for (const link of wire.links) {
         if (link.type == 'pin' && (link.value as any).type == 'input') {
@@ -104,7 +104,7 @@ function findAllConnectedInputConnectors(circuit: Circuit,wire: Wire, idsToIgnor
     }
 
 
-    start = window.performance.now();
+    start = performance.now();
     const linkedWireIds = (circuit.metadata.rendering.wires as Wire[])
         .filter((w) => w.links.some((link) => link.value == wire.id) && !idsToIgnore.has(w.id))
         .map((w) => w.id);

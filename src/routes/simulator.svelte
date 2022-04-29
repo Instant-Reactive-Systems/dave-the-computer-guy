@@ -58,10 +58,6 @@
 		circuit = $circuitStore;
 	}
 
-	setInterval(() => {
-		rebuildCircuit();
-	});
-
 	function saveCircuit() {
 		if ($circuitStore == null) {
 			console.log('Can not save circuit as no circuit is currently loaded.');
@@ -83,11 +79,17 @@
 	}
 
 	function startSimulation() {
-		if ($simulationStateStore != 'RUNNING') {
-			simulator.startSimulation();
-			simulationStateStore.set('RUNNING');
-		} else {
-			console.log('Simulation already running');
+		const circuit = $circuitStore;
+		if (circuit != null) {
+			circuitBuilder.deductConnections(circuit).then((circ) => {
+				circuitStore.set(circ);
+				if ($simulationStateStore != 'RUNNING') {
+					simulator.startSimulation();
+					simulationStateStore.set('RUNNING');
+				} else {
+					console.log('Simulation already running');
+				}
+			});
 		}
 	}
 
@@ -158,29 +160,22 @@
 		const definition: ComponentDefinition = event.detail.componentDefinition;
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
-
+		const preCommandCircuit = $circuitStore;
 		const addNewComponentCommand: Command = {
-			name: 'Add new component',
+			name: 'AddNewComponent',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuitBuilder.addNewComponent(circuit, definition, x, y)
-					.then((circuit) => circuitStore.set(circuit))
-				
-				
-				circuitStore.set(circuit);
+				circuitBuilder
+					.addNewComponent(circuit, definition, x, y)
+					.then((circuit) => circuitStore.set(circuit));
 			},
 			undo: () => {
-				const circuit: Circuit = get(circuitStore);
-				circuit.metadata.rendering.components.pop();
-				circuit.components.pop();
-				circuitStore.set(circuit);
+				circuitStore.set(preCommandCircuit);
 			},
 			redoable: true
 		};
 		addNewComponentCommand.do();
-		const undoCommandsStack = get(undoStore);
-		undoCommandsStack.push(addNewComponentCommand);
-		undoStore.set(undoCommandsStack);
+		addComandToUndoStack(addNewComponentCommand);
 	}
 
 	//returns the id of the new component which is calculated as the length of the current components in the circuit
@@ -190,68 +185,68 @@
 	}
 
 	function moveComponent(event): void {
+		console.log('Moving component');
+		const preCommandCircuit = $circuitStore;
 		const x = event.detail.x;
 		const y = event.detail.y;
 		const id = event.detail.componentId;
-		const componentRenderingData = new ComponentRenderingData();
-		componentRenderingData.x = x;
-		componentRenderingData.y = y;
-		const circuit = $circuitStore;
-		circuit.metadata.rendering.components[id] = componentRenderingData;
-		disconnectConnectorsForComponent(circuit, id);
-		circuitStore.set(circuit);
+		const moveCommand: Command = {
+			name: 'MoveComponent',
+			do: () => {
+				const circuit: Circuit = get(circuitStore);
+				circuitBuilder.moveComponent(circuit, id, x, y).then((circ) => circuitStore.set(circ));
+			},
+			undo: () => {
+				circuitStore.set(preCommandCircuit);
+			},
+			redoable: true
+		};
+
+		moveCommand.do();
+		addComandToUndoStack(moveCommand);
+	}
+
+	function addComandToUndoStack(command: Command) {
+		const undoCommandsStack = get(undoStore);
+		undoCommandsStack.push(command);
+		undoStore.set(undoCommandsStack);
 	}
 
 	//TODO handle undo and redo
 	function addNewWire(e) {
-		const circuit = $circuitStore;
+		const preCommandCircuit = $circuitStore;
+		const wire: Wire = e.detail.wire;
+		const junction: Junction[] = e.detail.junction;
+
 		const addNewWireCommand: Command = {
 			name: 'Add new wire',
 			do: () => {
-				const mode = $editorModeStore;
-				const wire: Wire = e.detail.wire;
-				circuit.metadata.rendering.wires.push(wire);
-				const junction: Junction = e.detail.junction;
-				if (junction != null) {
-					circuit.metadata.rendering.junctions.push(junction);
-				}
-				if (mode.type == 'wire') {
-					mode.data.lastX = wire.endX;
-					mode.data.lastY = wire.endY;
-				}
-				circuitStore.set(circuit);
-				deductConnectionsFromWires();
+				circuitBuilder.addNewWire(circuit, wire, junction).then((circ) => {
+					const mode = _.cloneDeep(get(editorModeStore));
+					if (mode.type == 'wire') {
+						mode.data.lastX = wire.endX;
+						mode.data.lastY = wire.endY;
+					}
+					editorModeStore.set(mode);
+					circuitStore.set(circ);
+				});
 			},
 			undo: () => {
-				const mode = $editorModeStore;
-				const wire = circuit.metadata.rendering.wires.pop();
-				const junction: Junction = e.detail.junction;
-				if (junction != null) {
-					circuit.metadata.rendering.junctions.pop();
-				}
-				circuitStore.set(circuit);
+				const mode = _.cloneDeep(get(editorModeStore));
 				if (mode.type == 'wire') {
 					mode.data.lastX = wire.startX;
 					mode.data.lastY = wire.startY;
 				}
-				deductConnectionsFromWires();
+				editorModeStore.set(mode);
+				circuitStore.set(preCommandCircuit);
 			},
 			redoable: false
 		};
 		addNewWireCommand.do();
-		const undoCommandsStack = get(undoStore);
-		undoCommandsStack.push(addNewWireCommand);
-		undoStore.set(undoCommandsStack);
+		addComandToUndoStack(addNewWireCommand);
 	}
 
-	function rebuildCircuit() {
-		const circuit = $circuitStore;
-		if (circuitDirty && circuit != null) {
-			deductConnectionsFromWires();
-		}
-	}
-
-	function disconnectConnectorsForComponent(circuit: Circuit, id: number) {
+	function deleteComponent(circuit: Circuit, id: number) {
 		console.log('Connector disconnecting not implemented');
 	}
 
@@ -276,9 +271,6 @@
 	}
 	onMount(() => {
 		createNewCircuit();
-		serviceSubscriptions.push(
-			simulator.getCircuitStateBehaviourSubject().subscribe((state) => console.log(`state`, state))
-		);
 		serviceSubscriptions.push(
 			simulator.getCircuitStateBehaviourSubject().subscribe((val) => {
 				circuitStateStore.set(val);

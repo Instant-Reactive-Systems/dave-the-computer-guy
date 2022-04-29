@@ -1,11 +1,13 @@
-import { ComponentRenderingData, type Circuit } from "$lib/models/circuit";
+import { ComponentRenderingData, Junction, type Circuit } from "$lib/models/circuit";
 import type { CircuitBuilderService } from "../circuit_builder_serivce";
 import Worker from "$lib/circuit_builder_worker?worker";
 import type { WorkerResponse, WorkerMessage } from "$lib/circuit_builder_worker";
 import type { ComponentDefinition } from "$lib/models/component_definition";
 import _ from "lodash"
 import { ComponentRef } from "$lib/models/component_ref";
+import type { Wire } from "$lib/models/wire";
 export class WorkerCircuitBuilderService implements CircuitBuilderService {
+
     private worker: Worker;
     private resolves = {};
     private rejects = {};
@@ -67,15 +69,16 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
             id: msgId
         }
 
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             this.resolves[msgId] = resolve;
             this.rejects[msgId] = reject;
             this.worker.postMessage(msg);
         })
     }
-    
+
     async addNewComponent(circuit: Circuit, definition: ComponentDefinition, x: number, y: number): Promise<Circuit> {
-        const circuitCopy = _.cloneDeep(circuit)
+        console.log("Adding new component");
+        const circuitCopy: Circuit = _.cloneDeep(circuit)
         const componentRenderingData = new ComponentRenderingData();
         const id = circuitCopy.components.length;
         const component = new ComponentRef(id, definition.id);
@@ -86,5 +89,53 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
         circuitCopy.components.push(component);
         return circuitCopy;
     }
+
+    async popComponent(circuit: Circuit): Promise<Circuit> {
+        console.log("Popping component");
+        const circuitCopy: Circuit = _.cloneDeep(circuit);
+        circuitCopy.metadata.rendering.components.pop();
+        circuitCopy.components.pop();
+        return circuitCopy;
+    }
+
+    async moveComponent(circuit: Circuit, id: number, x: number, y: number): Promise<Circuit> {
+        console.log("Moving component");
+        const circuitCopy = _.cloneDeep(circuit)
+        const componentRenderingData = new ComponentRenderingData();
+        componentRenderingData.x = x;
+        componentRenderingData.y = y;
+        componentRenderingData.id = id;
+        circuitCopy.metadata.rendering.components[id] = componentRenderingData;
+        this.disconnectConnectorsForComponent(circuitCopy, id);
+        return circuitCopy;
+    }
+
+    private disconnectConnectorsForComponent(circuit: Circuit, id: number): void {
+        console.log("Disconnecting connector for component");
+        //we only disconnect connections in rendering because the real sim connections will be deducted from rendering
+        circuit.metadata.rendering.wires
+            .forEach(wire => wire.links = wire.links.filter(link => {
+                console.log("link is ", link);
+                if (link.type == 'wire') {
+                    return true;
+                } else {
+                    return (link.value as any).conn.componentId != id;
+                }
+            }))
+
+    }
+
+    async addNewWire(circuit: Circuit, wire: Wire, junctions: Junction[]): Promise<Circuit> {
+        console.log("Adding new wire");
+        const circuitCopy = _.cloneDeep(circuit);
+        circuitCopy.metadata.rendering.wires.push(wire);
+        for (const junction of junctions) {
+            if (junction != null) {
+                circuitCopy.metadata.rendering.junctions.push(junction);
+            }
+        }
+        return circuitCopy;
+    }
+
 
 }
