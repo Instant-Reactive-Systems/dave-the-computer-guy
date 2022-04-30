@@ -19,17 +19,13 @@
 	import { undoStore } from '$lib/stores/undo_store';
 	import { redoStore } from '$lib/stores/redo_store';
 	import _ from 'lodash';
-	import type { Wire, DirectLink } from '$lib/models/wire';
-	import { Connection } from '$lib/models/connection';
-	import type { Connector } from '$lib/models/connector';
+	import type { Wire } from '$lib/models/wire';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import type { UserEvent } from '$lib/models/user_event';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
-	import { ComponentRef } from '$lib/models/component_ref';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
-    import { bind } from 'svelte-simple-modal';
     import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
     import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
 
@@ -45,14 +41,14 @@
 	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
 	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
-	let circuitDirty = true;
 
     
     const { open } = getContext('simple-modal');
     const openSaveCircuitModal = () => open(SaveCircuit, { onSend: (name: string, description: string) => {
         circuit.name = name;
         circuit.description = description;
-        circuitLoader.insertCircuit(circuit, true);
+        circuitLoader.insertCircuit(circuit);
+        circuitStore.set(circuit);
     }});
     const openLoadCircuitModal = () => open(LoadCircuit, { onLoad: (circuit: Circuit) => {
         let newCircuitTab = {
@@ -169,10 +165,12 @@
 		console.log(e);
 		if (e.ctrlKey == true && e.key.toLowerCase() == 'z') {
 			undo();
+            e.preventDefault();
 		}
 		if (e.ctrlKey == true && e.key.toLowerCase() == 'y') {
 			console.log('Redoing');
 			redo();
+            e.preventDefault();
 		}
 	}
 
@@ -380,7 +378,7 @@
 		/>
 	</aside>
 </div>
-<svelte:window on:keydown|preventDefault|trusted={handleKeyPress} />
+<svelte:window on:keydown|trusted={handleKeyPress} />
 
 <style>
 	/*

@@ -12,7 +12,7 @@
 	let componentDefinitionLoaderService: ComponentDefinitionLoaderService = getContext(
 		COMPONENT_DEFINITION_LOADER_SERVICE
 	);
-	const subscriptions: Subscription[] = [];
+	let subscriptions: Subscription[] = [];
 	let defs = [];
 	let selectedComponentDefinition: ComponentDefinition;
 	onMount(() => {
@@ -27,6 +27,7 @@
 		for (const subscription of subscriptions) {
 			subscription.unsubscribe();
 		}
+        subscriptions = [];
 	});
 
 	function onComponentDefinitionSelected(event: CustomEvent) {

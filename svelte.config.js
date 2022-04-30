@@ -19,11 +19,7 @@ const config = {
                 minify: false,
             },
 			optimizeDeps: {
-				include: ["ts-results"],
                 exclude: ['digisim']
-			},
-			ssr:{
-				noExternal: ["ts-results"]
 			},
             plugins: [
                 wasmPack([], ['digisim'])
