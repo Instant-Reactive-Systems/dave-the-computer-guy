@@ -101,7 +101,6 @@
 			//handle drag
 			if (mouseEvent.e.altKey === true) {
 				canvas.isDragging = true;
-				canvas.selection = false;
 				canvas.lastPosX = mouseEvent.e.clientX;
 				canvas.lastPosY = mouseEvent.e.clientY;
 				return;
@@ -171,7 +170,6 @@
 			// for all objects, so we call setViewportTransform
 			canvas.setViewportTransform(canvas.viewportTransform);
 			canvas.isDragging = false;
-			canvas.selection = true;
 		});
 	}
 

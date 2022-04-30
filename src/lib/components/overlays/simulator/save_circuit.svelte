@@ -9,7 +9,7 @@
     <input on:keydown|stopPropagation placeholder="Name" bind:value={name}/>
     <input on:keydown|stopPropagation placeholder="Description" bind:value={description}/>
 
-    <button on:click={() => onSend(name, description)}>Save</button>
+    <button on:click={() => onSend(`${name}`, `${description}`)}>Save</button>
 </form>
 
 <style>

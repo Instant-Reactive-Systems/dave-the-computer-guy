@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, ComponentRenderingData, Junction } from '$lib/models/circuit';
+	import { Circuit, ComponentRenderingData, Junction, WiringRenderingEntry } from '$lib/models/circuit';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -33,7 +33,6 @@
 		name: string;
 		circuit: Circuit;
 	};
-	let circuit;
 
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
@@ -43,21 +42,38 @@
 	let serviceSubscriptions: Subscription[] = [];
 
     
-    const { open } = getContext('simple-modal');
+    const { open, close } = getContext('simple-modal');
     const openSaveCircuitModal = () => open(SaveCircuit, { onSend: (name: string, description: string) => {
+        const circuit = $circuitStore;
         circuit.name = name;
         circuit.description = description;
-        circuitLoader.insertCircuit(circuit);
-        circuitStore.set(circuit);
+        circuitLoader.insertCircuit(circuit).then((circ) => {
+            console.log('Loaded circuit: ', circ);
+            currentCircuitTab.name = name;
+            currentCircuitTab.circuit = circ;
+            circuitTabs = circuitTabs;
+            currentCircuitTab = currentCircuitTab;
+        });
+        close();
     }});
     const openLoadCircuitModal = () => open(LoadCircuit, { onLoad: (circuit: Circuit) => {
+        // Load opened tab
+        const found = circuitTabs.find((x) => x.circuit.id == circuit.id);
+        if (found != null) {
+            currentCircuitTab = found;
+            circuitTabs = circuitTabs;
+            close();
+            return;
+        }
+
+        // Open new tab
         let newCircuitTab = {
-			name: Math.random().toString(36).slice(-5),
+			name: circuit.name,
 			circuit: circuit,
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
-        circuitStore.set(circuit);
+        close();
     }});
 
 	function createNewCircuit() {
@@ -68,10 +84,6 @@
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
-	}
-
-	$: {
-		circuit = $circuitStore;
 	}
 
 	function saveCircuit() {
@@ -159,6 +171,7 @@
 	function stopSimulation() {
 		simulationStateStore.set('STOPPED');
 		simulator.stopSimulation();
+        circuitStateStore.set(null);
 	}
 
 	function handleKeyPress(e: KeyboardEvent) {
@@ -240,6 +253,7 @@
 		const addNewWireCommand: Command = {
 			name: 'Add new wire',
 			do: () => {
+                const circuit = $circuitStore;
 				circuitBuilder.addNewWire(circuit, wire, junction).then((circ) => {
 					const mode = _.cloneDeep(get(editorModeStore));
 					if (mode.type == 'wire') {
@@ -277,7 +291,11 @@
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
-		console.log('Setting current circuit');
+        const newCircuit = new Circuit();
+        newCircuit.metadata.rendering.wiringRendering.set("cigan", new WiringRenderingEntry());
+        // JSON.parse(JSON.stringify(newCircuit))
+        console.log('Empty circuit: ', newCircuit, JSON.stringify(newCircuit));
+		console.log('Setting current circuit: ', circuit, JSON.stringify(circuit));
 		circuitStore.set(circuit);
 	}
 

@@ -7,16 +7,16 @@
 
     export let onLoad: (circuit: Circuit) => void;
 
-    let query: string;
+    let query: string = "";
     let circuits: Circuit[] = [];
-    let filteredCircuits: Circuit[] = [];
     let subscriptions: Subscription[] = [];
     const circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
 
 	onMount(() => {
 		subscriptions.push(
 			circuitLoader.getCircuitsBehaviourSubject().subscribe((loadedCircuits) => {
-				circuits = Array.from(loadedCircuits.values());
+				console.log('subbed', loadedCircuits);
+                circuits = Array.from(loadedCircuits.values());
 			})
 		);
 	});
@@ -29,25 +29,17 @@
         subscriptions = [];
 	});
 
-    $: {
-        let filteredCircuits = [];
-        for (const circuit of circuits) {
-            const re = `.*${query}.*`;
-            if (circuit.name.match(re)) filteredCircuits.push(circuit);
-        }
-    }
-
     function onClick(index: number) {
         onLoad(circuits[index]);
     }
 </script>
 
-<form>
+<form on:submit|preventDefault>
     <h1>Load a saved circuit:</h1>
-    <input type="text" bind:value={query}/>
+    <input on:keydown|stopPropagation placeholder="Search for circuit name" bind:value={query}/>
 
     <ul>
-        {#each filteredCircuits as circuit, i}
+        {#each circuits.filter(x => x.name.match(new RegExp(`.*${query}.*`, 'i'))) as circuit, i}
             <li><button on:click={() => onClick(i)}>
                 <span>{circuit.name}</span>
                 <span>{circuit.description}</span>

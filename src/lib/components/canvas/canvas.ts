@@ -34,7 +34,7 @@ export class Canvas {
     }
 
     public render(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
-        console.log("Rerendering whole circuit");
+        console.log("Rerendering whole circuit: ", circuit);
         this.clear();
         const components = circuit.components.map((c) => new Component(c.id, definitions.get(c.definitionId)));
         const wires = circuit.metadata.rendering.wires;

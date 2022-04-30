@@ -39,13 +39,8 @@ export class Junction {
     }
 }
 
-@toJson
-@jsonObject
-export class WiringRenderingEntry{
- 
-    @jsonArrayMember(Number)
-    wires: number[]
-
+export class WiringRenderingEntry {
+    wires: number[];
 }
 
 @toJson
@@ -58,10 +53,11 @@ export class RenderingMetadata {
     wires: Wire[];
 
     @jsonArrayMember(Junction)
-    junctions: Junction[]
+    junctions: Junction[];
 
-    @jsonMapMember(String,WiringRenderingEntry)
-    wiringRendering: Map<string,WiringRenderingEntry>
+    /*@jsonMember({deserializer: value => {console.log('desrializing'); return new Map();}, serializer: value => "cetnik"})*/
+    @jsonMember(AnyT)
+    wiringRendering: Map<string,WiringRenderingEntry>;
 }
 
 
@@ -71,11 +67,12 @@ export class RenderingMetadata {
 export class CircuitMetadata {
     @jsonMember(RenderingMetadata)
     rendering: RenderingMetadata;
+
     @jsonMember(Date)
     createdAt: Date;
+
     @jsonMember(Date)
     modifiedAt: Date;
-
 }
 
 @toJson
@@ -93,7 +90,7 @@ export class Circuit {
     @jsonArrayMember(ComponentRef)
     components: ComponentRef[];
 
-    @jsonMember(Connection)
+    @jsonArrayMember(Connection)
     connections: Connection[];
 
     @jsonArrayMember(Param)
@@ -104,7 +101,7 @@ export class Circuit {
 
 
     constructor() {
-        this.id = 0;
+        this.id = -1;
         this.name = "";
         this.description = "";
         this.components = [];

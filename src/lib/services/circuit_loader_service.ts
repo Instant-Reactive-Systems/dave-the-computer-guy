@@ -4,7 +4,7 @@ import type { BehaviorSubject } from "rxjs";
 
 export type CircuitLoaderService = {
     loadUserCircuits(user:User, offset:number, limit:number): Promise<Circuit[]>,
-    insertCircuit(circuit: Circuit): Promise<void>,
+    insertCircuit(circuit: Circuit): Promise<Circuit>,
     deleteCircuit(circuitId: number): Promise<Circuit>,
     getCircuitsBehaviourSubject(): BehaviorSubject<Circuit[]>,
     init(),

@@ -43,6 +43,7 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
 }
 
 function deductConnectionsFromWires(circuit: Circuit): Circuit {
+    circuit.metadata.rendering.wiringRendering = new Map();
     const start = performance.now();
         circuit.connections = [];
     const wires = circuit.metadata.rendering.wires;
