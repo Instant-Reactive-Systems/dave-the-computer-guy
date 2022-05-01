@@ -1,2 +1,5 @@
-<h1>Welcome to SvelteKit</h1>
-<p class="bg-slate-500">Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+import RoomPanel from '$lib/components/room_panel.svelte'
+</script>
+<h1>Welcome to Dave The Computer Guy</h1>
+<RoomPanel></RoomPanel>

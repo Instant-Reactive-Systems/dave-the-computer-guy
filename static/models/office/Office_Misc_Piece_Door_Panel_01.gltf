@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 72,
+      "min": [
+        -0.6000000238418579,
+        0,
+        -0.10000000149011612
+      ],
+      "max": [
+        0.6000000238418579,
+        2.700000047683716,
+        0.20000000298023224
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 72,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 72,
+      "min": [
+        0.9160159826278687,
+        0.5
+      ],
+      "max": [
+        0.9433590173721313,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 132,
+      "min": [
+        0
+      ],
+      "max": [
+        71
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Piece_Door_Panel_01",
+      "byteLength": 2924,
+      "uri": "data:application/octet-stream;base64,mpkZv83MLEDNzMw9mpkZvwAAAAAAAAAAmpkZvwAAAADNzMw9mpkZv83MLEAAAAAAzcxMPmZmpj/NzEw+zcxMPpqZmT/NzMw9zcxMPpqZmT/NzEw+zcxMPmZmpj/NzMw9zcxMPmZmpj8AAAAAzcxMPpqZmT/NzMy9zcxMPpqZmT8AAAAAzcxMPmZmpj/NzMy9AAAAP5qZmT/NzEw+AAAAP5qZmT/NzMw9AAAAP2Zmpj/NzEw+AAAAP2Zmpj/NzMw9AAAAP5qZmT8AAAAAAAAAP5qZmT/NzMy9AAAAP2Zmpj8AAAAAAAAAP2Zmpj/NzMy9mpkZPwAAAADNzMw9mpkZPwAAAAAAAAAAmpkZP83MLEDNzMw9mpkZP83MLEAAAAAAAAAAP5qZmT/NzEw+zcxMPmZmpj/NzEw+zcxMPpqZmT/NzEw+AAAAP2Zmpj/NzEw+zcxMPpqZmT/NzMw9mpkZv83MLEDNzMw9mpkZvwAAAADNzMw9zcxMPmZmpj/NzMw9AAAAP5qZmT/NzMw9AAAAP2Zmpj/NzMw9mpkZPwAAAADNzMw9mpkZP83MLEDNzMw9mpkZvwAAAAAAAAAAmpkZv83MLEAAAAAAzcxMPpqZmT8AAAAAzcxMPmZmpj8AAAAAAAAAP5qZmT8AAAAAAAAAP2Zmpj8AAAAAmpkZPwAAAAAAAAAAmpkZP83MLEAAAAAAzcxMPpqZmT/NzMy9zcxMPmZmpj/NzMy9AAAAP5qZmT/NzMy9AAAAP2Zmpj/NzMy9mpkZvwAAAAAAAAAAmpkZPwAAAADNzMw9mpkZvwAAAADNzMw9mpkZPwAAAAAAAAAAzcxMPpqZmT/NzMw9AAAAP5qZmT/NzEw+zcxMPpqZmT/NzEw+AAAAP5qZmT/NzMw9zcxMPpqZmT/NzMy9AAAAP5qZmT8AAAAAzcxMPpqZmT8AAAAAAAAAP5qZmT/NzMy9zcxMPmZmpj/NzEw+AAAAP2Zmpj/NzEw+zcxMPmZmpj/NzMw9AAAAP2Zmpj/NzMw9zcxMPmZmpj8AAAAAAAAAP2Zmpj8AAAAAzcxMPmZmpj/NzMy9AAAAP2Zmpj/NzMy9mpkZv83MLEDNzMw9mpkZP83MLEDNzMw9mpkZv83MLEAAAAAAmpkZP83MLEAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAABoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAP/p/cT8AAAA/+n9xPwAAAD/6f3E/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/AAABAAIAAwABAAAABAAFAAYABwAFAAQACAAJAAoACwAJAAgADAANAA4ADgANAA8AEAARABIAEgARABMAFAAVABYAFgAVABcAGAAZABoAGwAZABgAHAAdAB4AHwAdABwAIAAcAB4AIQAdAB8AIgAgAB4AIgAhACAAIwAdACEAIwAhACIAJAAlACYAJgAlACcAJAAmACgAJwAlACkAJAAoACoAKAApACoAKQAlACsAKgApACsALAAtAC4ALgAtAC8AMAAxADIAMwAxADAANAA1ADYANwA1ADQAOAA5ADoAOwA5ADgAPAA9AD4APgA9AD8AQABBAEIAQgBBAEMARABFAEYARgBFAEcAiVBORw0KGgoAAAANSUhEUgAAAQAAAAABCAYAAAAxWXB3AAAAAXNSR0IArs4c6QAAAR1JREFUOI3t0D1IAnEAhvFH+nd54nmWV0LdWQYH0U3WUHOTcENLbUEINTQfBA3NgkuLUwhhSx9TDbZFUOCNBtUUElmTISWhZnLVEI0tTQ3+1hee4fXZtv1JV9c/FUvnqGys/LqfVntR+jWUcITB0DlyWMYf9hOrzJNI2CRLFp6k4ElBni6idGSZd9lP5nmI+HCCy/QhSbWP0moPtVoNwzBwXRchBPV6ncUji9T0BDOBbbJLc5xMBkiZyxiGga7rFNtFbq9fWYuXaZbviY4tgDaOlMlx4N2xf/VAo9VmNDpAJCBxfFNFjHwQ0oIoWpBQa4pZ67v109R1HdM0UVWVs91N9rJ5XppvPDY6rG/t4LoujuMghMCyrD9/WygUfF8JHFICEprT/wAAAABJRU5ErkJgggA="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 864,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 864,
+      "byteOffset": 864,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 576,
+      "byteOffset": 1728,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 264,
+      "byteOffset": 2304,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2568,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Piece_Door_Panel_01",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Piece_Door_Panel_01",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

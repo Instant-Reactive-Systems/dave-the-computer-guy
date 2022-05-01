@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 96,
+      "min": [
+        -0.800000011920929,
+        0,
+        -0.800000011920929
+      ],
+      "max": [
+        0.800000011920929,
+        2.4000000953674316,
+        0.800000011920929
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 96,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 96,
+      "min": [
+        0.8886719942092896,
+        0.5
+      ],
+      "max": [
+        0.9042969942092896,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 168,
+      "min": [
+        0
+      ],
+      "max": [
+        95
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Cubicle_Piece_White_Corner_03",
+      "byteLength": 3764,
+      "uri": "data:application/octet-stream;base64,zcxMv83MzD0AAAC/zcxMvwAAAADNzEy/zcxMvwAAAAAAAAC/zcxMv83MzD3NzEy/zcxMv5qZmT8AAAC/zcxMv83MzD3NzEy/zcxMv83MzD0AAAC/zcxMv5qZmT8zMzO/zcxMvzMzE0AzMzO/zcxMv5qZGUAAAAC/zcxMvzMzE0AAAAC/zcxMv5qZGUDNzEy/mpkZPzMzE0CamRm/mpkZP5qZmT8zMzO/mpkZP5qZmT+amRm/mpkZPzMzE0AzMzO/MzMzP83MzD3NzEw/MzMzPwAAAAAAAAC/MzMzPwAAAADNzEw/MzMzP83MzD0AAAC/MzMzP5qZmT8AAAC/MzMzP83MzD0AAAC/MzMzP83MzD3NzEw/MzMzPzMzE0AAAAC/MzMzP5qZmT+amRm/MzMzPzMzE0CamRm/MzMzP5qZGUDNzEw/MzMzP5qZGUAAAAC/zcxMPwAAAADNzEw/zcxMPwAAAADNzEy/zcxMP83MzD3NzEw/zcxMP83MzD3NzEy/zcxMP83MzD3NzEw/zcxMP83MzD3NzEy/zcxMP5qZGUDNzEw/zcxMP5qZGUDNzEy/zcxMPwAAAADNzEw/MzMzP83MzD3NzEw/MzMzPwAAAADNzEw/zcxMP83MzD3NzEw/MzMzP5qZGUDNzEw/MzMzP83MzD3NzEw/zcxMP83MzD3NzEw/zcxMP5qZGUDNzEw/MzMzPwAAAAAAAAC/zcxMv83MzD0AAAC/zcxMvwAAAAAAAAC/MzMzP83MzD0AAAC/zcxMv5qZmT8AAAC/zcxMv83MzD0AAAC/MzMzP83MzD0AAAC/MzMzP5qZmT8AAAC/MzMzPzMzE0AAAAC/zcxMv5qZGUAAAAC/zcxMvzMzE0AAAAC/MzMzP5qZGUAAAAC/MzMzP5qZmT+amRm/mpkZPzMzE0CamRm/mpkZP5qZmT+amRm/MzMzPzMzE0CamRm/mpkZP5qZmT8zMzO/zcxMvzMzE0AzMzO/zcxMv5qZmT8zMzO/mpkZPzMzE0AzMzO/zcxMvwAAAADNzEy/zcxMv83MzD3NzEy/zcxMPwAAAADNzEy/zcxMv83MzD3NzEy/zcxMv5qZGUDNzEy/zcxMP83MzD3NzEy/zcxMP83MzD3NzEy/zcxMP5qZGUDNzEy/MzMzPwAAAAAAAAC/zcxMPwAAAADNzEw/MzMzPwAAAADNzEw/zcxMvwAAAADNzEy/zcxMvwAAAAAAAAC/zcxMPwAAAADNzEy/mpkZPzMzE0CamRm/MzMzPzMzE0AAAAC/zcxMvzMzE0AAAAC/MzMzPzMzE0CamRm/zcxMvzMzE0AzMzO/mpkZPzMzE0AzMzO/zcxMv5qZmT8AAAC/MzMzP5qZmT8AAAC/mpkZP5qZmT+amRm/MzMzP5qZmT+amRm/zcxMv5qZmT8zMzO/mpkZP5qZmT8zMzO/MzMzP5qZGUDNzEw/zcxMP5qZGUDNzEw/MzMzP5qZGUAAAAC/zcxMv5qZGUAAAAC/zcxMv5qZGUDNzEy/zcxMP5qZGUDNzEy/AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAoBnPwAAAD8CgGc/AAAAPwKAZz8AAAA/AoBnPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGc/AAAAPwKAZz8AAAA/AoBnPwAAAD8CgGc/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGc/AAAAPwKAZz8AAAA/AoBnPwAAAD8CgGc/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBnPwAAAD8CgGc/AAAAPwKAZz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBnPwAAAD8CgGM/AAAAPwKAZz8AAAA/AoBnPwAAAD8CgGc/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAZz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGc/AAAAPwKAZz8AAAA/AoBnPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGc/AAAAPwKAYz8AAAA/AoBnPwAAAD8CgGc/AAAAPwKAZz8AAAA/AoBnPwAAAD8CgGc/AAAAPwKAZz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAPwKAYz8AAAA/AAABAAIAAwABAAAABAAFAAYABwAFAAQACAAFAAcACQAIAAoACwAFAAgACwAIAAkADAANAA4ADwANAAwAEAARABIAEwARABAAFAAVABYAFwAUABYAFwAYABQAGQAYABcAGgAXABYAGwAXABoAHAAdAB4AHgAdAB8AIAAhACIAIgAhACMAJAAlACYAJwAoACkAKgAlACQAKwAoACcALAAtAC4ALwAwADEAMgAtACwAMwAwAC8ANAA1ADYANwA1ADQAOAA5ADoAOwA5ADgAPAA9AD4APwA9ADwAQABBAEIAQwBEAEUAQgBBAEYARQBEAEcASABJAEoASwBIAEwATQBJAEgATQBIAEsATgBPAFAAUQBPAE4AUgBOAFAAUwBOAFIAVABVAFYAVgBVAFcAVABWAFgAWABWAFkAWgBbAFwAXQBcAF4AXABbAF8AXgBcAF8AiVBORw0KGgoAAAANSUhEUgAAAQAAAAABCAYAAAAxWXB3AAAAAXNSR0IArs4c6QAAAR1JREFUOI3t0D1IAnEAhvFH+nd54nmWV0LdWQYH0U3WUHOTcENLbUEINTQfBA3NgkuLUwhhSx9TDbZFUOCNBtUUElmTISWhZnLVEI0tTQ3+1hee4fXZtv1JV9c/FUvnqGys/LqfVntR+jWUcITB0DlyWMYf9hOrzJNI2CRLFp6k4ElBni6idGSZd9lP5nmI+HCCy/QhSbWP0moPtVoNwzBwXRchBPV6ncUji9T0BDOBbbJLc5xMBkiZyxiGga7rFNtFbq9fWYuXaZbviY4tgDaOlMlx4N2xf/VAo9VmNDpAJCBxfFNFjHwQ0oIoWpBQa4pZ67v109R1HdM0UVWVs91N9rJ5XppvPDY6rG/t4LoujuMghMCyrD9/WygUfF8JHFICEprT/wAAAABJRU5ErkJgggA="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 1152,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 1152,
+      "byteOffset": 1152,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 768,
+      "byteOffset": 2304,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 336,
+      "byteOffset": 3072,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 3408,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Cubicle_Piece_White_Corner_03",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Cubicle_Piece_White_Corner_03",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

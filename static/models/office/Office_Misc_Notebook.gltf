@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 60,
+      "min": [
+        -0.4000000059604645,
+        0,
+        -0.5
+      ],
+      "max": [
+        0.30000001192092896,
+        0.20000000298023224,
+        0.4000000059604645
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 60,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 60,
+      "min": [
+        0.7597659826278687,
+        0.5
+      ],
+      "max": [
+        0.7636719942092896,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 120,
+      "min": [
+        0
+      ],
+      "max": [
+        59
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Notebook",
+      "byteLength": 2516,
+      "uri": "data:application/octet-stream;base64,zczMvs3MTD7NzMw+zczMvgAAAAAAAAC/zczMvgAAAADNzMw+zczMvs3MTD4AAAC/mpmZPgAAAADNzMw+mpmZPgAAAAAAAAC/mpmZPs3MzD3NzMw+mpmZPs3MzD0AAAC/mpmZPs3MzD3NzMw+mpmZPs3MzD0AAAC/mpmZPs3MTD7NzMw+mpmZPs3MTD4AAAC/mpmZvs3MzD3NzMw+zczMvs3MTD7NzMw+zczMvgAAAADNzMw+mpmZvs3MTD7NzMw+mpmZPgAAAADNzMw+mpmZPs3MzD3NzMw+mpmZvs3MTD7NzMw+mpmZvs3MzD3NzMw+mpmZPs3MzD3NzMw+mpmZPs3MTD7NzMw+zczMvgAAAAAAAAC/zczMvs3MTD4AAAC/mpmZvs3MzD0AAAC/mpmZvs3MTD4AAAC/mpmZPgAAAAAAAAC/mpmZvs3MzD0AAAC/mpmZvs3MTD4AAAC/mpmZPs3MzD0AAAC/mpmZPs3MzD0AAAC/mpmZPs3MTD4AAAC/zczMvgAAAAAAAAC/mpmZPgAAAADNzMw+zczMvgAAAADNzMw+mpmZPgAAAAAAAAC/mpmZvs3MTD7NzMw+mpmZPs3MTD7NzMw+zczMvc3MTD7NzMy9zczMPc3MTD7NzMy9zczMvc3MTD7NzEy+zczMvc3MTD7NzMy9zczMPc3MTD7NzMy9zczMvc3MTD7NzEy+zczMPc3MTD7NzEy+zczMPc3MTD7NzEy+zcxMvs3MTD6amZm+zcxMPs3MTD6amZm+zcxMvs3MTD7NzMy+zcxMvs3MTD6amZm+zcxMPs3MTD6amZm+zcxMvs3MTD7NzMy+zcxMPs3MTD7NzMy+zcxMPs3MTD7NzMy+zczMvs3MTD7NzMw+mpmZvs3MTD7NzMw+zczMvs3MTD4AAAC/mpmZvs3MTD4AAAC/mpmZvs3MTD4AAAC/mpmZPs3MTD4AAAC/AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwaAQj8AAAA/BoBCPwAAAD8GgEI/AAAAPwaAQj8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwaAQj8AAAA/BoBCPwAAAD8GgEI/AAAAPwKAQz8AAAA/BoBCPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/BoBCPwAAAD8GgEI/AAAAPwaAQj8AAAA/AoBDPwAAAD8GgEI/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/BoBCPwAAAD8GgEI/AAAAPwaAQj8AAAA/BoBCPwAAAD8GgEI/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwaAQj8AAAA/AoBDPwAAAD8GgEI/AAAAPwaAQj8AAAA/BoBCPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8GgEI/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/BoBCPwAAAD8CgEM/AAAAPwaAQj8AAAA/AAABAAIAAwABAAAABAAFAAYABgAFAAcACAAJAAoACgAJAAsADAANAA4ADwANAAwAEAAMAA4AEQASABMAFAAMABAAFQASABEAFgAXABgAGAAXABkAFgAYABoAGwAcAB0AGgAYAB4AHQAcAB8AIAAhACIAIwAhACAAJAAlACYAJgAlACcAJAAmACgAKQAqACsAJwAlACwAKwAqAC0AJAAoAC4AKAAsAC4ALAAlAC8ALgAsAC8AJAAuADAAMQAyADMALwAlADQAMwAyADUANgA3ADgAJAAwADkAOAA3ADoAMAA0ADkANAAlADsAOQA0ADsAiVBORw0KGgoAAAANSUhEUgAAAQAAAAABCAYAAAAxWXB3AAAAAXNSR0IArs4c6QAAAR1JREFUOI3t0D1IAnEAhvFH+nd54nmWV0LdWQYH0U3WUHOTcENLbUEINTQfBA3NgkuLUwhhSx9TDbZFUOCNBtUUElmTISWhZnLVEI0tTQ3+1hee4fXZtv1JV9c/FUvnqGys/LqfVntR+jWUcITB0DlyWMYf9hOrzJNI2CRLFp6k4ElBni6idGSZd9lP5nmI+HCCy/QhSbWP0moPtVoNwzBwXRchBPV6ncUji9T0BDOBbbJLc5xMBkiZyxiGga7rFNtFbq9fWYuXaZbviY4tgDaOlMlx4N2xf/VAo9VmNDpAJCBxfFNFjHwQ0oIoWpBQa4pZ67v109R1HdM0UVWVs91N9rJ5XppvPDY6rG/t4LoujuMghMCyrD9/WygUfF8JHFICEprT/wAAAABJRU5ErkJgggA="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 720,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 720,
+      "byteOffset": 720,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 480,
+      "byteOffset": 1440,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 240,
+      "byteOffset": 1920,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2160,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Notebook",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Notebook",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

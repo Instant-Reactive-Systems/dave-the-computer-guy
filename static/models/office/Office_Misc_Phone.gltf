@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 64,
+      "min": [
+        -0.30000001192092896,
+        0,
+        -0.20000000298023224
+      ],
+      "max": [
+        0.30000001192092896,
+        0.20000000298023224,
+        0.30000001192092896
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 64,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 64,
+      "min": [
+        0.7636719942092896,
+        0.5
+      ],
+      "max": [
+        0.8144530057907104,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 132,
+      "min": [
+        0
+      ],
+      "max": [
+        63
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Phone",
+      "byteLength": 2668,
+      "uri": "data:application/octet-stream;base64,mpmZvs3MzD2amZk+mpmZvgAAAADNzEy+mpmZvgAAAACamZk+mpmZvs3MzD3NzEy+zczMPc3MTD7NzEw+zczMPc3MzD3NzMy9zczMPc3MzD3NzEw+zczMPc3MTD7NzMy9zcxMPs3MzD3NzEw+zcxMPs3MzD3NzMy9zcxMPs3MTD7NzEw+zcxMPs3MTD7NzMy9mpmZPgAAAACamZk+mpmZPgAAAADNzEy+mpmZPs3MzD2amZk+mpmZPs3MzD3NzEy+mpmZPgAAAACamZk+mpmZvs3MzD2amZk+mpmZvgAAAACamZk+mpmZPs3MzD2amZk+zcxMPs3MzD3NzEw+zczMPc3MTD7NzEw+zczMPc3MzD3NzEw+zcxMPs3MTD7NzEw+zczMPc3MzD3NzMy9zczMPc3MTD7NzMy9zcxMPs3MzD3NzMy9zcxMPs3MTD7NzMy9mpmZvgAAAADNzEy+mpmZvs3MzD3NzEy+mpmZPgAAAADNzEy+mpmZPs3MzD3NzEy+zcxMvgAAAAAAAAAAmpmZPgAAAACamZk+mpmZvgAAAACamZk+AAAAAAAAAAAAAAAAzcxMvgAAAADNzMy9zcxMvgAAAADNzMy9AAAAAAAAAAAAAAAAzcxMvgAAAAAAAAAAAAAAAAAAAADNzMy9AAAAAAAAAADNzMy9mpmZvgAAAADNzEy+mpmZPgAAAADNzEy+mpmZvs3MzD2amZk+mpmZPs3MzD2amZk+zczMPc3MzD3NzEw+zcxMPs3MzD3NzEw+zcxMvs3MzD0AAAAAAAAAAM3MzD0AAAAAzcxMvs3MzD3NzMy9zcxMvs3MzD0AAAAAAAAAAM3MzD0AAAAAzcxMvs3MzD3NzMy9AAAAAM3MzD3NzMy9AAAAAM3MzD3NzMy9zczMPc3MzD3NzMy9zcxMPs3MzD3NzMy9mpmZvs3MzD3NzEy+mpmZPs3MzD3NzEy+zczMPc3MTD7NzEw+zcxMPs3MTD7NzEw+zczMPc3MTD7NzMy9zcxMPs3MTD7NzMy9AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD/+f1A/AAAAP/5/UD8AAAA//n9QPwAAAD8CgEM/AAAAP/5/UD8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA//n9QPwAAAD/+f1A/AAAAP/5/UD8AAAA/AoBDPwAAAD/+f1A/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8CgEM/AAAAPwKAQz8AAAA/AoBDPwAAAD8AAAEAAgADAAEAAAAEAAUABgAHAAUABAAIAAkACgAKAAkACwAMAA0ADgAOAA0ADwAQABEAEgATABEAEAAUABUAFgAXABUAFAAYABkAGgAaABkAGwAcAB0AHgAeAB0AHwAgACEAIgAjACEAIAAkACAAIgAlACYAJwAoACEAIwApACYAJQAqACQAIgAqACgAJAArACEAKAArACgAKgAsAC0ALgAuAC0ALwAsAC4AMAAwAC4AMQAsADAAMgAzADQANQAxAC4ANgA1ADQANwA2AC4AOAAvAC0AOQA2ADgAOgA4ADkAOgAsADIAOgAyADYAOgA5AC0AOwA6ADkAOwA8AD0APgA+AD0APwCJUE5HDQoaCgAAAA1JSERSAAABAAAAAAEIBgAAADFZcHcAAAABc1JHQgCuzhzpAAABHUlEQVQ4je3QPUgCcQCG8Uf6d3nieZZXQt1ZBgfRTdZQc5NwQ0ttQQg1NB8EDc2CS4tTCGFLH1MNtkVQ4I0G1RQSWZMhJaFmctUQjS1NDf7WF57h9dm2/UlX1z8VS+eobKz8up9We1H6NZRwhMHQOXJYxh/2E6vMk0jYJEsWnqTgSUGeLqJ0ZJl32U/meYj4cILL9CFJtY/Sag+1Wg3DMHBdFyEE9XqdxSOL1PQEM4FtsktznEwGSJnLGIaBrusU20Vur19Zi5dplu+Jji2ANo6UyXHg3bF/9UCj1WY0OkAkIHF8U0WMfBDSgihakFBrilnru/XT1HUd0zRRVZWz3U32snlemm88Njqsb+3gui6O4yCEwLKsP39bKBR8XwkcUgISmtP/AAAAAElFTkSuQmCCAA=="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 768,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 768,
+      "byteOffset": 768,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 512,
+      "byteOffset": 1536,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 264,
+      "byteOffset": 2048,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2312,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Phone",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Phone",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

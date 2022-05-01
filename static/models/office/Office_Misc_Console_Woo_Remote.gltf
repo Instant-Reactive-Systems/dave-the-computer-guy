@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 56,
+      "min": [
+        -0.10000000149011612,
+        0,
+        -0.30000001192092896
+      ],
+      "max": [
+        1.4901200273698123e-8,
+        0.10000000149011612,
+        0.4000000059604645
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 56,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 56,
+      "min": [
+        0.8925780057907104,
+        0.5
+      ],
+      "max": [
+        0.9277340173721313,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 84,
+      "min": [
+        0
+      ],
+      "max": [
+        55
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Console_Woo_Remote",
+      "byteLength": 2316,
+      "uri": "data:application/octet-stream;base64,zczMvc3MzD3NzMw+zczMvQAAAADNzEw+zczMvQAAAADNzMw+zczMvc3MzD3NzEw+zczMvQAAAADNzMw9zczMvQAAAADNzEw+zczMvc3MzD3NzEw+zczMvc3MzD3NzMw9zczMvQAAAACamZm+zczMvQAAAADNzMw9zczMvc3MzD3NzMw9zczMvc3MzD2amZm+FgCAMgAAAADNzMw+FgCAMgAAAADNzEw+FgCAMs3MzD3NzMw+FgCAMgAAAADNzEw+FgCAMgAAAADNzMw9FgCAMs3MzD3NzEw+FgCAMs3MzD3NzEw+FgCAMgAAAADNzMw9FgCAMgAAAACamZm+FgCAMs3MzD3NzMw9FgCAMs3MzD3NzMw9FgCAMs3MzD2amZm+FgCAMgAAAADNzMw+zczMvc3MzD3NzMw+zczMvQAAAADNzMw+FgCAMs3MzD3NzMw+zczMvQAAAACamZm+zczMvc3MzD2amZm+FgCAMgAAAACamZm+FgCAMs3MzD2amZm+zczMvQAAAADNzEw+FgCAMgAAAADNzMw+zczMvQAAAADNzMw+FgCAMgAAAADNzEw+zczMvQAAAADNzMw9FgCAMgAAAADNzEw+zczMvQAAAADNzEw+FgCAMgAAAADNzMw9zczMvQAAAACamZm+FgCAMgAAAADNzMw9zczMvQAAAADNzMw9FgCAMgAAAACamZm+zczMvc3MzD3NzMw+FgCAMs3MzD3NzMw+zczMvc3MzD3NzEw+FgCAMs3MzD3NzEw+zczMvc3MzD3NzEw+FgCAMs3MzD3NzEw+zczMvc3MzD3NzMw9FgCAMs3MzD3NzMw9zczMvc3MzD3NzMw9FgCAMs3MzD3NzMw9zczMvc3MzD2amZm+FgCAMs3MzD2amZm+AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAA/n9kPwAAAD/+f2Q/AAAAP/5/ZD8AAAA/+n9tPwAAAD/6f20/AAAAP/p/bT8AAAA//n9kPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f20/AAAAP/p/ZT8AAAA//n9kPwAAAD/+f2Q/AAAAP/5/ZD8AAAA/+n9tPwAAAD/6f20/AAAAP/p/bT8AAAA//n9kPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f20/AAAAP/p/ZT8AAAA//n9kPwAAAD/+f2Q/AAAAP/5/ZD8AAAA//n9kPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/5/ZD8AAAA//n9kPwAAAD/+f2Q/AAAAP/5/ZD8AAAA/+n9tPwAAAD/6f20/AAAAP/p/bT8AAAA/+n9tPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/5/ZD8AAAA//n9kPwAAAD/+f2Q/AAAAP/5/ZD8AAAA/+n9tPwAAAD/6f20/AAAAP/p/bT8AAAA/+n9tPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAPwAAAQACAAMABAAFAAYAAQAAAAcACAAJAAoABAADAAsACAAHAAwADQAOAA8AEAARAA4ADQASABMAFAAVABEAEAAWABUAFAAXABgAGQAaABsAGQAYABwAHQAeAB4AHQAfACAAIQAiACMAIQAgACQAJQAmACcAJQAkACgAKQAqACsAKQAoACwALQAuAC4ALQAvADAAMQAyADIAMQAzADQANQA2ADYANQA3AIlQTkcNChoKAAAADUlIRFIAAAEAAAAAAQgGAAAAMVlwdwAAAAFzUkdCAK7OHOkAAAEdSURBVDiN7dA9SAJxAIbxR/p3eeJ5lldC3VkGB9FN1lBzk3BDS21BCDU0HwQNzYJLi1MIYUsfUw22RVDgjQbVFBJZkyEloWZy1RCNLU0N/tYXnuH12bb9SVfXPxVL56hsrPy6n1Z7Ufo1lHCEwdA5cljGH/YTq8yTSNgkSxaepOBJQZ4uonRkmXfZT+Z5iPhwgsv0IUm1j9JqD7VaDcMwcF0XIQT1ep3FI4vU9AQzgW2yS3OcTAZImcsYhoGu6xTbRW6vX1mLl2mW74mOLYA2jpTJceDdsX/1QKPVZjQ6QCQgcXxTRYx8ENKCKFqQUGuKWeu79dPUdR3TNFFVlbPdTfayeV6abzw2Oqxv7eC6Lo7jIITAsqw/f1soFHxfCRxSAhKa0/8AAAAASUVORK5CYIIA"
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 672,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 672,
+      "byteOffset": 672,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 448,
+      "byteOffset": 1344,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 168,
+      "byteOffset": 1792,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1960,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Console_Woo_Remote",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Console_Woo_Remote",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

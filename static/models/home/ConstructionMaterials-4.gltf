@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 76,
+      "min": [
+        -27.100000381469727,
+        0,
+        12
+      ],
+      "max": [
+        -25,
+        3.5,
+        12.199999809265137
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 76,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 76,
+      "min": [
+        0.8574219942092896,
+        0.5
+      ],
+      "max": [
+        0.9199219942092896,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 156,
+      "min": [
+        0
+      ],
+      "max": [
+        75
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "ConstructionMaterials-4",
+      "byteLength": 3032,
+      "uri": "data:application/octet-stream;base64,zczYwQAAYECamUFBzczYwQAAAAAAAEBBzczYwQAAAACamUFBzczYwQAAYEAAAEBBAADYwWZm5j8zM0NBAADYwc3MzD+amUFBAADYwc3MzD8zM0NBAADYwWZm5j+amUFBMzPXwc3MzD8zM0NBMzPXwc3MzD+amUFBMzPXwZqZ2T8zM0NBMzPXwZqZ2T+amUFBmpnVwZqZ2T8zM0NBmpnVwZqZ2T+amUFBmpnVwWZm5j8zM0NBmpnVwWZm5j+amUFBAADIwQAAAACamUFBAADIwQAAAAAAAEBBAADIwQAAYECamUFBAADIwQAAYEAAAEBBMzPXwc3MzD8zM0NBAADYwWZm5j8zM0NBAADYwc3MzD8zM0NBMzPXwZqZ2T8zM0NBmpnVwZqZ2T8zM0NBmpnVwWZm5j8zM0NBAADYwc3MzD+amUFBzczYwQAAYECamUFBzczYwQAAAACamUFBAADYwWZm5j+amUFBMzPXwc3MzD+amUFBMzPXwc3MDECamUFBMzPXwTMzU0CamUFBmpnVwZqZ2T+amUFBMzPXwZqZ2T+amUFBmpnVwWZm5j+amUFBmpnJwc3MDECamUFBMzPXwTMzU0CamUFBMzPXwc3MDECamUFBmpnJwc3MDECamUFBmpnJwTMzU0CamUFBmpnJwTMzU0CamUFBAADIwQAAAACamUFBAADIwQAAYECamUFBzczYwQAAAAAAAEBBzczYwQAAYEAAAEBBMzPXwc3MDEAAAEBBMzPXwTMzU0AAAEBBmpnJwc3MDEAAAEBBMzPXwc3MDEAAAEBBMzPXwTMzU0AAAEBBmpnJwc3MDEAAAEBBmpnJwTMzU0AAAEBBmpnJwTMzU0AAAEBBAADIwQAAAAAAAEBBAADIwQAAYEAAAEBBzczYwQAAAAAAAEBBAADIwQAAAACamUFBzczYwQAAAACamUFBAADIwQAAAAAAAEBBAADYwc3MzD+amUFBMzPXwc3MzD8zM0NBAADYwc3MzD8zM0NBMzPXwc3MzD+amUFBMzPXwZqZ2T+amUFBmpnVwZqZ2T8zM0NBMzPXwZqZ2T8zM0NBmpnVwZqZ2T+amUFBAADYwWZm5j8zM0NBmpnVwWZm5j8zM0NBAADYwWZm5j+amUFBmpnVwWZm5j+amUFBzczYwQAAYECamUFBAADIwQAAYECamUFBzczYwQAAYEAAAEBBAADIwQAAYEAAAEBBAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAABoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/AoBrPwAAAD8CgGs/AAAAPwKAaz8AAAA/BoBqPwAAAD8GgGo/AAAAPwKAaz8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8CgGs/AAAAPwKAaz8AAAA/AoBrPwAAAD8GgGo/AAAAPwKAaz8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/AoBbPwAAAD8CgFs/AAAAPwKAWz8AAAA/BoBqPwAAAD8GgGo/AAAAPwaAaj8AAAA/BoBqPwAAAD8AAAEAAgADAAEAAAAEAAUABgAHAAUABAAIAAkACgAKAAkACwAMAA0ADgAOAA0ADwAQABEAEgASABEAEwAUABUAFgAXABUAFAAYABUAFwAZABUAGAAaABsAHAAdABsAGgAeABoAHAAfABsAHQAgABsAHwAhACIAHgAjAB8AHQAkACUAJgAnACMAIQAnAB8AIwAoABsAIAApACUAJAAqACcAIQAqAB4AHAAqACgAJwAqACEAHgArABsAKAArACgAKgAsAC0ALgAuAC0ALwAsAC4AMAAxADIAMwAvAC0ANAAzADIANQAsADAANgAwADQANgA0AC0ANwA2ADQANwA4ADkAOgA7ADkAOAA8AD0APgA/AD0APABAAEEAQgBDAEEAQABEAEUARgBGAEUARwBIAEkASgBKAEkASwCJUE5HDQoaCgAAAA1JSERSAAABAAAAAAEIBgAAADFZcHcAAAABc1JHQgCuzhzpAAAA2ElEQVQ4jWP09vb+zzAKRsEIBacf/2IwlWXDKd/T08MQEBDAwGGdzPDo0GoG7h/PGb5ySDJYqYsxMDAwMLh8fcJw5sU7hg/Kelj1nzlzhuHFixcMFRUVDGfOnGF4//49g6SkJFz+/v37DNLS0gx3795luHvvHgPDLwYGbVYGBkUfb7g8MzMzQ3Z2NoOenh5Da2srivnMr+8wsD5+zlC2YTfD4kx7hplGZgxP29YwPHr0iKG+vp7BX4WV4e2nbwyX7j5n4GBnYeDmYGcQ4OZguPXkNcOqI1cZAXHzSQLP0ENtAAAAAElFTkSuQmCCAAA="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 912,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 912,
+      "byteOffset": 912,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 608,
+      "byteOffset": 1824,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 312,
+      "byteOffset": 2432,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2744,
+      "byteLength": 286
+    }
+  ],
+  "images": [
+    {
+      "name": "ConstructionMaterials-4",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "ConstructionMaterials-4",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}
