@@ -1,5 +1,6 @@
 import type { Circuit } from "$lib/models/circuit";
 import type { ComponentDefinition } from "$lib/models/component_definition";
+import type { ComponentRef } from "$lib/models/component_ref";
 import type { UserEvent } from "$lib/models/user_event";
 import type { BehaviorSubject } from "rxjs";
 
@@ -9,6 +10,7 @@ export type SimulatorService = {
     setCircuit(circuit: Circuit): void,
     startSimulation(): void,
     stopSimulation(): void,
+    verifyComponent(component: ComponentRef,verificationData: any): Promise<VerificationResult>,
     stepSimulation(): void,
     insertUserEvent(userEvent: UserEvent): void,
     insertDefinition(definition: ComponentDefinition),
