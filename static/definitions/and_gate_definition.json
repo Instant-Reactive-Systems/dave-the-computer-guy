@@ -1,0 +1,81 @@
+{
+    "id": 1,
+    "name": "AndGate",
+    "description": "An AND gate component.",
+    "type": "Transparent",
+    "pins": {
+        "input": ["A", "B"],
+        "output": ["Y"]
+    },
+    "pinMapping": {
+        "input": [
+            {
+                "componentId": 0,
+                "pin": 0
+            },
+            {
+                "componentId": 0,
+                "pin": 1
+            }
+        ],
+        "output": [
+            {
+                "componentId": 1,
+                "pin": 2
+            }
+        ]
+    }, 
+    "circuit": {
+        "components": [
+            {
+                "definitionId": -1,
+                "id": 0
+            },
+            {
+                "definitionId": -1,
+                "id": 1
+            }
+        ],
+        "connections": [
+            {
+                "from": {
+                    "componentId": 0,
+                    "pin": 2
+                },
+                "to": [
+                    {
+                        "componentId": 1,
+                        "pin": 0
+                    },
+                    {
+                        "componentId": 1,
+                        "pin": 1
+                    }
+                ]
+            }
+        ]
+    },
+    "truthTable": [
+        [
+            false,
+            false,
+            false
+        ],
+        [
+            false,
+            true,
+            false
+        ],
+        [
+            true,
+            false,
+            false
+        ],
+        [
+            true,
+            true,
+            true
+        ]
+    ],
+    "booleanFunction": "A and B"
+}

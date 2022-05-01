@@ -1,0 +1,44 @@
+{
+    "id": 2,
+    "name": "NotGate",
+    "description": "A NOT gate component.",
+    "type": "Transparent",
+    "pins": {
+        "input": ["A"],
+        "output": ["Y"]
+    },
+    "pinMapping": {
+        "input": [
+            {
+                "componentId": 0,
+                "pin": 0
+            }
+        ],
+        "output": [
+            {
+                "componentId": 0,
+                "pin": 1
+            }
+        ]
+    }, 
+    "circuit": {
+        "components": [
+            {
+                "definitionId": -1,
+                "id": 0
+            }
+        ],
+        "connections": []
+    },
+    "truthTable": [
+        [
+            false,
+            true
+        ],
+        [
+            true,
+            false
+        ]
+    ],
+    "booleanFunction": "not A"
+}
