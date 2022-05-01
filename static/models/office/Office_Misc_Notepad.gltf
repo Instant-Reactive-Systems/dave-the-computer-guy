@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 40,
+      "min": [
+        -0.10000000149011612,
+        0,
+        -0.10000000149011612
+      ],
+      "max": [
+        0.20000000298023224,
+        0.20000000298023224,
+        0.20000000298023224
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 40,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 40,
+      "min": [
+        0.8222659826278687,
+        0.5
+      ],
+      "max": [
+        0.8261719942092896,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 60,
+      "min": [
+        0
+      ],
+      "max": [
+        39
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Notepad",
+      "byteLength": 1756,
+      "uri": "data:application/octet-stream;base64,zczMvc3MzD3NzEw+zczMvQAAAADNzMy9zczMvQAAAADNzEw+zczMvc3MzD3NzMy9zczMvc3MTD7NzEw+zczMvc3MzD3NzMy9zczMvc3MzD3NzEw+zczMvc3MTD7NzMy9zcxMPgAAAADNzEw+zcxMPgAAAADNzMy9zcxMPs3MzD3NzEw+zcxMPs3MzD3NzMy9zcxMPs3MzD3NzEw+zcxMPs3MzD3NzMy9zcxMPs3MTD7NzEw+zcxMPs3MTD7NzMy9zcxMPgAAAADNzEw+zczMvc3MzD3NzEw+zczMvQAAAADNzEw+zcxMPs3MzD3NzEw+zczMvc3MTD7NzEw+zczMvc3MzD3NzEw+zcxMPs3MzD3NzEw+zcxMPs3MTD7NzEw+zczMvQAAAADNzMy9zczMvc3MzD3NzMy9zcxMPgAAAADNzMy9zczMvc3MzD3NzMy9zczMvc3MTD7NzMy9zcxMPs3MzD3NzMy9zcxMPs3MzD3NzMy9zcxMPs3MTD7NzMy9zczMvQAAAADNzMy9zcxMPgAAAADNzEw+zczMvQAAAADNzEw+zcxMPgAAAADNzMy9zczMvc3MTD7NzEw+zcxMPs3MTD7NzEw+zczMvc3MTD7NzMy9zcxMPs3MTD7NzMy9AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAoBTPwAAAD8CgFM/AAAAPwKAUz8AAAA/AoBTPwAAAD8GgFI/AAAAPwaAUj8AAAA/BoBSPwAAAD8GgFI/AAAAPwKAUz8AAAA/AoBTPwAAAD8CgFM/AAAAPwKAUz8AAAA/BoBSPwAAAD8GgFI/AAAAPwaAUj8AAAA/BoBSPwAAAD8CgFM/AAAAPwKAUz8AAAA/AoBTPwAAAD8GgFI/AAAAPwaAUj8AAAA/BoBSPwAAAD8CgFM/AAAAPwaAUj8AAAA/AoBTPwAAAD8CgFM/AAAAPwKAUz8AAAA/BoBSPwAAAD8GgFI/AAAAPwaAUj8AAAA/AoBTPwAAAD8GgFI/AAAAPwKAUz8AAAA/AoBTPwAAAD8CgFM/AAAAPwKAUz8AAAA/BoBSPwAAAD8GgFI/AAAAPwaAUj8AAAA/BoBSPwAAAD8AAAEAAgADAAEAAAAEAAUABgAHAAUABAAIAAkACgAKAAkACwAMAA0ADgAOAA0ADwAQABEAEgATABQAFQAWABEAEAAXABQAEwAYABkAGgAbABwAHQAaABkAHgAdABwAHwAgACEAIgAjACEAIAAkACUAJgAmACUAJwCJUE5HDQoaCgAAAA1JSERSAAABAAAAAAEIBgAAADFZcHcAAAABc1JHQgCuzhzpAAABHUlEQVQ4je3QPUgCcQCG8Uf6d3nieZZXQt1ZBgfRTdZQc5NwQ0ttQQg1NB8EDc2CS4tTCGFLH1MNtkVQ4I0G1RQSWZMhJaFmctUQjS1NDf7WF57h9dm2/UlX1z8VS+eobKz8up9We1H6NZRwhMHQOXJYxh/2E6vMk0jYJEsWnqTgSUGeLqJ0ZJl32U/meYj4cILL9CFJtY/Sag+1Wg3DMHBdFyEE9XqdxSOL1PQEM4FtsktznEwGSJnLGIaBrusU20Vur19Zi5dplu+Jji2ANo6UyXHg3bF/9UCj1WY0OkAkIHF8U0WMfBDSgihakFBrilnru/XT1HUd0zRRVZWz3U32snlemm88Njqsb+3gui6O4yCEwLKsP39bKBR8XwkcUgISmtP/AAAAAElFTkSuQmCCAA=="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 480,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 480,
+      "byteOffset": 480,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 320,
+      "byteOffset": 960,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 120,
+      "byteOffset": 1280,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 1400,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Notepad",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Notepad",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

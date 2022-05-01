@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount, setContext, getContext } from 'svelte';
+	import { onDestroy, onMount, setContext, getContext, SvelteComponent } from 'svelte';
 	import '../app.css';
 	import { Connector } from '$lib/models/connector';
 	import { TypedJSON } from 'typedjson';
@@ -22,6 +22,8 @@
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import { WorkerCircuitBuilderService } from '$lib/services/impl/worker_circuit_builder_service';
     import Modal from 'svelte-simple-modal';
+	import PageTransition from '$lib/components/page_transition.svelte'; 
+	import { page } from '$app/stores';
 
 	let authService: AuthService = new MockAuthService();
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
@@ -58,5 +60,8 @@
 </script>
 
 <Modal>
-    <slot />
+	<PageTransition refresh={$page.routeId}>
+		<slot />
+	</PageTransition>
+
 </Modal>

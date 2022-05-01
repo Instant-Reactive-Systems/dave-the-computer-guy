@@ -1,4 +1,5 @@
 import adapter from '@sveltejs/adapter-auto';
+import adapterStatic from '@sveltejs/adapter-static';
 import preprocess from 'svelte-preprocess';
 import wasmPack from 'vite-plugin-wasm-pack';
 
@@ -13,18 +14,24 @@ const config = {
 	],
 
 	kit: {
-		adapter: adapter(),
-		vite:{
-            build: {
-                minify: false,
-            },
-			optimizeDeps: {
-                exclude: ['digisim']
+		adapter: adapterStatic(),
+		vite: {
+			build: {
+				minify: false,
 			},
-            plugins: [
-                wasmPack([], ['digisim'])
-            ]
-		},
+			optimizeDeps: {
+				include: ["@fortawesome/free-solid-svg-icons"],
+				exclude: ['digisim']
+
+			},
+			ssr: {
+				noExternal: ["@fortawesome/free-solid-svg-icons", "three"]
+			},
+			plugins: [
+				wasmPack([], ['digisim'])
+			]
+		}
+
 	}
 };
 

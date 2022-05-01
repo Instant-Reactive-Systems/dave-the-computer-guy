@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 92,
+      "min": [
+        -0.30000001192092896,
+        0,
+        -0.10000000149011612
+      ],
+      "max": [
+        0.20000000298023224,
+        0.5,
+        0.10000000149011612
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 92,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 92,
+      "min": [
+        0.7597659826278687,
+        0.5
+      ],
+      "max": [
+        0.8886719942092896,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 174,
+      "min": [
+        0
+      ],
+      "max": [
+        91
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_PictureFrame_01",
+      "byteLength": 3648,
+      "uri": "data:application/octet-stream;base64,mpmZvgAAAD/NzMw9mpmZvgAAAAAWAICympmZvgAAAADNzMw9mpmZvgAAAD8WAICyzcxMvs3MzD4WAICyzcxMvgAAAADNzMy9zcxMvgAAAAAWAICyzcxMvs3MzD7NzMy9zczMPQAAAAAWAICyzczMPQAAAADNzMy9zczMPc3MzD4WAICyzczMPc3MzD7NzMy9zcxMPgAAAADNzMw9zcxMPgAAAAAWAICyzcxMPgAAAD/NzMw9zcxMPgAAAD8WAICyzcxMvs3MzD3NzMw9mpmZvgAAAD/NzMw9mpmZvgAAAADNzMw9zcxMvs3MTD7NzMw9zcxMvs3MzD7NzMw9zczMvc3MzD3NzMw9zczMvc3MzD3NzMw9zcxMvs3MTD7NzMw9zcxMvs3MzD3NzMw9zczMvc3MTD7NzMw9zcxMvs3MzD7NzMw9zcxMvs3MTD7NzMw9zczMvc3MTD7NzMw9zczMvZqZmT7NzMw9zczMvc3MzD7NzMw9zczMvc3MzD7NzMw9AAAAAM3MzD3NzMw9AAAAAM3MzD3NzMw9zczMvc3MTD7NzMw9zczMvc3MzD3NzMw9AAAAAM3MTD7NzMw9zczMvZqZmT7NzMw9zczMvc3MTD7NzMw9AAAAAM3MTD7NzMw9AAAAAJqZmT7NzMw9zczMvc3MzD7NzMw9zczMvZqZmT7NzMw9AAAAAJqZmT7NzMw9AAAAAM3MzD7NzMw9AAAAAM3MzD7NzMw9zczMPc3MzD3NzMw9zczMPc3MzD3NzMw9AAAAAM3MTD7NzMw9AAAAAM3MzD3NzMw9zczMPc3MTD7NzMw9AAAAAJqZmT7NzMw9AAAAAM3MTD7NzMw9zczMPc3MTD7NzMw9zczMPZqZmT7NzMw9AAAAAM3MzD7NzMw9AAAAAJqZmT7NzMw9zczMPZqZmT7NzMw9zczMPc3MzD7NzMw9zczMPc3MzD7NzMw9zcxMPgAAAADNzMw9zczMPZqZmT7NzMw9zczMPc3MTD7NzMw9zcxMPgAAAD/NzMw9mpmZvgAAAAAWAICympmZvgAAAD8WAICyzcxMvgAAAAAWAICyzcxMvs3MzD4WAICyzczMPc3MzD4WAICyzczMPQAAAAAWAICyzcxMPgAAAAAWAICyzcxMPgAAAD8WAICyzcxMvgAAAADNzMy9zcxMvs3MzD7NzMy9zczMPQAAAADNzMy9zczMPc3MzD7NzMy9mpmZvgAAAAAWAICyzcxMPgAAAADNzMw9mpmZvgAAAADNzMw9zcxMvgAAAAAWAICyzczMPQAAAAAWAICyzcxMPgAAAAAWAICyzcxMvgAAAADNzMy9zczMPQAAAADNzMy9zcxMvs3MzD4WAICyzczMPc3MzD4WAICyzcxMvs3MzD7NzMy9zczMPc3MzD7NzMy9mpmZvgAAAD/NzMw9zcxMPgAAAD/NzMw9mpmZvgAAAD8WAICyzcxMPgAAAD8WAICyAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD/+f1A/AAAAP/5/UD8AAAA//n9QPwAAAD8CgGM/AAAAPwKAYz8AAAA/AoBjPwAAAD/+f1A/AAAAPwKAYz8AAAA/AoBLPwAAAD8CgGM/AAAAPwKASz8AAAA/+n9RPwAAAD/6f1E/AAAAP/p/UT8AAAA/AoBXPwAAAD8CgFc/AAAAPwKAVz8AAAA/+n9RPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgFc/AAAAPwKASz8AAAA/AoBPPwAAAD8CgEs/AAAAP/5/UD8AAAA//n9QPwAAAD/+f1A/AAAAPwKAYz8AAAA/AoBjPwAAAD8CgGM/AAAAP/5/UD8AAAA/BoBCPwAAAD8GgEI/AAAAPwaAQj8AAAA/AoBjPwAAAD8CgEs/AAAAPwaAQj8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwKASz8AAAA/AoBLPwAAAD8CgEs/AAAAPwAAAQACAAMAAQAAAAQABQAGAAcABQAEAAgACQAKAAoACQALAAwADQAOAA4ADQAPABAAEQASABMAEQAQABQAEQATABUAEAASABYAFwAYABkAGgAbABwAFwAWAB0AGgAZAB4AEQAUAB8AGgAdACAAFQASACEAIgAjACQAJQAmACcAIgAhACgAKQAqACsAJQAkACwAEQAeAC0AKQAoAC4AIAASAC8AMAAxADIAMwA0ADUAMAAvADYANwA4ADkAMwAyADoAEQAsADsANwA2ADwAPQA+ADwALgASADwAOgA9ADwAPgAuAD8AEQA6AD8AOgA8AEAAQQBCAEIAQQBDAEMAQQBEAEUARABGAEQAQQBHAEYARABHAEgASQBKAEoASQBLAEwATQBOAE8ATQBMAFAATQBPAFEATQBQAFIAUABPAFMAUABSAFQAVQBWAFYAVQBXAFgAWQBaAFoAWQBbAIlQTkcNChoKAAAADUlIRFIAAAEAAAAAAQgGAAAAMVlwdwAAAAFzUkdCAK7OHOkAAAEdSURBVDiN7dA9SAJxAIbxR/p3eeJ5lldC3VkGB9FN1lBzk3BDS21BCDU0HwQNzYJLi1MIYUsfUw22RVDgjQbVFBJZkyEloWZy1RCNLU0N/tYXnuH12bb9SVfXPxVL56hsrPy6n1Z7Ufo1lHCEwdA5cljGH/YTq8yTSNgkSxaepOBJQZ4uonRkmXfZT+Z5iPhwgsv0IUm1j9JqD7VaDcMwcF0XIQT1ep3FI4vU9AQzgW2yS3OcTAZImcsYhoGu6xTbRW6vX1mLl2mW74mOLYA2jpTJceDdsX/1QKPVZjQ6QCQgcXxTRYx8ENKCKFqQUGuKWeu79dPUdR3TNFFVlbPdTfayeV6abzw2Oqxv7eC6Lo7jIITAsqw/f1soFHxfCRxSAhKa0/8AAAAASUVORK5CYIIA"
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 1104,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 1104,
+      "byteOffset": 1104,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 736,
+      "byteOffset": 2208,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 348,
+      "byteOffset": 2944,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 3292,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_PictureFrame_01",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_PictureFrame_01",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 72,
+      "min": [
+        -0.10000000149011612,
+        0,
+        -0.20000000298023224
+      ],
+      "max": [
+        0.20000000298023224,
+        0.30000001192092896,
+        0.20000000298023224
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 72,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 72,
+      "min": [
+        0.8105469942092896,
+        0.5
+      ],
+      "max": [
+        0.8105469942092896,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 132,
+      "min": [
+        0
+      ],
+      "max": [
+        71
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Coffee_Mug",
+      "byteLength": 2924,
+      "uri": "data:application/octet-stream;base64,zczMvZqZmT7NzMw9zczMvQAAAADNzEy+zczMvQAAAADNzMw9zczMvZqZmT7NzEy+FgCAMs3MTD7NzEw+FgCAMgAAAADNzMw9FgCAMgAAAADNzEw+FgCAMs3MTD7NzMw9zczMPZqZmT4AAAAAzczMPc3MzD3NzMy9zczMPc3MzD0AAAAAzczMPZqZmT7NzMy9FgCAMs3MzD0AAAAAFgCAMs3MzD3NzMy9FgCAMpqZmT4AAAAAFgCAMpqZmT7NzMy9zczMPQAAAADNzEw+zczMPQAAAADNzMw9zczMPc3MTD7NzEw+zczMPc3MTD7NzMw9zcxMPgAAAADNzMw9zcxMPgAAAADNzEy+zcxMPpqZmT7NzMw9zcxMPpqZmT7NzEy+zczMPQAAAADNzEw+FgCAMs3MTD7NzEw+FgCAMgAAAADNzEw+zczMPc3MTD7NzEw+FgCAMgAAAADNzMw9zczMvZqZmT7NzMw9zczMvQAAAADNzMw9FgCAMs3MTD7NzMw9zczMPc3MTD7NzMw9zcxMPgAAAADNzMw9zczMPQAAAADNzMw9zcxMPpqZmT7NzMw9zczMPc3MzD3NzMy9FgCAMpqZmT7NzMy9FgCAMs3MzD3NzMy9zczMPZqZmT7NzMy9FgCAMs3MzD0AAAAAFgCAMpqZmT4AAAAAzczMPc3MzD0AAAAAzczMPZqZmT4AAAAAzczMvQAAAADNzEy+zczMvZqZmT7NzEy+zcxMPgAAAADNzEy+zcxMPpqZmT7NzEy+FgCAMgAAAADNzMw9zczMPQAAAADNzEw+FgCAMgAAAADNzEw+zczMPQAAAADNzMw9zczMvQAAAADNzEy+zczMvQAAAADNzMw9zcxMPgAAAADNzMw9zcxMPgAAAADNzEy+FgCAMs3MzD0AAAAAzczMPc3MzD0AAAAAFgCAMs3MzD3NzMy9zczMPc3MzD3NzMy9FgCAMs3MTD7NzEw+zczMPc3MTD7NzEw+FgCAMs3MTD7NzMw9zczMPc3MTD7NzMw9zczMvZqZmT7NzMw9zcxMPpqZmT7NzMw9FgCAMpqZmT4AAAAAzczMPZqZmT4AAAAAFgCAMpqZmT7NzMy9zczMPZqZmT7NzMy9zczMvZqZmT7NzEy+zcxMPpqZmT7NzEy+AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AoBPPwAAAD8CgE8/AAAAPwKATz8AAAA/AAABAAIAAwABAAAABAAFAAYABwAFAAQACAAJAAoACwAJAAgADAANAA4ADgANAA8AEAARABIAEgARABMAFAAVABYAFgAVABcAGAAZABoAGwAZABgAHAAdAB4AHwAdABwAIAAdAB8AIQAgACIAIwAdACAAIwAgACEAJAAlACYAJwAlACQAKAApACoAKgApACsALAAtAC4ALgAtAC8AMAAxADIAMwAxADAANAAwADUANAA2ADMANAAzADAANwA2ADQAOAA5ADoAOgA5ADsAPAA9AD4APgA9AD8AQABBAEIAQgBBAEMAQABCAEQAQwBBAEUAQABEAEYARABFAEYARQBBAEcARgBFAEcAiVBORw0KGgoAAAANSUhEUgAAAQAAAAABCAYAAAAxWXB3AAAAAXNSR0IArs4c6QAAAR1JREFUOI3t0D1IAnEAhvFH+nd54nmWV0LdWQYH0U3WUHOTcENLbUEINTQfBA3NgkuLUwhhSx9TDbZFUOCNBtUUElmTISWhZnLVEI0tTQ3+1hee4fXZtv1JV9c/FUvnqGys/LqfVntR+jWUcITB0DlyWMYf9hOrzJNI2CRLFp6k4ElBni6idGSZd9lP5nmI+HCCy/QhSbWP0moPtVoNwzBwXRchBPV6ncUji9T0BDOBbbJLc5xMBkiZyxiGga7rFNtFbq9fWYuXaZbviY4tgDaOlMlx4N2xf/VAo9VmNDpAJCBxfFNFjHwQ0oIoWpBQa4pZ67v109R1HdM0UVWVs91N9rJ5XppvPDY6rG/t4LoujuMghMCyrD9/WygUfF8JHFICEprT/wAAAABJRU5ErkJgggA="
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 864,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 864,
+      "byteOffset": 864,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 576,
+      "byteOffset": 1728,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 264,
+      "byteOffset": 2304,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2568,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Coffee_Mug",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Coffee_Mug",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}

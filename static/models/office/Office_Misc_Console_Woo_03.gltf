@@ -1,0 +1,195 @@
+{
+  "accessors": [
+    {
+      "name": "Node-Mesh_0_positions",
+      "componentType": 5126,
+      "count": 56,
+      "min": [
+        -0.4000000059604645,
+        0,
+        -0.30000001192092896
+      ],
+      "max": [
+        0.30000001192092896,
+        0.20000000298023224,
+        0.4000000059604645
+      ],
+      "type": "VEC3",
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_normals",
+      "componentType": 5126,
+      "count": 56,
+      "min": [
+        -1,
+        -1,
+        -1
+      ],
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "type": "VEC3",
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_texcoords",
+      "componentType": 5126,
+      "count": 56,
+      "min": [
+        0.8925780057907104,
+        0.5
+      ],
+      "max": [
+        0.8964840173721313,
+        0.5
+      ],
+      "type": "VEC2",
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "name": "Node-Mesh_0_indices",
+      "componentType": 5123,
+      "count": 108,
+      "min": [
+        0
+      ],
+      "max": [
+        55
+      ],
+      "type": "SCALAR",
+      "bufferView": 3,
+      "byteOffset": 0
+    }
+  ],
+  "asset": {
+    "generator": "obj2gltf",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "name": "Office_Misc_Console_Woo_03",
+      "byteLength": 2364,
+      "uri": "data:application/octet-stream;base64,zczMvs3MTD7NzMw+zczMvgAAAACamZm+zczMvgAAAADNzMw+zczMvs3MTD6amZm+mpmZPgAAAADNzMw+mpmZPgAAAACamZm+mpmZPs3MTD7NzMw+mpmZPs3MTD6amZm+mpmZvgAAAADNzMw+zczMvs3MTD7NzMw+zczMvgAAAADNzMw+mpmZvs3MzD3NzMw+zcxMvgAAAADNzMw+mpmZvs3MzD3NzMw+mpmZvgAAAADNzMw+zcxMvs3MzD3NzMw+zcxMvs3MzD3NzMw+zczMvQAAAADNzMw+zcxMvgAAAADNzMw+zczMvc3MzD3NzMw+zcxMPgAAAADNzMw+zczMvc3MzD3NzMw+zczMvQAAAADNzMw+zcxMPs3MzD3NzMw+zcxMPs3MzD3NzMw+mpmZPgAAAADNzMw+zcxMPgAAAADNzMw+mpmZPs3MTD7NzMw+zczMvgAAAACamZm+zczMvs3MTD6amZm+mpmZPgAAAACamZm+mpmZPs3MTD6amZm+mpmZvgAAAACamZk+mpmZvgAAAADNzMw+zczMvgAAAADNzMw+mpmZvgAAAACamZk+zcxMvgAAAADNzMw+mpmZvgAAAADNzMw+zcxMvgAAAACamZk+zczMvQAAAADNzMw+zcxMvgAAAADNzMw+zcxMvgAAAACamZk+zczMvQAAAACamZk+zcxMPgAAAADNzMw+zczMvQAAAADNzMw+zczMvQAAAACamZk+zcxMPgAAAACamZk+mpmZPgAAAADNzMw+zcxMPgAAAADNzMw+zcxMPgAAAACamZk+zczMvgAAAACamZm+mpmZPgAAAACamZm+zczMvs3MTD7NzMw+mpmZPs3MTD7NzMw+zczMvs3MTD6amZm+mpmZPs3MTD6amZm+AACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAA+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA//n9kPwAAAD/+f2Q/AAAAP/5/ZD8AAAA/+n9lPwAAAD/+f2Q/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/5/ZD8AAAA//n9kPwAAAD/+f2Q/AAAAP/p/ZT8AAAA//n9kPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/5/ZD8AAAA//n9kPwAAAD/+f2Q/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/5/ZD8AAAA//n9kPwAAAD/+f2Q/AAAAP/5/ZD8AAAA/+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/+f2Q/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAP/p/ZT8AAAA/+n9lPwAAAD/6f2U/AAAAPwAAAQACAAMAAQAAAAQABQAGAAYABQAHAAgACQAKAAsACQAIAAwADQAOAA8ACQALABAADQAMABEADwASABMACQAPABMADwARABQAFQAWABcACQATABgAFQAUABkAFwAaABsACQAXABsAFwAZABwAHQAeAB4AHQAfACAAIQAiACMAJAAlACYAJwAoACkAJAAjACoAKwAsAC0AJwAmAC4ALwAwADEAKwAqADIALQAmADIAJgAgADIALgAtADIAIAAiADMALwAuADMALgAyADQANQA2ADYANQA3AIlQTkcNChoKAAAADUlIRFIAAAEAAAAAAQgGAAAAMVlwdwAAAAFzUkdCAK7OHOkAAAEdSURBVDiN7dA9SAJxAIbxR/p3eeJ5lldC3VkGB9FN1lBzk3BDS21BCDU0HwQNzYJLi1MIYUsfUw22RVDgjQbVFBJZkyEloWZy1RCNLU0N/tYXnuH12bb9SVfXPxVL56hsrPy6n1Z7Ufo1lHCEwdA5cljGH/YTq8yTSNgkSxaepOBJQZ4uonRkmXfZT+Z5iPhwgsv0IUm1j9JqD7VaDcMwcF0XIQT1ep3FI4vU9AQzgW2yS3OcTAZImcsYhoGu6xTbRW6vX1mLl2mW74mOLYA2jpTJceDdsX/1QKPVZjQ6QCQgcXxTRYx8ENKCKFqQUGuKWeu79dPUdR3TNFFVlbPdTfayeV6abzw2Oqxv7eC6Lo7jIITAsqw/f1soFHxfCRxSAhKa0/8AAAAASUVORK5CYIIA"
+    }
+  ],
+  "bufferViews": [
+    {
+      "name": "bufferView_0",
+      "buffer": 0,
+      "byteLength": 672,
+      "byteOffset": 0,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_1",
+      "buffer": 0,
+      "byteLength": 672,
+      "byteOffset": 672,
+      "byteStride": 12,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_2",
+      "buffer": 0,
+      "byteLength": 448,
+      "byteOffset": 1344,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "name": "bufferView_3",
+      "buffer": 0,
+      "byteLength": 216,
+      "byteOffset": 1792,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 2008,
+      "byteLength": 355
+    }
+  ],
+  "images": [
+    {
+      "name": "Office_Misc_Console_Woo_03",
+      "mimeType": "image/png",
+      "bufferView": 4
+    }
+  ],
+  "materials": [
+    {
+      "name": "palette",
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": false
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Node-Mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Node",
+      "mesh": 0
+    }
+  ],
+  "samplers": [
+    {
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "Office_Misc_Console_Woo_03",
+      "sampler": 0,
+      "source": 0
+    }
+  ]
+}
