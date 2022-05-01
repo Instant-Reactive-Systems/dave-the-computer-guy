@@ -36,4 +36,5 @@ export class Quest{
 
     @jsonMember(AnyT)
     verificationData: any;
+
 }

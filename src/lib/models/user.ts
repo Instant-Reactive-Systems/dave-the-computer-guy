@@ -19,8 +19,11 @@ export class User{
     @jsonMapMember(Number,AnyT)
     preferences: Map<string,any>;
 
-    @jsonArrayMember(Number)
-    completedQuestIds: number[]; 
+    @jsonMember(Number)
+    activeQuests: number[]
+
+    @jsonMember(Number)
+    completedQuests: number[]
 }
 
 
