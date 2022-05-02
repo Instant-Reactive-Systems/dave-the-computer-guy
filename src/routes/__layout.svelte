@@ -65,11 +65,7 @@
 	});
 </script>
 
-<Modal
-	styleWindow={{
-		width:'max(40vh,min-content)'
-	}}
->
+<Modal>
 	<PageTransition refresh={$page.routeId}>
 		<slot />
 	</PageTransition>

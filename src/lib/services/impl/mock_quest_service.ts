@@ -6,18 +6,23 @@ import type { QuestService } from "../quest_service";
 
 
 
-const QUEST_1: Quest = new Quest();
-const QUEST_1_TIME_STEADY_STATE: QuestRequirement = new QuestRequirement();
-QUEST_1_TIME_STEADY_STATE.description = "Time to reach steady state, circuit is stable"
-QUEST_1_TIME_STEADY_STATE.id = 1;
-QUEST_1_TIME_STEADY_STATE.name = "Time To Steady State"
-QUEST_1_TIME_STEADY_STATE.value = 10
-QUEST_1.id = 1;
-QUEST_1.description = "This is the first quest";
-QUEST_1.requirements = [QUEST_1_TIME_STEADY_STATE];
-QUEST_1.verificationData = null;
+const QUEST_TEMPLATE: Quest = new Quest();
+const QUEST_TEMPLATE_TIME_STEADY_STATE: QuestRequirement = new QuestRequirement();
+QUEST_TEMPLATE_TIME_STEADY_STATE.description = "Time to reach steady state, circuit is stable"
+QUEST_TEMPLATE_TIME_STEADY_STATE.id = 1;
+QUEST_TEMPLATE_TIME_STEADY_STATE.name = "Time To Steady State"
+QUEST_TEMPLATE_TIME_STEADY_STATE.value = 10
+QUEST_TEMPLATE.id = 1;
+QUEST_TEMPLATE.name = "First quest"
+QUEST_TEMPLATE.description = "This is the first quest";
+QUEST_TEMPLATE.requirements = [QUEST_TEMPLATE_TIME_STEADY_STATE];
+QUEST_TEMPLATE.verificationData = null;
 const ALL_QUESTS: Map<number, Quest> = new Map();
-ALL_QUESTS.set(1, QUEST_1);
+for(let i = 0;i<20;i++){
+    const quest:Quest = JSON.parse(JSON.stringify(QUEST_TEMPLATE));
+    quest.id = i;
+    ALL_QUESTS.set(quest.id,quest);
+}
 
 
 

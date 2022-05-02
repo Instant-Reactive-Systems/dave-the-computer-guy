@@ -81,7 +81,9 @@
 		const width = parent.clientWidth;
 		const height = parent.clientHeight;
 
-		const fabricCanvas = new fabric.Canvas(canvasElement);
+		const fabricCanvas = new fabric.Canvas(canvasElement, {
+			selection: false
+		});
 		const size = { width, height };
 		canvas = new Canvas(fabricCanvas, size);
 		attachListeners();

@@ -23,14 +23,18 @@
 	}
 
 	function openTutorialPanel() {
-		open(TutorialPanel,{} );
+		open(TutorialPanel,);
 	}
 
 	function openQuestsPanel() {
-		open(QuestsPanel, {
+		open(QuestsPanel, {}, {
 			closeButton: false,
 			styleWindow: {
-				fontSize: '30em'
+				width: "auto",
+				overflow: "hidden"
+			},
+			styleContent: {
+				overflow: "hidden"
 			}
 		});
 	}

@@ -5,7 +5,7 @@ import { AnyT, jsonArrayMember, jsonMapMember, jsonMember, jsonObject, toJson } 
 @toJson
 @jsonObject
 export class QuestRequirement{
-    @jsonMember(String)
+    @jsonMember(Number)
     id: number
     
     @jsonMember(String)

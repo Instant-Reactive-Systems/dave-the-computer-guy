@@ -34,7 +34,7 @@
     }
 </script>
 
-<form on:submit|preventDefault>
+<form  on:submit|preventDefault>
     <h1>Load a saved circuit:</h1>
     <input on:keydown|stopPropagation placeholder="Search for circuit name" bind:value={query}/>
 

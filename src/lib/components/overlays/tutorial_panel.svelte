@@ -1,10 +1,10 @@
 <script lang="ts">
-
- 
 </script>
 
-<p> Welcome to the tutorial </p>
+
+<div class="w-[500px]">
+	<p>Welcome to the tutorial</p>
+</div>
 
 <style>
-
 </style>

@@ -28,7 +28,6 @@ export class Canvas {
         this.canvas = canvas;
         this.components = new Map();
         this.wires = new Map();
-
         this.setupZoom();
         this.resize(size);
     }
