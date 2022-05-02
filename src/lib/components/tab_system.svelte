@@ -37,7 +37,7 @@
 
     .content {
         --tab-nav-height: theme(height.8);
-        --hgt: calc(theme(height.full) - var(--tab-nav-height) - 3px);
+        --hgt: calc(theme(height.full) - var(--tab-nav-height) - 1px);
         height: var(--hgt);
         max-height: var(--hgt);
         min-height: var(--hgt);

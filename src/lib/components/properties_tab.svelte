@@ -34,3 +34,4 @@
 		@apply text-left;
 	}
 </style>
+

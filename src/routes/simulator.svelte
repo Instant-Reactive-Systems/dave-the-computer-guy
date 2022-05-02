@@ -28,6 +28,10 @@
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
     import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
     import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
+    import Play from '$lib/icons/play.svelte';
+    import Pause from '$lib/icons/pause.svelte';
+    import Stop from '$lib/icons/stop.svelte';
+    import Step from '$lib/icons/step.svelte';
 
 	type CircuitTab = {
 		name: string;
@@ -289,6 +293,10 @@
 		simulator.insertUserEvent(event);
 	}
 
+    function switchBetweenEditorModes() {
+        // TODO
+    }
+
 	$: {
 		const circuit = currentCircuitTab?.circuit;
         const newCircuit = new Circuit();
@@ -320,8 +328,8 @@
 	});
 </script>
 
-<nav id="app-tab-menu" class="shadow-md flex flex-row justify-between">
-	<ul class="h-10">
+<nav id="toolbar" class="shadow-md inline-flex w-full">
+	<ul id="app-tab-menu">
 		<li>
 			<div class="tab-name">File</div>
 			<div class="dropdown-menu">
@@ -339,33 +347,34 @@
 			</div>
 		</li>
 	</ul>
-
-	<ul class="h-10 space-x-3">
-		<li class="pt-2">
-			<button on:click={startSimulation}>Start</button>
+	<ul id="tools">
+		<li>
+			<button on:click={stopSimulation} title="Stop">
+                <Stop/>
+            </button>
 		</li>
-		<li class="pt-2">
-			<button on:click={pauseSimulation}>Pause</button>
+		<li>
+			<button on:click={pauseSimulation} title="Pause">
+                <Pause/>
+            </button>
 		</li>
-		<li class="pt-2 ">
-			<button on:click={stepSimulation}>Step</button>
+		<li>
+			<button on:click={startSimulation} title="Start">
+                <Play/>
+            </button>
 		</li>
-		<li class="pt-2 ">
-			<button on:click={stopSimulation}>Stop</button>
+		<li>
+			<button on:click={stepSimulation} title="Step">
+                <Step/>
+            </button>
 		</li>
 	</ul>
-
-	<ul class="h-10 space-x-3">
-		<p>{$editorModeStore.type}</p>
-	</ul>
-
-	<div />
 </nav>
 
 <div id="main-content-wrapper" class="grid grid-cols-12">
 	<div class="col-span-9">
-		<div class=" h-full flex flex-col">
-			<main id="canvas-wrapper" class="grow">
+		<div class="h-full flex flex-col">
+			<main id="canvas-wrapper">
 				<Canvas
 					on:componentMove={moveComponent}
 					on:addNewComponent={addNewComponent}
@@ -373,21 +382,28 @@
 					on:userEventGenerated={processUserEvent}
 				/>
 			</main>
-			<nav class="shadow-md">
-				<ul class="h-10 flex flex-row">
-					{#each circuitTabs as tab (tab)}
-						<li
-							class:selected={tab.name == currentCircuitTab.name}
-							class="p-3 hover:bg-blue-500 hover:text-white"
-						>
-							<button on:click={() => switchCircuitTab(tab)}>{tab.name}</button>
-						</li>
-					{/each}
-				</ul>
-			</nav>
+			<div id="bottom-bar" class="inline-flex">
+                <div id="editor-mode"
+                    class:editmode={$editorModeStore.type == 'edit'}
+                    class:wiremode={$editorModeStore.type == 'wire'}
+                    class:delmode={$editorModeStore.type == 'delete'}>
+                        {$editorModeStore.type}
+                </div>
+                <nav id="circuit-tabs">
+				    <ul>
+					    {#each circuitTabs as tab (tab)}
+						<li class:selected={tab.name == currentCircuitTab.name}>
+							<button on:click={() => switchCircuitTab(tab)}>
+                                {tab.name}
+                            </button>
+					    </li>
+					    {/each}
+				    </ul>
+                </nav>
+			</div>
 		</div>
 	</div>
-	<aside id="side-menu" class="col-span-3 shadow-xl border-l border-gray-200">
+	<aside id="side-menu" class="aside-height col-span-3">
 		<TabSystem
 			tabs={[
 				{ title: 'Components', innerComponent: ComponentsTab },
@@ -402,31 +418,43 @@
 	/*
     Top-level navbar styles
     */
-	#app-tab-menu > ul {
+    #toolbar {
+        @apply h-10;
+    }
+
+	#toolbar > ul {
 		@apply inline-flex;
 	}
 
-	#app-tab-menu > ul > li {
+    #toolbar > ul > li:hover {
+        @apply bg-blue-400 text-white;
+    }
+
+    #app-tab-menu {
+        @apply mx-4;
+    }
+
+	#app-tab-menu > li {
 		@apply h-full relative box-border;
 	}
 
-	#app-tab-menu > ul > li:first-child {
-		@apply ml-4;
-	}
-
-	#app-tab-menu > ul > li > .tab-name {
+	#app-tab-menu > li > .tab-name {
 		@apply px-4 h-full flex items-center cursor-default;
 	}
 
-	#app-tab-menu > ul > li:hover {
-		@apply bg-blue-500 text-white;
-	}
+    #tools {
+        @apply pl-4 border-l border-blue-400;
+    }
+
+    #tools > li > button {
+        @apply py-2 px-2;
+    }
 
 	/*
     Dropdown menu styles
     */
 	.dropdown-menu {
-		@apply invisible box-border absolute z-50 bg-white text-black border-blue-500 border-l-2 shadow-md;
+		@apply invisible box-border absolute z-50 bg-white text-black border-blue-400 border-l-2 shadow-md;
 	}
 
 	li:hover > .dropdown-menu {
@@ -434,24 +462,83 @@
 	}
 
 	.dropdown-menu > ul > li:hover {
-		@apply bg-blue-500 text-white;
+		@apply bg-blue-400 text-white;
 	}
 
 	.dropdown-menu > ul > li > button {
 		@apply px-2 py-2 flex items-start w-max;
 	}
 
+    /*
+    Selected
+    */
 	.selected {
-		@apply bg-blue-400;
+		@apply border-blue-400 !important;
 	}
 
-	/*
-    Main content styles
+    /*
+    Editor mode styles
     */
+    #editor-mode {
+        @apply px-4 py-2 uppercase text-lg font-bold;
+    }
+
+    .editmode {
+        @apply bg-yellow-500;
+    }
+
+    
+    .wiremode {
+        @apply bg-purple-700;
+    }
+
+    
+    .delmode {
+        @apply bg-red-700;
+    }
+
+    /*Bottom bar*/
+    #bottom-bar {
+        @apply inline-flex space-x-2;
+    }
+
+    #bottom-bar > * {
+        @apply h-10;
+    }
+
+    #circuit-tabs {
+        @apply grow overflow-x-auto overflow-y-clip;
+    }
+
+    #circuit-tabs > ul {
+        @apply inline-flex;
+    }
+
+    #circuit-tabs > ul > li {
+        @apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
+    }
+
+    #circuit-tabs > ul > li > button {
+        @apply px-4 py-2;
+    }
+
+    /*Aside*/
+    .aside-height {
+        --hgt: calc(theme(height.full));
+        height: var(--hgt);
+        max-height: var(--hgt);
+        min-height: var(--hgt);
+    }
+
+	/*Main content styles*/
 	#main-content-wrapper {
 		--hgt: calc(theme(height.screen) - theme(height.10));
 		height: var(--hgt);
 		max-height: var(--hgt);
 		min-height: var(--hgt);
 	}
+
+    #canvas-wrapper {
+        @apply grow border-r-2 border-b-2 border-gray-200;
+    }
 </style>
