@@ -144,7 +144,8 @@
             switch ($editorModeStore.type) {
                 case 'edit':
                 case 'wire':
-                case 'delete': {
+                case 'delete':
+                case 'paused': {
                     simulator.start();
                     editorModeStore.set(DEFAULT_RUNNING_MODE);
                     break;
