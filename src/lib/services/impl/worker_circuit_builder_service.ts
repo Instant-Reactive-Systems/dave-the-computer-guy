@@ -110,7 +110,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
     }
 
     private disconnectConnectorsForComponent(circuit: Circuit, id: number): void {
-        console.log("Disconnecting connector for component");
+        console.log("Disconnecting connector for component",id,circuit.metadata.rendering);
         //we only disconnect connections in rendering because the real sim connections will be deducted from rendering
         circuit.metadata.rendering.wires
             .forEach(wire => wire.links = wire.links.filter(link => {

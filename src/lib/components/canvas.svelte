@@ -16,7 +16,11 @@
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { Canvas } from './canvas/canvas';
-    import { DEFAULT_DELETE_MODE, DEFAULT_WIRE_MODE, DEFAULT_EDIT_MODE } from '$lib/models/editor_mode';
+	import {
+		DEFAULT_DELETE_MODE,
+		DEFAULT_WIRE_MODE,
+		DEFAULT_EDIT_MODE
+	} from '$lib/models/editor_mode';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -46,15 +50,15 @@
 	$: {
 		if (canvas != undefined) {
 			// Disable component dragging when simulation is not stopped or when in wired mode
-            switch ($editorModeStore.type) {
-                case 'wire':
-                case 'running':
-                case 'paused':
-                    canvas.lockComponents();
-                    break;
-                default:
-                    canvas.unlockComponents();
-            }
+			switch ($editorModeStore.type) {
+				case 'wire':
+				case 'running':
+				case 'paused':
+					canvas.lockComponents();
+					break;
+				default:
+					canvas.unlockComponents();
+			}
 		}
 	}
 
@@ -65,6 +69,10 @@
 			for (const stateEntry of state.entries()) {
 				// If the component is the Wiring component (u32::MAX)
 				if (stateEntry[0] == 4294967295) {
+					console.log(
+						'Wiring rendering metadata',
+						$circuitStore.metadata.rendering.wiringRendering
+					);
 					canvas.renderWiringState(stateEntry[1], $circuitStore.metadata.rendering.wiringRendering);
 				} else {
 					canvas.updateComponent(stateEntry[0], stateEntry[1]);
@@ -85,8 +93,8 @@
 		const height = parent.clientHeight;
 
 		const fabricCanvas = new fabric.Canvas(canvasElement, {
-            selection: false,
-        });
+			selection: false
+		});
 		const size = { width, height };
 		canvas = new Canvas(fabricCanvas, size);
 		attachListeners();
@@ -141,20 +149,20 @@
 		});
 	}
 
-    function handleDrag(event: fabric.IEvent<MouseEvent>): boolean {
-        if (event.e.altKey == true) {
+	function handleDrag(event: fabric.IEvent<MouseEvent>): boolean {
+		if (event.e.altKey == true) {
 			canvas.isDragging = true;
 			canvas.lastPosX = event.e.clientX;
 			canvas.lastPosY = event.e.clientY;
 			return true;
 		}
 
-        return false;
-    }
+		return false;
+	}
 
-    function handleMousedown(event: fabric.IEvent<MouseEvent>) {
-        switch ($editorModeStore.type) {
-            case 'paused':
+	function handleMousedown(event: fabric.IEvent<MouseEvent>) {
+		switch ($editorModeStore.type) {
+			case 'paused':
 			case 'running': {
 				const target = getMouseDownTarget(event);
 
@@ -167,18 +175,18 @@
 				break;
 			}
 			case 'wire': {
-				handleMousedownInWiredMode(event);	
+				handleMousedownInWiredMode(event);
 				break;
 			}
-            case 'edit': {
-                handleMouseDownInEditMode(event);
-                break;
-            }
-            case 'delete': {
-                break;
-            }
+			case 'edit': {
+				handleMouseDownInEditMode(event);
+				break;
+			}
+			case 'delete': {
+				break;
+			}
 		}
-    }
+	}
 
 	function handleMousedownInWiredMode(mouseEvent) {
 		const target = getWiredModeTarget(mouseEvent);
@@ -376,7 +384,7 @@
 	}
 
 	function initWireMode() {
-        const mode = DEFAULT_WIRE_MODE;
+		const mode = DEFAULT_WIRE_MODE;
 		editorModeStore.set(mode);
 	}
 
@@ -440,34 +448,34 @@
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-        switch ($editorModeStore.type) {
-            case 'edit': {
-                // Reset component selection
-                if (event.key == 'Escape') editorModeStore.set(DEFAULT_EDIT_MODE);
+		switch ($editorModeStore.type) {
+			case 'edit': {
+				// Reset component selection
+				if (event.key == 'Escape') editorModeStore.set(DEFAULT_EDIT_MODE);
 
-                // Switch to wire mode
-                if (event.key == 'w') initWireMode();
-                break;
-            }
-            case 'wire': {
-                // Switch to edit mode
-                if (event.key == 'Escape') quitWireMode();
-                break;
-            }
-            case 'delete': {
-                break;
-            }
-            case 'running': {
-                break;
-            }
-            case 'paused': {
-                break;
-            }
-        }
+				// Switch to wire mode
+				if (event.key == 'w') initWireMode();
+				break;
+			}
+			case 'wire': {
+				// Switch to edit mode
+				if (event.key == 'Escape') quitWireMode();
+				break;
+			}
+			case 'delete': {
+				break;
+			}
+			case 'running': {
+				break;
+			}
+			case 'paused': {
+				break;
+			}
+		}
 	}
 
 	function quitWireMode() {
-        const mode = DEFAULT_EDIT_MODE;
+		const mode = DEFAULT_EDIT_MODE;
 		editorModeStore.set(mode);
 		console.log('Quitting wire mode');
 	}
