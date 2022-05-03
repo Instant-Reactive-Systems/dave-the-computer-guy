@@ -6,8 +6,9 @@ import type { ComponentDefinition } from "$lib/models/component_definition";
 import _ from "lodash"
 import { ComponentRef } from "$lib/models/component_ref";
 import type { Wire } from "$lib/models/wire";
-export class WorkerCircuitBuilderService implements CircuitBuilderService {
 
+
+export class WorkerCircuitBuilderService implements CircuitBuilderService {
     private worker: Worker;
     private resolves = {};
     private rejects = {};
@@ -29,9 +30,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
         this.worker.onerror = (e) => {
             console.log(e);
         }
-
     }
-
 
     private handleMessageFromWorker(msg: WorkerResponse) {
         const { id, action, payload, err } = msg

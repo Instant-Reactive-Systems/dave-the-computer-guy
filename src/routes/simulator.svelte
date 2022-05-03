@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, ComponentRenderingData, Junction, WiringRenderingEntry } from '$lib/models/circuit';
+	import { Circuit, Junction } from '$lib/models/circuit';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -13,7 +13,6 @@
 	} from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
-	import { simulationStateStore } from '$lib/stores/simulation_state';
 	import type { Command } from '$lib/models/command';
 	import { get } from 'svelte/store';
 	import { undoStore } from '$lib/stores/undo_store';
@@ -26,12 +25,23 @@
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
+    import { 
+        type EditorModeType, 
+        DEFAULT_DELETE_MODE, 
+        DEFAULT_WIRE_MODE, 
+        DEFAULT_EDIT_MODE,
+        DEFAULT_RUNNING_MODE,
+        DEFAULT_PAUSED_MODE,
+    } from '$lib/models/editor_mode';
     import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
     import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
-    import Play from '$lib/icons/play.svelte';
-    import Pause from '$lib/icons/pause.svelte';
-    import Stop from '$lib/icons/stop.svelte';
-    import Step from '$lib/icons/step.svelte';
+    import PlayIcon from '$lib/icons/play.svelte';
+    import PauseIcon from '$lib/icons/pause.svelte';
+    import StopIcon from '$lib/icons/stop.svelte';
+    import StepIcon from '$lib/icons/step.svelte';
+    import EditIcon from '$lib/icons/edit.svelte';
+    import WireIcon from '$lib/icons/wire.svelte';
+    import { assert } from '$lib/util/common';
 
 	type CircuitTab = {
 		name: string;
@@ -44,6 +54,7 @@
 	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
 	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
+    let isInSimulation = false;
 
     
     const { open, close } = getContext('simple-modal');
@@ -90,40 +101,9 @@
 		currentCircuitTab = newCircuitTab;
 	}
 
-	function saveCircuit() {
-		if ($circuitStore == null) {
-			console.log('Can not save circuit as no circuit is currently loaded.');
-		} else {
-
-			//showCircuitSaveModalForm();
-			//circuitLoader.insertCircuit($circuit, true);
-		}
-	}
-
-	function showCircuitSaveModalForm() {}
-
 	function switchCircuitTab(tab: CircuitTab) {
 		console.log('Switching circuit tab');
 		currentCircuitTab = tab;
-	}
-
-	function loadCircuit() {
-		console.log('Loading circuit');
-	}
-
-	function startSimulation() {
-		const circuit = $circuitStore;
-		if (circuit != null) {
-			circuitBuilder.deductConnections(circuit).then((circ) => {
-				circuitStore.set(circ);
-				if ($simulationStateStore != 'RUNNING') {
-					simulator.startSimulation();
-					simulationStateStore.set('RUNNING');
-				} else {
-					console.log('Simulation already running');
-				}
-			});
-		}
 	}
 
 	function undo() {
@@ -158,28 +138,70 @@
 		undoStore.set(undoStack);
 	}
 
-	function pauseSimulation() {
-		if ($simulationStateStore != 'PAUSED') {
-			simulator.stopSimulation();
-			simulationStateStore.set('PAUSED');
-		} else {
-			console.log('Simulation already stopped');
-		}
+    function startSimulation() {
+        deductConnections().then((circuit) => {
+            circuitStore.set(circuit);
+            switch ($editorModeStore.type) {
+                case 'edit':
+                case 'wire':
+                case 'delete': {
+                    simulator.start();
+                    editorModeStore.set(DEFAULT_RUNNING_MODE);
+                    break;
+                }
+                default: {
+                    console.log('Simulation already running!');
+                }
+            }
+        });
 	}
 
-	function stepSimulation() {
-		simulator.stepSimulation();
-		console.log('Step simulation');
+	function pauseSimulation() {
+        switch ($editorModeStore.type) {
+            case 'running': {
+                simulator.pause();
+                editorModeStore.set(DEFAULT_PAUSED_MODE);
+                break;
+            }
+            case 'paused': {
+                console.log('Simulation already paused!');
+                break;
+            }
+            default: {
+                console.log('Simulation not running!');
+            }
+        }
 	}
 
 	function stopSimulation() {
-		simulationStateStore.set('STOPPED');
-		simulator.stopSimulation();
-        circuitStateStore.set(null);
+        switch ($editorModeStore.type) {
+            case 'paused':
+            case 'running': {
+                simulator.stop();
+                editorModeStore.set(DEFAULT_EDIT_MODE);
+                circuitStateStore.set(null); // Remove simulation visuals
+                break;
+            }
+            default: {
+                console.log('Simulation not running!');
+            }
+        }
+	}
+    
+	function stepSimulation() {
+        deductConnections().then((circuit) => {
+            circuitStore.set(circuit);
+            simulator.step();
+            editorModeStore.set(DEFAULT_PAUSED_MODE);
+        });
 	}
 
+    function deductConnections(): Promise<Circuit> {
+        const circuit = $circuitStore;
+		return circuitBuilder.deductConnections(circuit);
+    }
+
 	function handleKeyPress(e: KeyboardEvent) {
-		console.log(e);
 		if (e.ctrlKey == true && e.key.toLowerCase() == 'z') {
 			undo();
             e.preventDefault();
@@ -212,12 +234,6 @@
 		};
 		addNewComponentCommand.do();
 		addComandToUndoStack(addNewComponentCommand);
-	}
-
-	//returns the id of the new component which is calculated as the length of the current components in the circuit
-	function getNewComponentId(): number {
-		const circuit = $circuitStore;
-		return circuit.components.length;
 	}
 
 	function moveComponent(event): void {
@@ -289,23 +305,34 @@
 
 	function processUserEvent(e) {
 		const event: UserEvent = e.detail.event;
-
 		simulator.insertUserEvent(event);
 	}
 
-    function switchBetweenEditorModes() {
-        // TODO
+    function switchEditorMode(type: EditorModeType) {
+        switch (type) {
+            case 'delete': $editorModeStore = DEFAULT_DELETE_MODE; break;
+            case 'wire': $editorModeStore = DEFAULT_WIRE_MODE; break;
+            case 'edit': $editorModeStore = DEFAULT_EDIT_MODE; break;
+        }
     }
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
-        const newCircuit = new Circuit();
-        newCircuit.metadata.rendering.wiringRendering.set("cigan", new WiringRenderingEntry());
-        // JSON.parse(JSON.stringify(newCircuit))
-        console.log('Empty circuit: ', newCircuit, JSON.stringify(newCircuit));
-		console.log('Setting current circuit: ', circuit, JSON.stringify(circuit));
 		circuitStore.set(circuit);
 	}
+
+    // Set 'isInSimulation' state to disable controls based on editor mode
+    $: {
+        const mode = $editorModeStore;
+        switch (mode.type) {
+            case 'paused':
+            case 'running':
+                isInSimulation = true;
+                break;
+            default:
+                isInSimulation = false;
+        }
+    }
 
 	$: {
 		console.log($circuitStore);
@@ -329,7 +356,7 @@
 </script>
 
 <nav id="toolbar" class="shadow-md inline-flex w-full">
-	<ul id="app-tab-menu">
+	<ul class="app-tab-menu">
 		<li>
 			<div class="tab-name">File</div>
 			<div class="dropdown-menu">
@@ -347,28 +374,40 @@
 			</div>
 		</li>
 	</ul>
-	<ul id="tools">
+	<ul class="sim-tools">
 		<li>
 			<button on:click={stopSimulation} title="Stop">
-                <Stop/>
+                <StopIcon/>
             </button>
 		</li>
 		<li>
 			<button on:click={pauseSimulation} title="Pause">
-                <Pause/>
+                <PauseIcon/>
             </button>
 		</li>
 		<li>
 			<button on:click={startSimulation} title="Start">
-                <Play/>
+                <PlayIcon/>
             </button>
 		</li>
 		<li>
 			<button on:click={stepSimulation} title="Step">
-                <Step/>
+                <StepIcon/>
             </button>
 		</li>
 	</ul>
+    <ul class="editor-tools">
+        <li>
+            <button on:click={() => switchEditorMode('edit')} disabled={isInSimulation}>
+                <EditIcon/>
+            </button>
+        </li>
+        <li>
+            <button on:click={() => switchEditorMode('wire')} disabled={isInSimulation}>
+                <WireIcon/>
+            </button>
+        </li>
+    </ul>
 </nav>
 
 <div id="main-content-wrapper" class="grid grid-cols-12">
@@ -386,7 +425,9 @@
                 <div id="editor-mode"
                     class:editmode={$editorModeStore.type == 'edit'}
                     class:wiremode={$editorModeStore.type == 'wire'}
-                    class:delmode={$editorModeStore.type == 'delete'}>
+                    class:delmode={$editorModeStore.type == 'delete'}
+                    class:runningmode={$editorModeStore.type == 'running'}
+                    class:pausedmode={$editorModeStore.type == 'paused'}>
                         {$editorModeStore.type}
                 </div>
                 <nav id="circuit-tabs">
@@ -430,25 +471,35 @@
         @apply bg-blue-400 text-white;
     }
 
-    #app-tab-menu {
+    .app-tab-menu {
         @apply mx-4;
     }
 
-	#app-tab-menu > li {
+	.app-tab-menu > li {
 		@apply h-full relative box-border;
 	}
 
-	#app-tab-menu > li > .tab-name {
+	.app-tab-menu > li > .tab-name {
 		@apply px-4 h-full flex items-center cursor-default;
 	}
 
-    #tools {
+    .sim-tools {
         @apply pl-4 border-l border-blue-400;
     }
 
-    #tools > li > button {
-        @apply py-2 px-2;
+    .sim-tools > li > button {
+        @apply p-2;
     }
+
+    .editor-tools {
+        @apply pl-4 ml-4 border-l border-slate-300;
+    }
+
+    .editor-tools > li > button {
+        @apply p-2 disabled:cursor-not-allowed;
+    }
+
+
 
 	/*
     Dropdown menu styles
@@ -495,6 +546,14 @@
     
     .delmode {
         @apply bg-red-700;
+    }
+    
+    .runningmode {
+        @apply bg-blue-200;
+    }
+    
+    .pausedmode {
+        @apply bg-green-400;
     }
 
     /*Bottom bar*/

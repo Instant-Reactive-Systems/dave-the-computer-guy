@@ -3,16 +3,18 @@ import type { ComponentDefinition } from "./models/component_definition";
 import type { UserEvent } from "./models/user_event";
 import init, { set_panic_hook, Simulation, Config } from "digisim";
 
+export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinition';
+export type WorkerPayload = ComponentDefinition | Circuit | UserEvent;
+
 export type WorkerMessage = {
-    action: 'setCircuit' | 'startSimulation' | 'pauseSimulation' | 'stepSimulation' |
-    'insertUserEvent' | 'insertDefinition' | 'stopSimulation',
-    payload: ComponentDefinition | Circuit | UserEvent
+    action: WorkerAction,
+    payload: WorkerPayload,
 };
 
 export type WorkerResponse = {
-    action: 'circuitStateUpdate'
-    payload: Map<number, any>
-}
+    action: 'circuitStateUpdate',
+    payload: Map<number, any>,
+};
 
 enum SimulationState {
     STOPPED,
@@ -23,8 +25,7 @@ enum SimulationState {
 let simulatorInitted = false;
 let simulation: Simulation | undefined = undefined;
 let state: SimulationState = SimulationState.STOPPED;
-let simulationInitted;
-let startTime;
+let startTime: number;
 
 init().then(() => {
     set_panic_hook();
@@ -35,39 +36,37 @@ init().then(() => {
 
 declare var self: DedicatedWorkerGlobalScope;
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
-    if (!simulatorInitted) {
-        console.error('Tried to send a message to non initted digisim WASM simulator.');
-        return;
-    }
+    if (!simulatorInitted) return;
 
     const action = msg.data.action;
     const payload = msg.data.payload;
     switch (action) {
-        case "setCircuit":
-            setCircuit(payload as Circuit);
-            break;
-        case "startSimulation":
+        case 'start':
             startSimulation();
             break;
-        case "pauseSimulation":
+        case 'pause':
             pauseSimulation();
             break;
-        case "stopSimulation":
+        case 'stop':
             stopSimulation();
             break;
-        case "stepSimulation":
+        case 'step':
             stepSimulation();
             break;
-        case "insertUserEvent":
+        case 'insertUserEvent':
             insertUserEvent(payload as UserEvent);
             break;
-        case "insertDefinition":
+        case 'insertDefinition':
             insertDefinition(payload as ComponentDefinition);
+            break;
+        case 'setCircuit':
+            setCircuit(payload as Circuit);
+            break;
+        default: break;
     }
 }
 
 function setCircuit(circuit: Circuit) {
-    simulationInitted = false;
     console.log("Setting circuit", circuit);
     simulation.set_circuit(circuit);
 }
@@ -79,37 +78,14 @@ function insertDefinition(definition: ComponentDefinition) {
 
 function startSimulation() {
     console.log("Starting simulation");
-    simulation.init();
-    simulationInitted = true;
+    // Initialize the simulation only if the sim is stopped
+    // Otherwise we resume loop from the paused state
+    if (state == SimulationState.STOPPED) {
+        simulation.init();
+    }
     state = SimulationState.RUNNING;
     startTime = performance.now();
     simulate();
-
-}
-
-
-function simulate() {
-
-    setTimeout(() => {
-        if (state != SimulationState.RUNNING) return;
-
-        for (let i = 0; i < 10; ++i) {
-            simulation.tick();
-        }
-
-        if (performance.now() - startTime > 50) {
-            startTime = performance.now();
-            const circuitState = new Map(Object.entries(simulation.circuit_state())
-                .map(val => [parseInt(val[0]), val[1]]));   
-            const message: WorkerResponse = {
-                action: "circuitStateUpdate",
-                payload: circuitState
-            }
-            console.log("Sending state",message)
-            postMessage(message)
-        }
-        simulate();
-    }, 10);
 }
 
 function pauseSimulation() {
@@ -120,29 +96,54 @@ function pauseSimulation() {
 function stopSimulation() {
     console.log("Stopping simulation");
     state = SimulationState.STOPPED;
-    simulationInitted = false;
 }
 
 function stepSimulation() {
     console.log("Stepping simulation");
-    if (!simulationInitted) {
+
+    // Initialize simulation if not started
+    if (state == SimulationState.STOPPED) {
         simulation.init();
-        simulationInitted = true;
     }
+    state = SimulationState.PAUSED;
     simulation.tick();
-    const circuitState = new Map(Object.entries(simulation.circuit_state())
-        .map(val => [parseInt(val[0]), val[1]]));
+
+    const circuitState = getCircuitState();
     const message: WorkerResponse = {
         action: "circuitStateUpdate",
-        payload: circuitState
-    }
+        payload: circuitState,
+    };
     postMessage(message)
-
-
 }
 
 function insertUserEvent(event: UserEvent) {
     console.log("Inserting user event", event);
     simulation.insert_input_event(event);
+}
+
+function simulate() {
+    setTimeout(() => {
+        if (state != SimulationState.RUNNING) return;
+
+        for (let i = 0; i < 10; ++i) {
+            simulation.tick();
+        }
+
+        if (performance.now() - startTime > 50) {
+            startTime = performance.now();
+            const circuitState = getCircuitState();
+            const message: WorkerResponse = {
+                action: "circuitStateUpdate",
+                payload: circuitState,
+            };
+            console.log("Sending state", message)
+            postMessage(message)
+        }
+        simulate();
+    }, 10);
+}
+
+function getCircuitState(): Map<number, any> {
+    return new Map(Object.entries(simulation.circuit_state()).map(val => [parseInt(val[0]), val[1]]));
 }
 

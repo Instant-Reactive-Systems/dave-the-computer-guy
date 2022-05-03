@@ -11,12 +11,12 @@
 	import { onMount } from 'svelte';
 	import { COMPONENT_DEFINITION_LOADER_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
 	import { Event } from '$lib/models/event';
-	import { simulationStateStore } from '$lib/stores/simulation_state';
 	import { Connector } from '$lib/models/connector';
 	import { Circuit, Junction } from '$lib/models/circuit';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { Canvas } from './canvas/canvas';
+    import { DEFAULT_DELETE_MODE, DEFAULT_WIRE_MODE, DEFAULT_EDIT_MODE } from '$lib/models/editor_mode';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -45,13 +45,16 @@
 	// Locking/unlocking components based on state
 	$: {
 		if (canvas != undefined) {
-			if ($editorModeStore.type == 'wire' || $simulationStateStore != 'STOPPED') {
-				// Disable component dragging when simulation is not stopped or when in wired mode
-				canvas.lockComponents();
-			} else if ($simulationStateStore == 'STOPPED') {
-				// Enable dragging and selecting components if not in wired mode and not simulating
-				canvas.unlockComponents();
-			}
+			// Disable component dragging when simulation is not stopped or when in wired mode
+            switch ($editorModeStore.type) {
+                case 'wire':
+                case 'running':
+                case 'paused':
+                    canvas.lockComponents();
+                    break;
+                default:
+                    canvas.unlockComponents();
+            }
 		}
 	}
 
@@ -62,7 +65,7 @@
 			for (const stateEntry of state.entries()) {
 				// If the component is the Wiring component (u32::MAX)
 				if (stateEntry[0] == 4294967295) {
-					canvas.renderWiringState(stateEntry[1],$circuitStore.metadata.rendering.wiringRendering);
+					canvas.renderWiringState(stateEntry[1], $circuitStore.metadata.rendering.wiringRendering);
 				} else {
 					canvas.updateComponent(stateEntry[0], stateEntry[1]);
 				}
@@ -98,51 +101,13 @@
 	}
 
 	function attachListeners() {
-		canvas.on('mouse:down', (mouseEvent) => {
+		canvas.on('mouse:down', (event: fabric.IEvent<MouseEvent>) => {
 			console.log('mouse down');
-			//handle drag
-			if (mouseEvent.e.altKey === true) {
-				canvas.isDragging = true;
-				canvas.lastPosX = mouseEvent.e.clientX;
-				canvas.lastPosY = mouseEvent.e.clientY;
-				return;
-			}
+			// Drag has precedence over all other mouse down events
+			if (handleDrag(event)) return;
 
-			//handle mouse down event depending on simulation state
-			switch ($simulationStateStore) {
-				case 'RUNNING': {
-					const target = getMouseDownTarget(mouseEvent);
-
-					if (target != null && target.data.type == 'component') {
-						generateUserEvent(target.data.ref as RenderableComponent);
-					} else if (target == null) {
-						processNoTargetMouseDown(mouseEvent);
-					}
-
-					break;
-				}
-				case 'STOPPED': {
-					if ($editorModeStore.type == 'wire') {
-						handleMousedownInWiredMode(mouseEvent);
-					} else {
-						handleMouseDownInEditMode(mouseEvent);
-					}
-
-					break;
-				}
-				case 'PAUSED': {
-					const target = getMouseDownTarget(mouseEvent);
-					if (target != null && target.data.type == 'component') {
-						generateUserEvent(target.data.ref as RenderableComponent);
-					}
-					if (target == null) {
-						processNoTargetMouseDown(mouseEvent);
-						return;
-					}
-
-					break;
-				}
-			}
+			// Handle mouse down event depending on editor mode
+			handleMousedown(event);
 		});
 
 		canvas.on('object:modified', (e: any) => {
@@ -152,28 +117,68 @@
 			}
 		});
 
-		canvas.on('mouse:move', (mouseEvent) => {
-			const pt = canvas.getPointer(mouseEvent.e);
+		canvas.on('mouse:move', (event: fabric.IEvent<MouseEvent>) => {
+			const pt = canvas.getPointer(event.e);
 			if (canvas.isDragging) {
-				canvas.viewportTransform[4] += mouseEvent.e.clientX - canvas.lastPosX;
-				canvas.viewportTransform[5] += mouseEvent.e.clientY - canvas.lastPosY;
+				canvas.viewportTransform[4] += event.e.clientX - canvas.lastPosX;
+				canvas.viewportTransform[5] += event.e.clientY - canvas.lastPosY;
 				canvas.requestRenderAll();
-				canvas.lastPosX = mouseEvent.e.clientX;
-				canvas.lastPosY = mouseEvent.e.clientY;
+				canvas.lastPosX = event.e.clientX;
+				canvas.lastPosY = event.e.clientY;
 				return;
 			}
+
 			if ($editorModeStore.type == 'wire') {
-				showTemporaryWire(mouseEvent);
+				showTemporaryWire(event);
 			}
 		});
 
 		canvas.on('mouse:up', (_) => {
-			// on mouse up we want to recalculate new interaction
+			// On mouse up we want to recalculate new interaction
 			// for all objects, so we call setViewportTransform
 			canvas.setViewportTransform(canvas.viewportTransform);
 			canvas.isDragging = false;
 		});
 	}
+
+    function handleDrag(event: fabric.IEvent<MouseEvent>): boolean {
+        if (event.e.altKey == true) {
+			canvas.isDragging = true;
+			canvas.lastPosX = event.e.clientX;
+			canvas.lastPosY = event.e.clientY;
+			return true;
+		}
+
+        return false;
+    }
+
+    function handleMousedown(event: fabric.IEvent<MouseEvent>) {
+        switch ($editorModeStore.type) {
+            case 'paused':
+			case 'running': {
+				const target = getMouseDownTarget(event);
+
+				if (target != null && target.data.type == 'component') {
+					generateUserEvent(target.data.ref as RenderableComponent);
+				} else if (target == null) {
+					processNoTargetMouseDown(event);
+				}
+
+				break;
+			}
+			case 'wire': {
+				handleMousedownInWiredMode(event);	
+				break;
+			}
+            case 'edit': {
+                handleMouseDownInEditMode(event);
+                break;
+            }
+            case 'delete': {
+                break;
+            }
+		}
+    }
 
 	function handleMousedownInWiredMode(mouseEvent) {
 		const target = getWiredModeTarget(mouseEvent);
@@ -371,16 +376,7 @@
 	}
 
 	function initWireMode() {
-		const mode = _.cloneDeep($editorModeStore);
-
-		mode.type = 'wire';
-		mode.data = {
-			source: null,
-			lastX: null,
-			lastY: null,
-			currentWire: null,
-			currentJunction: null
-		};
+        const mode = DEFAULT_WIRE_MODE;
 		editorModeStore.set(mode);
 	}
 
@@ -443,24 +439,37 @@
 		});
 	}
 
-	function handleKeydown(e) {
-		if ($editorModeStore.type == 'wire' && e.key == 'Escape') {
-			quitWireMode();
-			return;
-		}
+	function handleKeydown(event: KeyboardEvent) {
+        switch ($editorModeStore.type) {
+            case 'edit': {
+                // Reset component selection
+                if (event.key == 'Escape') editorModeStore.set(DEFAULT_EDIT_MODE);
 
-		if ($editorModeStore.type != 'wire' && e.key == 'w' && $simulationStateStore == 'STOPPED') {
-			initWireMode();
-			return;
-		}
+                // Switch to wire mode
+                if (event.key == 'w') initWireMode();
+                break;
+            }
+            case 'wire': {
+                // Switch to edit mode
+                if (event.key == 'Escape') quitWireMode();
+                break;
+            }
+            case 'delete': {
+                break;
+            }
+            case 'running': {
+                break;
+            }
+            case 'paused': {
+                break;
+            }
+        }
 	}
 
 	function quitWireMode() {
-		const mode = _.cloneDeep($editorModeStore);
-		mode.type = 'edit';
-		mode.data = null;
-		console.log('Quitting wire mode');
+        const mode = DEFAULT_EDIT_MODE;
 		editorModeStore.set(mode);
+		console.log('Quitting wire mode');
 	}
 
 	function resizeCanvas(_event) {
