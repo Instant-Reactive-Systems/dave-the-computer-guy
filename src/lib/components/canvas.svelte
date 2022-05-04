@@ -168,8 +168,6 @@
 
 				if (target != null && target.data.type == 'component') {
 					generateUserEvent(target.data.ref as RenderableComponent);
-				} else if (target == null) {
-					processNoTargetMouseDown(event);
 				}
 
 				break;

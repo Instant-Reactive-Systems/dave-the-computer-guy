@@ -141,11 +141,15 @@ import Edit from '$lib/icons/edit.svelte';
 
     function startSimulation() {
         deductConnections().then((circuit) => {
-            circuitStore.set(circuit);
             switch ($editorModeStore.type) {
                 case 'edit':
                 case 'wire':
                 case 'delete':
+					circuitStore.set(circuit);
+					editorModeStore.set(DEFAULT_RUNNING_MODE);
+					simulator.setCircuit(circuit);
+					simulator.start();
+					break;
                 case 'paused': {
                     simulator.start();
                     editorModeStore.set(DEFAULT_RUNNING_MODE);
@@ -192,6 +196,7 @@ import Edit from '$lib/icons/edit.svelte';
     
 	function stepSimulation() {
 		if($editorModeStore.type == 'running'){
+			console.log("Can not step while simulator is rurnning");
 			return;
 		}
 
@@ -200,6 +205,7 @@ import Edit from '$lib/icons/edit.svelte';
 		}else{
 			deductConnections().then((circuit) => {
             	circuitStore.set(circuit);
+				simulator.setCircuit(circuit);
             	simulator.step();
             	editorModeStore.set(DEFAULT_PAUSED_MODE);
         	});
@@ -344,13 +350,7 @@ import Edit from '$lib/icons/edit.svelte';
         }
     }
 
-	$: {
-		console.log($circuitStore);
-		const circuit = $circuitStore;
-		if (circuit != null) {
-			simulator.setCircuit(circuit);
-		}
-	}
+	
 	onMount(() => {
 		createNewCircuit();
 		serviceSubscriptions.push(
