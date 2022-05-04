@@ -33,6 +33,7 @@
         DEFAULT_RUNNING_MODE,
         DEFAULT_PAUSED_MODE,
     } from '$lib/models/editor_mode';
+    import Notifier from '$lib/util/notifier';
     import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
     import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
     import PlayIcon from '$lib/icons/play.svelte';
@@ -40,9 +41,14 @@
     import StopIcon from '$lib/icons/stop.svelte';
     import StepIcon from '$lib/icons/step.svelte';
     import EditIcon from '$lib/icons/edit.svelte';
+    import DeleteIcon from '$lib/icons/delete.svelte';
     import WireIcon from '$lib/icons/wire.svelte';
-    import { assert } from '$lib/util/common';
-import Edit from '$lib/icons/edit.svelte';
+    import QuestIcon from '$lib/icons/quest.svelte';
+    import TutorialIcon from '$lib/icons/tutorial.svelte';
+    import { getNotificationsContext } from 'svelte-notifications';
+
+    const { open, close } = getContext('simple-modal');
+    const notifier = new Notifier(getNotificationsContext());
 
 	type CircuitTab = {
 		name: string;
@@ -57,40 +63,43 @@ import Edit from '$lib/icons/edit.svelte';
 	let serviceSubscriptions: Subscription[] = [];
     let isInSimulation = false;
 
-    
-    const { open, close } = getContext('simple-modal');
-    const openSaveCircuitModal = () => open(SaveCircuit, { onSend: (name: string, description: string) => {
-        const circuit = $circuitStore;
-        circuit.name = name;
-        circuit.description = description;
-        circuitLoader.insertCircuit(circuit).then((circ) => {
-            console.log('Loaded circuit: ', circ);
-            currentCircuitTab.name = name;
-            currentCircuitTab.circuit = circ;
-            circuitTabs = circuitTabs;
-            currentCircuitTab = currentCircuitTab;
-        });
-        close();
-    }});
-    const openLoadCircuitModal = () => open(LoadCircuit, { onLoad: (circuit: Circuit) => {
-        // Load opened tab
-        const found = circuitTabs.find((x) => x.circuit.id == circuit.id);
-        if (found != null) {
-            currentCircuitTab = found;
-            circuitTabs = circuitTabs;
+    function openSaveCircuitModal() {
+        open(SaveCircuit, { onSend: (name: string, description: string) => {
+            const circuit = $circuitStore;
+            circuit.name = name;
+            circuit.description = description;
+            circuitLoader.insertCircuit(circuit).then((circ) => {
+                console.log('Loaded circuit: ', circ);
+                currentCircuitTab.name = name;
+                currentCircuitTab.circuit = circ;
+                circuitTabs = circuitTabs;
+                currentCircuitTab = currentCircuitTab;
+            });
             close();
-            return;
-        }
+        }});
+    }
 
-        // Open new tab
-        let newCircuitTab = {
-			name: circuit.name,
-			circuit: circuit,
-		};
-		circuitTabs = [...circuitTabs, newCircuitTab];
-		currentCircuitTab = newCircuitTab;
-        close();
-    }});
+    function openLoadCircuitModal() {
+        open(LoadCircuit, { onLoad: (circuit: Circuit) => {
+            // Load opened tab
+            const found = circuitTabs.find((x) => x.circuit.id == circuit.id);
+            if (found != null) {
+                currentCircuitTab = found;
+                circuitTabs = circuitTabs;
+                close();
+                return;
+            }
+
+            // Open new tab
+            let newCircuitTab = {
+			    name: circuit.name,
+			    circuit: circuit,
+		    };
+		    circuitTabs = [...circuitTabs, newCircuitTab];
+		    currentCircuitTab = newCircuitTab;
+            close();
+        }});
+    }
 
 	function createNewCircuit() {
 		console.log('Creating new circuit');
@@ -156,7 +165,7 @@ import Edit from '$lib/icons/edit.svelte';
                     break;
                 }
                 default: {
-                    console.log('Simulation already running!');
+                    notifier.info('Simulation already running!');
                 }
             }
         });
@@ -195,21 +204,24 @@ import Edit from '$lib/icons/edit.svelte';
 	}
     
 	function stepSimulation() {
-		if($editorModeStore.type == 'running'){
-			console.log("Can not step while simulator is rurnning");
-			return;
-		}
-
-		if($editorModeStore.type == 'paused'){
-			simulator.step();
-		}else{
-			deductConnections().then((circuit) => {
-            	circuitStore.set(circuit);
-				simulator.setCircuit(circuit);
-            	simulator.step();
-            	editorModeStore.set(DEFAULT_PAUSED_MODE);
-        	});
-		}
+        switch ($editorModeStore.type) {
+            case 'paused': {
+                simulator.step();
+                break;
+            }
+            case 'running': {
+			    console.log("Can not step while simulator is rurnning");
+                break;
+            }
+            default: {
+                deductConnections().then((circuit) => {
+                    circuitStore.set(circuit);
+                    simulator.setCircuit(circuit);
+            	    simulator.step();
+            	    editorModeStore.set(DEFAULT_PAUSED_MODE);
+                });
+            }
+        }
 	}
 
     function deductConnections(): Promise<Circuit> {
@@ -406,18 +418,35 @@ import Edit from '$lib/icons/edit.svelte';
 			</button>
 		</li>
 	</ul>
-	<ul class="editor-tools">
-		<li>
-			<button on:click={() => switchEditorMode('edit')} disabled={isInSimulation}>
-				<EditIcon />
-			</button>
-		</li>
-		<li>
-			<button on:click={() => switchEditorMode('wire')} disabled={isInSimulation}>
-				<WireIcon />
-			</button>
-		</li>
-	</ul>
+    <ul class="editor-tools">
+        <li>
+            <button on:click={() => switchEditorMode('edit')} disabled={isInSimulation} title="Edit mode">
+                <EditIcon/>
+            </button>
+        </li>
+        <li>
+            <button on:click={() => switchEditorMode('wire')} disabled={isInSimulation} title="Wire mode">
+                <WireIcon/>
+            </button>
+        </li>
+        <li>
+            <button on:click={() => switchEditorMode('delete')} disabled={isInSimulation} title="Delete mode">
+                <DeleteIcon/>
+            </button>
+        </li>
+    </ul>
+    <ul class="game-tools">
+        <li>
+            <button on:click={() => {}} title="Quests">
+                <QuestIcon/>
+            </button>
+        </li>
+        <li>
+            <button on:click={() => {}} title="Tutorial">
+                <TutorialIcon/>
+            </button>
+        </li>
+    </ul>
 </nav>
 
 <div id="main-content-wrapper" class="grid grid-cols-12">
@@ -431,32 +460,31 @@ import Edit from '$lib/icons/edit.svelte';
 					on:userEventGenerated={processUserEvent}
 				/>
 			</main>
-			<div id="bottom-bar" class="inline-flex">
-				<div
-					id="editor-mode"
-					class:editmode={$editorModeStore.type == 'edit'}
-					class:wiremode={$editorModeStore.type == 'wire'}
-					class:delmode={$editorModeStore.type == 'delete'}
-					class:runningmode={$editorModeStore.type == 'running'}
-					class:pausedmode={$editorModeStore.type == 'paused'}
-				>
-					{$editorModeStore.type}
-				</div>
-				<nav id="circuit-tabs">
-					<ul>
-						{#each circuitTabs as tab (tab)}
-							<li class:selected={tab.name == currentCircuitTab.name}>
-								<button on:click={() => switchCircuitTab(tab)}>
-									{tab.name}
-								</button>
-							</li>
-						{/each}
-					</ul>
-				</nav>
+			<div class="bottom-bar">
+                <div class="editor-mode"
+                    class:editmode={$editorModeStore.type == 'edit'}
+                    class:wiremode={$editorModeStore.type == 'wire'}
+                    class:delmode={$editorModeStore.type == 'delete'}
+                    class:runningmode={$editorModeStore.type == 'running'}
+                    class:pausedmode={$editorModeStore.type == 'paused'}
+                    title="Editor mode">
+                        {$editorModeStore.type}
+                </div>
+                <nav class="circuit-tabs scroll-shadows-x">
+				    <ul>
+					    {#each circuitTabs as tab (tab)}
+						<li class:selected={tab.name == currentCircuitTab.name}>
+							<button on:click={() => switchCircuitTab(tab)}>
+                                {tab.name}
+                            </button>
+					    </li>
+					    {/each}
+				    </ul>
+                </nav>
 			</div>
 		</div>
 	</div>
-	<aside id="side-menu" class="aside-height col-span-3">
+	<aside id="side-menu" class="aside col-span-3">
 		<TabSystem
 			tabs={[
 				{ title: 'Components', innerComponent: ComponentsTab },
@@ -510,6 +538,14 @@ import Edit from '$lib/icons/edit.svelte';
 	.editor-tools > li > button {
 		@apply p-2 disabled:cursor-not-allowed;
 	}
+    
+    .game-tools {
+        @apply mr-4 w-full justify-end;
+    }
+
+    .game-tools > li > button {
+        @apply p-2;
+    }
 
 	/*
     Dropdown menu styles
@@ -540,62 +576,63 @@ import Edit from '$lib/icons/edit.svelte';
 	/*
     Editor mode styles
     */
-	#editor-mode {
-		@apply px-4 py-2 uppercase text-lg font-bold;
-	}
+    .editor-mode {
+        @apply px-4 py-2 uppercase text-lg font-bold;
+    }
 
-	.editmode {
-		@apply bg-yellow-500;
-	}
-
-	.wiremode {
-		@apply bg-purple-700;
-	}
+    .editmode {
+        @apply bg-yellow-500;
+    }
+    
+    .wiremode {
+        @apply bg-purple-700;
+    }
 
 	.delmode {
 		@apply bg-red-700;
 	}
 
 	.runningmode {
-		@apply bg-blue-200;
+		@apply bg-blue-300;
 	}
 
 	.pausedmode {
 		@apply bg-green-400;
 	}
 
-	/*Bottom bar*/
-	#bottom-bar {
-		@apply inline-flex space-x-2;
-	}
+    /*Bottom bar*/
+    .bottom-bar {
+        @apply inline-flex;
+    }
 
-	#bottom-bar > * {
-		@apply h-10;
-	}
+    .bottom-bar > * {
+        @apply h-10;
+    }
 
-	#circuit-tabs {
-		@apply grow overflow-x-auto overflow-y-clip;
-	}
+    .circuit-tabs {
+        @apply grow overflow-x-auto overflow-y-clip border-t-2 border-gray-200;
+    }
 
-	#circuit-tabs > ul {
-		@apply inline-flex;
-	}
+    .circuit-tabs > ul {
+        @apply inline-flex;
+    }
 
-	#circuit-tabs > ul > li {
-		@apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
-	}
+    .circuit-tabs > ul > li {
+        @apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
+    }
 
-	#circuit-tabs > ul > li > button {
-		@apply px-4 py-2;
-	}
+    .circuit-tabs > ul > li > button {
+        @apply px-4 py-2;
+    }
 
-	/*Aside*/
-	.aside-height {
-		--hgt: calc(theme(height.full));
-		height: var(--hgt);
-		max-height: var(--hgt);
-		min-height: var(--hgt);
-	}
+    /*Aside*/
+    .aside {
+        --hgt: calc(theme(height.full));
+        height: var(--hgt);
+        max-height: var(--hgt);
+        min-height: var(--hgt);
+        @apply border-l-2 border-gray-200;
+    }
 
 	/*Main content styles*/
 	#main-content-wrapper {
@@ -605,7 +642,7 @@ import Edit from '$lib/icons/edit.svelte';
 		min-height: var(--hgt);
 	}
 
-	#canvas-wrapper {
-		@apply grow border-r-2 border-b-2 border-gray-200;
-	}
+    #canvas-wrapper {
+        @apply grow;
+    }
 </style>

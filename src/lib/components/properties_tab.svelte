@@ -1,23 +1,21 @@
 <script lang="ts">
     import { getContext } from 'svelte';
     import ParamEditor from '$lib/components/overlays/simulator/param_editor.svelte';
-
-    type Param = {
-        name: string,
-        value: any,
-    };
+    import type { Param } from '$lib/models/param';
 
     let params: Param[] = [
-        {name: 'Foo', value: 'XYZ'},
-        {name: 'Bar', value: 'XYZ'},
-        {name: 'Baz', value: 'XYZ'},
+        {id: 0, name: 'Foo', data: 'XYZ'},
+        {id: 1, name: 'Bar', data: 'XYZ'},
+        {id: 2, name: 'Baz', data: 'XYZ'},
     ];
 
     const { open, close } = getContext('simple-modal');
-    const paramEditorModal = () => open(ParamEditor);
+    function openParamEditorModal(param: Param) {
+        open(ParamEditor, {param: param});
+    }
 </script>
 
-<div class="indenter">
+<div class="indenter scroll-shadows-y">
     <section class="common">
         <ul>
             <li>
@@ -45,14 +43,13 @@
             </thead>
             <tbody>
                 {#each params as param, i}
-                <tr on:click={paramEditorModal}>
+                <tr on:click={() => openParamEditorModal(param)}>
                     <td>{param.name}</td>
-                    <td>{param.value}</td>
+                    <td>{param.data}</td>
                 </tr>
                 {/each}
             </tbody>
         </table>
-        <button class="add-param" on:click={paramEditorModal}>Add new parameter</button>
     </section>
 </div>
 
@@ -99,10 +96,6 @@
 
     .params > table > tbody td {
         @apply px-2;
-    }
-
-    .add-param {
-        @apply w-full border border-slate-300 hover:bg-blue-400 hover:text-white rounded-md;
     }
 </style>
 

@@ -70,7 +70,7 @@
     }
 
     .circuit-list {
-        @apply overflow-y-auto text-center;
+        @apply max-h-48 overflow-y-auto text-center;
     }
 
     .circuit-list > span {

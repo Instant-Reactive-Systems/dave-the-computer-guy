@@ -23,6 +23,7 @@
 	import { WorkerCircuitBuilderService } from '$lib/services/impl/worker_circuit_builder_service';
     import Modal from 'svelte-simple-modal';
 	import PageTransition from '$lib/components/page_transition.svelte'; 
+	import Notifications from 'svelte-notifications'; 
 	import { page } from '$app/stores';
 
 	let authService: AuthService = new MockAuthService();
@@ -59,9 +60,10 @@
 	});
 </script>
 
-<Modal>
-	<PageTransition refresh={$page.routeId}>
-		<slot />
-	</PageTransition>
-
-</Modal>
+<Notifications>
+    <Modal>
+	    <PageTransition refresh={$page.routeId}>
+		    <slot />
+	    </PageTransition>
+    </Modal>
+</Notifications>
