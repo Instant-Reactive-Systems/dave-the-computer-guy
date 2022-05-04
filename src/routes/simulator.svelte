@@ -191,14 +191,18 @@ import Edit from '$lib/icons/edit.svelte';
 	}
     
 	function stepSimulation() {
-		if($editorModeStore.type != 'running' && $editorModeStore.type != 'paused'){
-        	deductConnections().then((circuit) => {
+		if($editorModeStore.type == 'running'){
+			return;
+		}
+
+		if($editorModeStore.type == 'paused'){
+			simulator.step();
+		}else{
+			deductConnections().then((circuit) => {
             	circuitStore.set(circuit);
             	simulator.step();
             	editorModeStore.set(DEFAULT_PAUSED_MODE);
         	});
-		}else{
-			simulator.step();
 		}
 	}
 
