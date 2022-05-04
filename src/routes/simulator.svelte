@@ -42,6 +42,7 @@
     import EditIcon from '$lib/icons/edit.svelte';
     import WireIcon from '$lib/icons/wire.svelte';
     import { assert } from '$lib/util/common';
+import Edit from '$lib/icons/edit.svelte';
 
 	type CircuitTab = {
 		name: string;
@@ -190,11 +191,15 @@
 	}
     
 	function stepSimulation() {
-        deductConnections().then((circuit) => {
-            circuitStore.set(circuit);
-            simulator.step();
-            editorModeStore.set(DEFAULT_PAUSED_MODE);
-        });
+		if($editorModeStore.type != 'running' && $editorModeStore.type != 'paused'){
+        	deductConnections().then((circuit) => {
+            	circuitStore.set(circuit);
+            	simulator.step();
+            	editorModeStore.set(DEFAULT_PAUSED_MODE);
+        	});
+		}else{
+			simulator.step();
+		}
 	}
 
     function deductConnections(): Promise<Circuit> {
@@ -378,37 +383,37 @@
 	<ul class="sim-tools">
 		<li>
 			<button on:click={stopSimulation} title="Stop">
-                <StopIcon/>
-            </button>
+				<StopIcon />
+			</button>
 		</li>
 		<li>
 			<button on:click={pauseSimulation} title="Pause">
-                <PauseIcon/>
-            </button>
+				<PauseIcon />
+			</button>
 		</li>
 		<li>
 			<button on:click={startSimulation} title="Start">
-                <PlayIcon/>
-            </button>
+				<PlayIcon />
+			</button>
 		</li>
 		<li>
 			<button on:click={stepSimulation} title="Step">
-                <StepIcon/>
-            </button>
+				<StepIcon />
+			</button>
 		</li>
 	</ul>
-    <ul class="editor-tools">
-        <li>
-            <button on:click={() => switchEditorMode('edit')} disabled={isInSimulation}>
-                <EditIcon/>
-            </button>
-        </li>
-        <li>
-            <button on:click={() => switchEditorMode('wire')} disabled={isInSimulation}>
-                <WireIcon/>
-            </button>
-        </li>
-    </ul>
+	<ul class="editor-tools">
+		<li>
+			<button on:click={() => switchEditorMode('edit')} disabled={isInSimulation}>
+				<EditIcon />
+			</button>
+		</li>
+		<li>
+			<button on:click={() => switchEditorMode('wire')} disabled={isInSimulation}>
+				<WireIcon />
+			</button>
+		</li>
+	</ul>
 </nav>
 
 <div id="main-content-wrapper" class="grid grid-cols-12">
@@ -423,25 +428,27 @@
 				/>
 			</main>
 			<div id="bottom-bar" class="inline-flex">
-                <div id="editor-mode"
-                    class:editmode={$editorModeStore.type == 'edit'}
-                    class:wiremode={$editorModeStore.type == 'wire'}
-                    class:delmode={$editorModeStore.type == 'delete'}
-                    class:runningmode={$editorModeStore.type == 'running'}
-                    class:pausedmode={$editorModeStore.type == 'paused'}>
-                        {$editorModeStore.type}
-                </div>
-                <nav id="circuit-tabs">
-				    <ul>
-					    {#each circuitTabs as tab (tab)}
-						<li class:selected={tab.name == currentCircuitTab.name}>
-							<button on:click={() => switchCircuitTab(tab)}>
-                                {tab.name}
-                            </button>
-					    </li>
-					    {/each}
-				    </ul>
-                </nav>
+				<div
+					id="editor-mode"
+					class:editmode={$editorModeStore.type == 'edit'}
+					class:wiremode={$editorModeStore.type == 'wire'}
+					class:delmode={$editorModeStore.type == 'delete'}
+					class:runningmode={$editorModeStore.type == 'running'}
+					class:pausedmode={$editorModeStore.type == 'paused'}
+				>
+					{$editorModeStore.type}
+				</div>
+				<nav id="circuit-tabs">
+					<ul>
+						{#each circuitTabs as tab (tab)}
+							<li class:selected={tab.name == currentCircuitTab.name}>
+								<button on:click={() => switchCircuitTab(tab)}>
+									{tab.name}
+								</button>
+							</li>
+						{/each}
+					</ul>
+				</nav>
 			</div>
 		</div>
 	</div>
@@ -460,21 +467,21 @@
 	/*
     Top-level navbar styles
     */
-    #toolbar {
-        @apply h-10;
-    }
+	#toolbar {
+		@apply h-10;
+	}
 
 	#toolbar > ul {
 		@apply inline-flex;
 	}
 
-    #toolbar > ul > li:hover {
-        @apply bg-blue-400 text-white;
-    }
+	#toolbar > ul > li:hover {
+		@apply bg-blue-400 text-white;
+	}
 
-    .app-tab-menu {
-        @apply mx-4;
-    }
+	.app-tab-menu {
+		@apply mx-4;
+	}
 
 	.app-tab-menu > li {
 		@apply h-full relative box-border;
@@ -484,23 +491,21 @@
 		@apply px-4 h-full flex items-center cursor-default;
 	}
 
-    .sim-tools {
-        @apply pl-4 border-l border-blue-400;
-    }
+	.sim-tools {
+		@apply pl-4 border-l border-blue-400;
+	}
 
-    .sim-tools > li > button {
-        @apply p-2;
-    }
+	.sim-tools > li > button {
+		@apply p-2;
+	}
 
-    .editor-tools {
-        @apply pl-4 ml-4 border-l border-slate-300;
-    }
+	.editor-tools {
+		@apply pl-4 ml-4 border-l border-slate-300;
+	}
 
-    .editor-tools > li > button {
-        @apply p-2 disabled:cursor-not-allowed;
-    }
-
-
+	.editor-tools > li > button {
+		@apply p-2 disabled:cursor-not-allowed;
+	}
 
 	/*
     Dropdown menu styles
@@ -521,74 +526,72 @@
 		@apply px-2 py-2 flex items-start w-max;
 	}
 
-    /*
+	/*
     Selected
     */
 	.selected {
 		@apply border-blue-400 !important;
 	}
 
-    /*
+	/*
     Editor mode styles
     */
-    #editor-mode {
-        @apply px-4 py-2 uppercase text-lg font-bold;
-    }
+	#editor-mode {
+		@apply px-4 py-2 uppercase text-lg font-bold;
+	}
 
-    .editmode {
-        @apply bg-yellow-500;
-    }
+	.editmode {
+		@apply bg-yellow-500;
+	}
 
-    
-    .wiremode {
-        @apply bg-purple-700;
-    }
+	.wiremode {
+		@apply bg-purple-700;
+	}
 
-    
-    .delmode {
-        @apply bg-red-700;
-    }
-    
-    .runningmode {
-        @apply bg-blue-200;
-    }
-    
-    .pausedmode {
-        @apply bg-green-400;
-    }
+	.delmode {
+		@apply bg-red-700;
+	}
 
-    /*Bottom bar*/
-    #bottom-bar {
-        @apply inline-flex space-x-2;
-    }
+	.runningmode {
+		@apply bg-blue-200;
+	}
 
-    #bottom-bar > * {
-        @apply h-10;
-    }
+	.pausedmode {
+		@apply bg-green-400;
+	}
 
-    #circuit-tabs {
-        @apply grow overflow-x-auto overflow-y-clip;
-    }
+	/*Bottom bar*/
+	#bottom-bar {
+		@apply inline-flex space-x-2;
+	}
 
-    #circuit-tabs > ul {
-        @apply inline-flex;
-    }
+	#bottom-bar > * {
+		@apply h-10;
+	}
 
-    #circuit-tabs > ul > li {
-        @apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
-    }
+	#circuit-tabs {
+		@apply grow overflow-x-auto overflow-y-clip;
+	}
 
-    #circuit-tabs > ul > li > button {
-        @apply px-4 py-2;
-    }
+	#circuit-tabs > ul {
+		@apply inline-flex;
+	}
 
-    /*Aside*/
-    .aside-height {
-        --hgt: calc(theme(height.full));
-        height: var(--hgt);
-        max-height: var(--hgt);
-        min-height: var(--hgt);
-    }
+	#circuit-tabs > ul > li {
+		@apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
+	}
+
+	#circuit-tabs > ul > li > button {
+		@apply px-4 py-2;
+	}
+
+	/*Aside*/
+	.aside-height {
+		--hgt: calc(theme(height.full));
+		height: var(--hgt);
+		max-height: var(--hgt);
+		min-height: var(--hgt);
+	}
 
 	/*Main content styles*/
 	#main-content-wrapper {
@@ -598,7 +601,7 @@
 		min-height: var(--hgt);
 	}
 
-    #canvas-wrapper {
-        @apply grow border-r-2 border-b-2 border-gray-200;
-    }
+	#canvas-wrapper {
+		@apply grow border-r-2 border-b-2 border-gray-200;
+	}
 </style>
