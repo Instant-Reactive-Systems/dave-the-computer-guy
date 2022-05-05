@@ -1,16 +1,20 @@
 <script lang="ts">
     import _ from 'lodash';
     import { circuitStore } from '$lib/stores/circuit';
-    import { createEventDispatcher } from 'svelte';
+    import { createEventDispatcher, getContext } from 'svelte';
+    import type { Circuit } from '$lib/models/circuit';
+    import { ComponentDefinition, NameAndPinPair } from '$lib/models/component_definition';
+    import type { ComponentRef } from '$lib/models/component_ref';
+    import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
+    import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
+    import ValidationErrorViewer from '$lib/components/overlays/simulator/validation_error_viewer.svelte';
+    import type { TableEntry, Entry } from '$lib/models/entry';
+    import { ValidationError, ValidationErrorType } from '$lib/models/validation_error';
+    import { makeArray } from '$lib/util/common';
 
     const dispatch = createEventDispatcher();
-
-    type TableEntry = {
-        pinName: string,
-        pinPosition: string,
-        componentId: string,
-        pinId: string,
-    };
+    const defLoader: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
+    const { open } = getContext('simple-modal');
 
     let name: string;
     let description: string;
@@ -26,6 +30,176 @@
 
     function onExport() {
         const circuit = $circuitStore;
+        const outs = outputEntries.map((entry) => {
+            return {
+                pinName: entry.pinName,
+                pinPosition: entry.pinPosition,
+                componentId: Number.parseInt(entry.componentId),
+                pinId: Number.parseInt(entry.pinId),
+            };
+        });
+        
+        const ins = inputEntries.map((entry) => {
+            return {
+                pinName: entry.pinName,
+                pinPosition: entry.pinPosition,
+                componentId: Number.parseInt(entry.componentId),
+                pinId: Number.parseInt(entry.pinId),
+            };
+        });
+
+        let errors: ValidationError[] = [];
+        let def = new ComponentDefinition();
+        def.name = name;
+        def.description = description;
+        def.pinsMapping = {input: makeArray<NameAndPinPair>(ins.length, []), output: makeArray<NameAndPinPair>(outs.length, [])};
+
+        let i = 0;
+        for (const entry of outs) {
+            const componentRef = getComponent(circuit, entry.componentId);
+            if (componentRef == null) {
+                const err = new ValidationError(
+                    ValidationErrorType.ComponentNotFound, 
+                    `Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
+                    i,
+                    'output',
+                );
+
+                errors.push(err);
+                continue;
+            }
+
+            const componentDef = defLoader.getDefinition(componentRef.definitionId);
+            if (!pinExists(componentDef, entry.pinId)) {
+                const err = new ValidationError(
+                    ValidationErrorType.PinNotFound, 
+                    `Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
+                    i,
+                    'output',
+                );
+
+                errors.push(err);
+                continue;
+            }
+
+            if (!pinTypeMatches(componentDef, entry.pinId, false)) {
+                const err = new ValidationError(
+                    ValidationErrorType.PinTypeMismatch, 
+                    `Pin with id '${entry.pinId}' is not an output pin. You cannot connect an input pin to an output pin of a transparent component.`,
+                    i,
+                    'output',
+                );
+
+                errors.push(err);
+                continue;
+            }
+
+            console.log(def.pinsMapping);
+            def.pins.output.push(entry.pinName);
+            def.pinsMapping.output[i].push({
+                componentId: entry.componentId,
+                pin: entry.pinId,
+            });
+            
+            let locMap: NameAndPinPair[];
+            switch (entry.pinPosition) {
+                case 'left': locMap = def.metadata.pinLocationMapping.left; break;
+                case 'right': locMap = def.metadata.pinLocationMapping.right; break;
+                case 'top': locMap = def.metadata.pinLocationMapping.top; break;
+                case 'bottom': locMap = def.metadata.pinLocationMapping.left; break;
+            }
+            locMap.push({name: entry.pinName, pin: entry.pinId});
+
+            i += 1;
+        }
+
+        i = 0;
+        for (const entry of ins) {
+            const componentRef = getComponent(circuit, entry.componentId);
+            if (componentRef == null) {
+                const err = new ValidationError(
+                    ValidationErrorType.ComponentNotFound, 
+                    `Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
+                    i,
+                    'input',
+                );
+
+                errors.push(err);
+                continue;
+            }
+
+            const componentDef = defLoader.getDefinition(componentRef.definitionId);
+            if (!pinExists(componentDef, entry.pinId)) {
+                const err = new ValidationError(
+                    ValidationErrorType.PinNotFound, 
+                    `Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
+                    i,
+                    'input',
+                );
+
+                errors.push(err);
+                continue;
+            }
+
+            if (!pinTypeMatches(componentDef, entry.pinId, true)) {
+                const err = new ValidationError(
+                    ValidationErrorType.PinTypeMismatch, 
+                    `Pin with id '${entry.pinId}' is not an input pin. You cannot connect an output pin to an input pin of a transparent component.`,
+                    i,
+                    'input',
+                );
+
+                errors.push(err);
+                continue;
+            }
+
+            def.pins.output.push(entry.pinName);
+            def.pinsMapping.input[i].push({
+                componentId: entry.componentId,
+                pin: entry.pinId,
+            });
+
+            let locMap: NameAndPinPair[];
+            switch (entry.pinPosition) {
+                case 'left': locMap = def.metadata.pinLocationMapping.left; break;
+                case 'right': locMap = def.metadata.pinLocationMapping.right; break;
+                case 'top': locMap = def.metadata.pinLocationMapping.top; break;
+                case 'bottom': locMap = def.metadata.pinLocationMapping.left; break;
+            }
+            locMap.push({name: entry.pinName, pin: entry.pinId});
+
+            i += 1;
+        }
+
+        if (errors.length != 0) {
+            open(ValidationErrorViewer, { errors: errors });
+            return;
+        }
+
+        dispatch('export', {
+            definition: def,
+        });
+    }
+
+    function onCancel() {
+        dispatch('cancelExport');
+    }
+
+    function getComponent(circuit: Circuit, id: number): ComponentRef {
+        return circuit.components.find((component) => component.id == id);
+    }
+
+    function pinExists(def: ComponentDefinition, id: number): boolean {
+        return id >= 0 && id < def.pins.input.length + def.pins.output.length;
+    }
+
+    function pinTypeMatches(def: ComponentDefinition, id: number, input: boolean): boolean {
+        if (input) {
+            return id >= 0 && id < def.pins.input.length;
+        } else {
+            const mappedId = id - def.pins.input.length;
+            return mappedId >= 0 && mappedId < def.pins.output.length;
+        }
     }
 </script>
 
@@ -135,10 +309,10 @@
         <section class="export-buttons">
             <ul class="button-row">
                 <li>
-                    <button on:click={() => {}}>Cancel</button>
+                    <button on:click={onCancel}>Cancel</button>
                 </li>
                 <li>
-                    <button on:click={() => {}}>Export</button>
+                    <button on:click={onExport}>Export</button>
                 </li>
             </ul>
         </section>
