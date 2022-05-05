@@ -66,6 +66,7 @@
                 );
 
                 errors.push(err);
+                i += 1;
                 continue;
             }
 
@@ -79,6 +80,7 @@
                 );
 
                 errors.push(err);
+                i += 1;
                 continue;
             }
 
@@ -91,6 +93,7 @@
                 );
 
                 errors.push(err);
+                i += 1;
                 continue;
             }
 
@@ -125,6 +128,7 @@
                 );
 
                 errors.push(err);
+                i += 1;
                 continue;
             }
 
@@ -138,6 +142,7 @@
                 );
 
                 errors.push(err);
+                i += 1;
                 continue;
             }
 
@@ -150,6 +155,7 @@
                 );
 
                 errors.push(err);
+                i += 1;
                 continue;
             }
 

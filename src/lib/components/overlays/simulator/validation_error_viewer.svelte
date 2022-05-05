@@ -10,7 +10,7 @@
 <ul class="error-list scroll-shadows-y">
     {#each errors as error, i}
     <li>
-        <span class="line-number">{i}.</span>
+        <span class="line-number">{i + 1}.</span>
         <span class="error-str">{error.toString()}</span>
     </li>
     {/each}
