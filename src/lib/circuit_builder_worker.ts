@@ -22,8 +22,6 @@ export type WorkerResponse = {
 }
 
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
-
-
     const action = msg.data.action;
     const id = msg.data.id;
     const payload = msg.data.payload;
@@ -38,7 +36,6 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
             };
             postMessage(resp)
             break;
-
     }
 }
 

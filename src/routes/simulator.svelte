@@ -47,6 +47,7 @@
     import TutorialIcon from '$lib/icons/tutorial.svelte';
     import { getNotificationsContext } from 'svelte-notifications';
     import ExportTab from '$lib/components/export_tab.svelte';
+import ComponentDefinition from '$lib/components/component_definition.svelte';
 
     const { open, close } = getContext('simple-modal');
     const notifier = new Notifier(getNotificationsContext());
@@ -350,6 +351,16 @@
         }
     }
 
+    function exportCircuit(event: CustomEvent<{definition: ComponentDefinition}>) {
+        console.log('Exported: ', event.detail.definition);
+        isExporting = false;
+    }
+    
+    function cancelExport() {
+        console.log('Cancelled exporting: ');
+        isExporting = false;
+    }
+
 	$: {
 		const circuit = currentCircuitTab?.circuit;
 		circuitStore.set(circuit);
@@ -495,7 +506,10 @@
 	</div>
 	<aside id="side-menu" class="aside col-span-3">
         {#if isExporting}
-            <ExportTab/>
+            <ExportTab 
+                on:cancelExport={cancelExport}
+                on:export={exportCircuit}
+            />
         {:else}
             <TabSystem
 			    tabs={[
