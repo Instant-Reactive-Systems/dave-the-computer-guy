@@ -264,7 +264,7 @@
 			undo: () => {
 				circuitStore.set(preCommandCircuit);
 			},
-			redoable: true
+			redoable: false
 		};
 		addNewComponentCommand.do();
 		addComandToUndoStack(addNewComponentCommand);

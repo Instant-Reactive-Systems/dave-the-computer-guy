@@ -96,6 +96,13 @@ function pauseSimulation() {
 function stopSimulation() {
     console.log("Stopping simulation");
     state = SimulationState.STOPPED;
+    const message: WorkerResponse = {
+        action: "circuitStateUpdate",
+        payload: null,
+    };
+    console.log("Clearing state", message)
+    postMessage(message)
+
 }
 
 function stepSimulation() {

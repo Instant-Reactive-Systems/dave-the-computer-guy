@@ -21,6 +21,7 @@
 		DEFAULT_WIRE_MODE,
 		DEFAULT_EDIT_MODE
 	} from '$lib/models/editor_mode';
+import { get } from 'svelte/store';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -30,13 +31,8 @@
 	const dispatch = createEventDispatcher();
 
 	$: {
-		if ($circuitStore != null) {
 			console.log('Called', $circuitStore);
-			const circuit = $circuitStore;
-			const definitionIds = circuit.components.map((c) => c.definitionId);
-			const definitions = getDefinitions(definitionIds);
-			renderCircuit(circuit, definitions);
-		}
+			rerenderCircuit($circuitStore);
 	}
 
 	// Renders the editor mode changes and custom objects
@@ -65,6 +61,7 @@
 	// Handle state rendering
 	$: {
 		const state = $circuitStateStore;
+		console.log('Updated state', state);
 		if (state != null) {
 			for (const stateEntry of state.entries()) {
 				// If the component is the Wiring component (u32::MAX)
@@ -73,18 +70,34 @@
 						'Wiring rendering metadata',
 						$circuitStore.metadata.rendering.wiringRendering
 					);
-					canvas.renderWiringState(stateEntry[1], $circuitStore.metadata.rendering.wiringRendering);
+					renderWiringState(stateEntry);
 				} else {
-					canvas.updateComponent(stateEntry[0], stateEntry[1]);
+					updateComponentState(stateEntry);
 				}
 			}
 
-			canvas.refresh();
+			refreshCanvas();
+		} else{
+			rerenderCircuit($circuitStore);
 		}
 	}
 
 	$: {
 		console.log('mode is', $editorModeStore);
+	}
+
+
+	function refreshCanvas(){
+		canvas.refresh();
+	}
+
+	function updateComponentState(stateEntry: [number,any]){
+		canvas.updateComponent(stateEntry[0], stateEntry[1]);
+	}
+	
+	function renderWiringState(stateEntry: [number,any]){
+		canvas.renderWiringState(stateEntry[1], $circuitStore.metadata.rendering.wiringRendering);
+
 	}
 
 	function prepareCanvas(): void {
@@ -158,6 +171,14 @@
 		}
 
 		return false;
+	}
+
+	function rerenderCircuit(circuit: Circuit) {
+		if(circuit == null) return;
+
+		const definitionIds = circuit.components.map((c) => c.definitionId);
+		const definitions = getDefinitions(definitionIds);
+		renderCircuit(circuit, definitions);
 	}
 
 	function handleMousedown(event: fabric.IEvent<MouseEvent>) {
@@ -432,7 +453,8 @@
 					target: null
 				})
 			);
-
+			console.log("evt is",evt);
+			
 			addNewComponentToCircuit(evt.payload.componentDefinition, x, y);
 		}
 	}
