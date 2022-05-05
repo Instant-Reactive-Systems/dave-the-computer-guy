@@ -4,9 +4,9 @@
     import type { Param } from '$lib/models/param';
 
     let params: Param[] = [
-        {id: 0, name: 'Foo', data: 'XYZ'},
-        {id: 1, name: 'Bar', data: 'XYZ'},
-        {id: 2, name: 'Baz', data: 'XYZ'},
+        {id: 0, type: 'string', name: 'Foo', data: 'XYZ'},
+        {id: 1, type: 'string', name: 'Bar', data: 'XYZ'},
+        {id: 2, type: 'string', name: 'Baz', data: 'XYZ'},
     ];
 
     const { open, close } = getContext('simple-modal');

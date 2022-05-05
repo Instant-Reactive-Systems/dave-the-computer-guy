@@ -46,6 +46,7 @@
     import QuestIcon from '$lib/icons/quest.svelte';
     import TutorialIcon from '$lib/icons/tutorial.svelte';
     import { getNotificationsContext } from 'svelte-notifications';
+    import ExportTab from '$lib/components/export_tab.svelte';
 
     const { open, close } = getContext('simple-modal');
     const notifier = new Notifier(getNotificationsContext());
@@ -62,6 +63,7 @@
 	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
     let isInSimulation = false;
+    let isExporting = false;
 
     function openSaveCircuitModal() {
         open(SaveCircuit, { onSend: (name: string, description: string) => {
@@ -99,6 +101,10 @@
 		    currentCircuitTab = newCircuitTab;
             close();
         }});
+    }
+
+    function startExportCircuit() {
+        isExporting = true;
     }
 
 	function createNewCircuit() {
@@ -392,6 +398,9 @@
 					<li>
 						<button on:click={openLoadCircuitModal}>Load circuit</button>
 					</li>
+                    <li>
+						<button on:click={startExportCircuit}>Export as component</button>
+					</li>
 				</ul>
 			</div>
 		</li>
@@ -485,12 +494,16 @@
 		</div>
 	</div>
 	<aside id="side-menu" class="aside col-span-3">
-		<TabSystem
-			tabs={[
-				{ title: 'Components', innerComponent: ComponentsTab },
-				{ title: 'Properties', innerComponent: PropertiesTab }
-			]}
-		/>
+        {#if isExporting}
+            <ExportTab/>
+        {:else}
+            <TabSystem
+			    tabs={[
+				    { title: 'Components', innerComponent: ComponentsTab },
+				    { title: 'Properties', innerComponent: PropertiesTab }
+			    ]}
+		    />
+        {/if}
 	</aside>
 </div>
 <svelte:window on:keydown|trusted={handleKeyPress} />
