@@ -1,5 +1,5 @@
 import type { Junction } from "$lib/models/circuit";
-import { normalizeLook } from "$lib/util/fabric_utils";
+import { disableInteractivity, normalizeLook } from "$lib/util/fabric_utils";
 import { fabric } from 'fabric'
 
 
@@ -26,6 +26,7 @@ export class JunctionRenderable {
 		});
 
     	normalizeLook(obj);
+        disableInteractivity(obj);
 		this.fabricObject = obj;
         return obj;
     }

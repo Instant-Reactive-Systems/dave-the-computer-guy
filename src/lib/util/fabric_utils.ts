@@ -16,10 +16,12 @@ export function loadSvg(str: string): fabric.Object {
 
 /// Disables interactivity on a Fabric Object
 export function disableInteractivity(obj: fabric.Object) {
-    obj.hasControls = false;
-    obj.hasBorders = false;
-	obj.lockMovementX = true,
-	obj.lockMovementY = true,
+    obj.lockMovementX = true;
+	obj.lockMovementY = true;
+}
+
+/// Removes the default Fabric object look (border, interact parts, ...).
+export function normalizeLook(obj: fabric.Object) {
     obj.setControlsVisibility({
         mt: false,
         mb: false,
@@ -31,13 +33,10 @@ export function disableInteractivity(obj: fabric.Object) {
         tr: false,
         mtr: false,
     });
-}
-
-/// Removes the default Fabric object look (border, interact parts, ...).
-export function normalizeLook(obj: fabric.Object) {
-    disableInteractivity(obj);
     obj.stroke = "black";
     obj.strokeWidth = 1;
+    obj.hasControls = false;
+    obj.hasBorders = false;
 }
 
 export function createPinObject(name: string, pin: number, x: number, y: number, type: PinType, component: Component): fabric.Object {

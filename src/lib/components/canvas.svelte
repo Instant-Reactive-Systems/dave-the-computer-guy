@@ -21,8 +21,7 @@
 		DEFAULT_WIRE_MODE,
 		DEFAULT_EDIT_MODE
 	} from '$lib/models/editor_mode';
-import type { ComponentRef } from '$lib/models/component_ref';
-import type { WireRenderable } from '$lib/fabric/wire_renderable';
+	import type { WireRenderable } from '$lib/fabric/wire_renderable';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -32,8 +31,8 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 	const dispatch = createEventDispatcher();
 
 	$: {
-			console.log('Called', $circuitStore);
-			rerenderCircuit($circuitStore);
+		console.log('Called', $circuitStore);
+		rerenderCircuit($circuitStore);
 	}
 
 	// Renders the editor mode changes and custom objects
@@ -78,7 +77,7 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 			}
 
 			refreshCanvas();
-		} else{
+		} else {
 			rerenderCircuit($circuitStore);
 		}
 	}
@@ -87,18 +86,16 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 		console.log('mode is', $editorModeStore);
 	}
 
-
-	function refreshCanvas(){
+	function refreshCanvas() {
 		canvas.refresh();
 	}
 
-	function updateComponentState(stateEntry: [number,any]){
+	function updateComponentState(stateEntry: [number, any]) {
 		canvas.updateComponent(stateEntry[0], stateEntry[1]);
 	}
-	
-	function renderWiringState(stateEntry: [number,any]){
-		canvas.renderWiringState(stateEntry[1], $circuitStore.metadata.rendering.wiringRendering);
 
+	function renderWiringState(stateEntry: [number, any]) {
+		canvas.renderWiringState(stateEntry[1], $circuitStore.metadata.rendering.wiringRendering);
 	}
 
 	function prepareCanvas(): void {
@@ -124,25 +121,27 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 
 	function attachListeners() {
 		canvas.on('mouse:down', (event: fabric.IEvent<MouseEvent>) => {
-			console.log('mouse down');
+			console.log('mouse down',event);
 			// Drag has precedence over all other mouse down events
 			if (handleDrag(event)) return;
 			// Handle mouse down event depending on editor mode
 			handleMousedown(event);
 		});
 
-		canvas.on('mouse:up',(event: fabric.IEvent<MouseEvent>) => {
-			console.log("mouse up");
-			switch($editorModeStore.type){
+		canvas.on('mouse:up', (event: fabric.IEvent<MouseEvent>) => {
+			console.log('mouse up',event);
+			canvas.setViewportTransform(canvas.viewportTransform);
+			canvas.isDragging = false;
+			switch ($editorModeStore.type) {
 				case 'delete':
-					const mode = _.cloneDeep($editorModeStore)
-					mode.data  = "released"
+					const mode = _.cloneDeep($editorModeStore);
+					mode.data = 'released';
 					editorModeStore.set(mode);
 					break;
 				default:
 					break;
 			}
-		})
+		});
 
 		canvas.on('object:modified', (e: any) => {
 			switch (e.action) {
@@ -152,7 +151,6 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 		});
 
 		canvas.on('mouse:move', (event: fabric.IEvent<MouseEvent>) => {
-
 			if (canvas.isDragging) {
 				canvas.viewportTransform[4] += event.e.clientX - canvas.lastPosX;
 				canvas.viewportTransform[5] += event.e.clientY - canvas.lastPosY;
@@ -164,22 +162,16 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 
 			if ($editorModeStore.type == 'wire') {
 				showTemporaryWire(event);
-			}else if($editorModeStore.type == 'delete'){
-				console.log("Editor mode",$editorModeStore)
-				if($editorModeStore.data == 'pressed'){
+			} else if ($editorModeStore.type == 'delete') {
+				console.log('Editor mode', $editorModeStore);
+				if ($editorModeStore.data == 'pressed') {
 					deleteObject(event);
 				}
 			}
-
 		});
 
-		canvas.on('mouse:up', (_) => {
-			// On mouse up we want to recalculate new interaction
-			// for all objects, so we call setViewportTransform
-			canvas.setViewportTransform(canvas.viewportTransform);
-			canvas.isDragging = false;
-		});
 	}
+	
 
 	function handleDrag(event: fabric.IEvent<MouseEvent>): boolean {
 		if (event.e.altKey == true) {
@@ -192,17 +184,17 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 		return false;
 	}
 
-	function deleteObject(mouseEvent){
-		const pt =  canvas.getPointer(mouseEvent.evt)
+	function deleteObject(mouseEvent) {
+		const pt = canvas.getPointer(mouseEvent.evt);
 		const x = pt.x;
 		const y = pt.y;
 		const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
 
-		for(const obj of canvas.getObjects()){
+		for (const obj of canvas.getObjects()) {
 			if (obj.intersectsWithObject(hitCircle, true)) {
 				switch (obj.data.type) {
 					case 'component': {
-						const componentId = (obj.data.ref as RenderableComponent).component.id
+						const componentId = (obj.data.ref as RenderableComponent).component.id;
 						deleteComponent(componentId);
 						break;
 					}
@@ -219,14 +211,14 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 		}
 	}
 
-	function deleteWire(wireId){
-		dispatch("deleteWire",{
+	function deleteWire(wireId) {
+		dispatch('deleteWire', {
 			wireId: wireId
-		})
+		});
 	}
 
 	function rerenderCircuit(circuit: Circuit) {
-		if(circuit == null) return;
+		if (circuit == null) return;
 
 		const definitionIds = circuit.components.map((c) => c.definitionId);
 		const definitions = getDefinitions(definitionIds);
@@ -508,8 +500,8 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 					target: null
 				})
 			);
-			console.log("evt is",evt);
-			
+			console.log('evt is', evt);
+
 			addNewComponentToCircuit(evt.payload.componentDefinition, x, y);
 		}
 	}
@@ -522,20 +514,20 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 		});
 	}
 
-	function initDeleteMode(){
+	function initDeleteMode() {
 		const mode = DEFAULT_DELETE_MODE;
 		mode.data = 'released';
 		editorModeStore.set(mode);
 	}
 
-	function deleteComponent(componentId: number){
-		dispatch("deleteComponent",{
+	function deleteComponent(componentId: number) {
+		dispatch('deleteComponent', {
 			componentId: componentId
-		})
+		});
 	}
 
-	function quitDeleteMode(){
-		const mode  =DEFAULT_EDIT_MODE;
+	function quitDeleteMode() {
+		const mode = DEFAULT_EDIT_MODE;
 		editorModeStore.set(mode);
 	}
 
@@ -548,7 +540,7 @@ import type { WireRenderable } from '$lib/fabric/wire_renderable';
 				// Switch to wire mode
 				if (event.key == 'w') initWireMode();
 
-				if(event.key == 'd') initDeleteMode();
+				if (event.key == 'd') initDeleteMode();
 				break;
 			}
 			case 'wire': {
