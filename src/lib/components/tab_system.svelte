@@ -5,11 +5,27 @@
 
     let activeTab = 0;
     
-    function onTabClick(index) {
+    function onTabClick(index: number) {
         activeTab = index;
         console.log(tabs[activeTab]);
     }
 </script>
+
+<nav class="shadow-sm border-b border-slate-200">
+    <ul class="scroll-shadows-x">
+        {#each tabs as tab, i}
+        <li>
+            <button on:click={() => onTabClick(i)} class:active={i == activeTab}>
+                {tab.title}
+            </button>
+        </li>
+        {/each}
+    </ul>
+</nav>
+<div class="content">
+    <svelte:component this={tabs[activeTab].innerComponent} />
+</div>
+
 
 <style>
     .active {
@@ -44,17 +60,3 @@
     }
 </style>
 
-<nav class="shadow-sm border-b border-slate-200">
-    <ul>
-        {#each tabs as tab, i}
-        <li>
-            <button on:click={() => onTabClick(i)} class:active={i == activeTab}>
-                {tab.title}
-            </button>
-        </li>
-        {/each}
-    </ul>
-</nav>
-<div class="content">
-    <svelte:component this={tabs[activeTab].innerComponent} />
-</div>
