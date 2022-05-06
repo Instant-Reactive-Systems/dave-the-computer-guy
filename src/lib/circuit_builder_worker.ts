@@ -22,8 +22,6 @@ export type WorkerResponse = {
 }
 
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
-    
-
     const action = msg.data.action;
     const id = msg.data.id;
     const payload = msg.data.payload;
@@ -38,14 +36,13 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
             };
             postMessage(resp)
             break;
-        
     }
 }
 
 function deductConnectionsFromWires(circuit: Circuit): Circuit {
     circuit.metadata.rendering.wiringRendering = new Map();
     const start = performance.now();
-        circuit.connections = [];
+    circuit.connections = [];
     const wires = circuit.metadata.rendering.wires;
     //find wires that are connected to output pins
 
@@ -64,7 +61,7 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
         const outputConnectors = wireOutpinPinsTuple[1];
         const ignoreIdSet: Set<number> = new Set();
         ignoreIdSet.add(wire.id);
-        const inputConnectors = findAllConnectedInputConnectors(circuit,wire, ignoreIdSet);
+        const inputConnectors = findAllConnectedInputConnectors(circuit, wire, ignoreIdSet);
         for (const connector of outputConnectors) {
             let connection = circuit.connections.find((conn) => _.isEqual(connector, conn.from));
             if (connection == undefined) {
@@ -78,7 +75,17 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
         const entry = new WiringRenderingEntry();
         const conn = wireOutpinPinsTuple[1][0];
         entry.wires = Array.from(ignoreIdSet);
-        circuit.metadata.rendering.wiringRendering.set(JSON.stringify(conn),entry)
+        entry.connectors = [...new Set(Array.from(ignoreIdSet)
+            .map(id => wires[id])
+            .flatMap(wire => wire.links
+                .filter(link => link.type == "pin")
+                .map(link => (link.value as any).conn as Connector))
+            .filter(conn => conn != undefined)
+        )]
+
+        entry.junctions = circuit.metadata.rendering.junctions.filter(junction => ignoreIdSet.has(junction.sourceWire));
+
+        circuit.metadata.rendering.wiringRendering.set(JSON.stringify(conn), entry)
     }
     const end = performance.now();
 
@@ -86,7 +93,9 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
     return circuit;
 }
 
-function findAllConnectedInputConnectors(circuit: Circuit,wire: Wire, idsToIgnore: Set<number>): Connector[] {
+
+
+function findAllConnectedInputConnectors(circuit: Circuit, wire: Wire, idsToIgnore: Set<number>): Connector[] {
     console.log('Called');
     const connectors: Connector[] = [];
     console.log('Ids to ignore', idsToIgnore);
@@ -119,7 +128,7 @@ function findAllConnectedInputConnectors(circuit: Circuit,wire: Wire, idsToIgnor
     //find all wires which are connected to this wire
     for (const linkedWireId of linkedWireIds) {
         const linkedWire = circuit.metadata.rendering.wires[linkedWireId as number];
-        connectors.push(...findAllConnectedInputConnectors(circuit,linkedWire, idsToIgnore));
+        connectors.push(...findAllConnectedInputConnectors(circuit, linkedWire, idsToIgnore));
     }
 
 

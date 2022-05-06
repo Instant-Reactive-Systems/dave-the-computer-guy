@@ -12,6 +12,7 @@ import type { fabric } from 'fabric';
 import type { EditorMode } from '$lib/models/editor_mode';
 import type { RenderableComponent } from '$lib/fabric/renderable_component';
 import type { Point } from '$lib/models/point';
+import _ from 'lodash';
 
 type EventHandlerType = (event: fabric.IEvent) => void;
 
@@ -21,6 +22,7 @@ export class Canvas {
     private canvas: fabric.Canvas;
     public components: Map<number, fabric.Object>;
     public wires: Map<number, fabric.Object>;
+    public junctions: fabric.Object[]
     private tempWire?: fabric.Object;
     private tempJunction?: fabric.Object;
 
@@ -205,23 +207,36 @@ export class Canvas {
     }
 
     private renderJunctions(junctions: Junction[]) {
+        this.junctions = [];
         for (const junction of junctions) {
             const junctionRenderable = new JunctionRenderable(junction);
             const fabricJunction = junctionRenderable.buildFabricObject();
+            this.junctions.push(fabricJunction);
             this.canvas.add(fabricJunction);
         }
     }
 
-    public renderWiringState(state: WiringState,wiringRenderingEntries: Map<string,WiringRenderingEntry>) {
+    public renderWiringState(state: WiringState, wiringRenderingEntries: Map<string, WiringRenderingEntry>) {
         console.log("Rendering wire state");
-        for(const stateEntry of state){
+        for (const stateEntry of state) {
             const json = JSON.stringify(stateEntry.connector);
             const wiringEntry = wiringRenderingEntries.get(json);
-            if(wiringEntry == undefined){
+            if (wiringEntry == undefined) {
                 continue;
             }
-            for(const wireId of wiringEntry.wires){
+            for (const wireId of wiringEntry.wires) {
                 this.wires.get(wireId).data.ref.update(stateEntry.value);
+            }
+            for (const connector of wiringEntry.connectors) {
+                const renderableComponent: RenderableComponent = this.components.get(connector.componentId).data.ref as RenderableComponent;
+                renderableComponent.updatePin(connector.pin, stateEntry.value);
+            }
+            for (const junction of wiringEntry.junctions) {
+                console.log(junction, this.junctions);
+                const junctionRenderable: JunctionRenderable = this.junctions
+                    .map(j => j.data.ref as JunctionRenderable)
+                    .find(j => _.isEqual(j.junction, junction));
+                junctionRenderable.update(stateEntry.value);
             }
         }
     }

@@ -3,9 +3,8 @@
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
+    import ComponentDefinitionComponent from './component_definition.svelte';
 	import type { Subscription } from 'rxjs';
-	import VirtualList from '@sveltejs/svelte-virtual-list';
-	import ComponentDefinitionComponent from './component_definition.svelte';
 	import { eventStore } from '$lib/stores/event_store';
 	import { Event } from '$lib/models/event';
 
@@ -49,32 +48,19 @@
 	}
 </script>
 
-<div class="mx-2 content">
-	<VirtualList items={defs} let:item>
-		<div class:selected={selectedComponentDefinition?.id == item.id}>
-			<ComponentDefinitionComponent
-				on:componentDefinitonSelected={onComponentDefinitionSelected}
-				componentDefinition={item}
-			/>
-		</div>
-	</VirtualList>
-</div>
+<ul class="h-full overflow-y-auto">
+    {#each defs as def}
+    <li class="h-16 p-2 border-b border-slate-200" class:selected={selectedComponentDefinition?.id == def.id}>
+        <ComponentDefinitionComponent 
+            on:componentDefinitonSelected={onComponentDefinitionSelected}
+            {def}
+        />
+    </li>
+    {/each}
+</ul>
 
 <style>
-	th {
-		@apply text-left;
-	}
-	td {
-		@apply text-left;
-	}
-	.content {
-		height: calc(100vh - 90px);
-		/*
-		Workaround so that virtuallist is full height, this needs to be refactored in the future
-		*/
-	}
-
 	.selected {
-		@apply bg-blue-600;
+		@apply bg-blue-500;
 	}
 </style>

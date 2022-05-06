@@ -1,20 +1,19 @@
 <script lang="ts">
-import type { ComponentDefinition } from "$lib/models/component_definition";
-import { createEventDispatcher, onMount } from "svelte";
+    import type { ComponentDefinition } from "$lib/models/component_definition";
+    import { createEventDispatcher } from "svelte";
 
-export let componentDefinition: ComponentDefinition;
+    export let def: ComponentDefinition;
 
-const dispatch = createEventDispatcher();
+    const dispatch = createEventDispatcher();
 
-function onComponentDefinitionSelected(){
-    dispatch('componentDefinitonSelected', {
-        componentDefinition: componentDefinition
-    })
-}
-
+    function onComponentDefinitionSelected() {
+        dispatch('componentDefinitonSelected', {
+            componentDefinition: def
+        })
+    }
 </script>
 
-<div on:click={onComponentDefinitionSelected}>
-    <p>{componentDefinition.name}</p>
-    <img class="w-1/2 h-100" src={componentDefinition.metadata.imageUrl}/>
+<div class="h-full" on:click={onComponentDefinitionSelected}>
+    <h1 class="text-md font-bold">{def.name}</h1>
+    <!--<img class="w-1/2 h-1/2" src={def.metadata.imageUrl}/>-->
 </div>

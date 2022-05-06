@@ -9,5 +9,7 @@ export type CircuitBuilderService = {
     addNewComponent(circuit: Circuit, definition: ComponentDefinition, x: number, y: number): Promise<Circuit>;
     popComponent(circuit: Circuit): Promise<Circuit>;
     moveComponent(circuit: Circuit, id: number, x: number, y: number): Promise<Circuit>;
-    addNewWire(circuit: Circuit, wire: Wire, junctions: Junction[]): Promise<Circuit>
+    addNewWire(circuit: Circuit, wire: Wire, junctions: Junction[]): Promise<Circuit>;
+    deleteComponent(circuit: Circuit, componentId: number):Promise<Circuit>;
+    deleteWire(circuit: Circuit, wireId: number):Promise<Circuit>;
 } 

@@ -47,7 +47,6 @@ export class PinLocationMapping{
 @toJson
 @jsonObject
 export class ComponentDefinitionMetadata{
-
     @jsonMember(PinLocationMapping)
     pinLocationMapping: PinLocationMapping;
 
@@ -60,12 +59,22 @@ export class ComponentDefinitionMetadata{
     @jsonMember(String)
     imageUrl: string;
 
+    constructor() {
+        this.pinLocationMapping = {
+            left: [],
+            right: [],
+            top: [],
+            bottom: [],
+        };
+        this.createdAt = new Date();
+        this.modifiedAt = new Date();
+        this.imageUrl = '';
+    }
 }
 
 @toJson
 @jsonObject
 export class Pins {
-
     @jsonArrayMember(String)
     input: string[];
 
@@ -106,5 +115,18 @@ export class ComponentDefinition {
 
     @jsonMember(ComponentDefinitionMetadata)
     metadata: ComponentDefinitionMetadata;
+
+    constructor() {
+        this.id = 0;
+        this.name = '';
+        this.type = 'transparent';
+        this.description = '';
+        this.pinsMapping = null;
+        this.pins = {input: [], output: []};
+        this.circuit = null;
+        this.truthTable = null;
+        this.booleanFunction = null;
+        this.metadata = new ComponentDefinitionMetadata();
+    }
 
 }

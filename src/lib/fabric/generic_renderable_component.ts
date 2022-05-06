@@ -24,7 +24,22 @@ export class GenericComponentRenderable implements RenderableComponent {
     onClick(): UserEvent {
         return null;
     }
-    
+
+    updatePin(pinId: number, val: boolean) {
+        console.log(pinId, this.component)
+        if (val) {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId);
+            pin.set("fill", "green");
+            pin.set("stroke", "green")
+            pin.shadow = new fabric.Shadow({ color: "green", blur: 2, })
+        } else {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId)
+            pin.set("fill", "black");
+            pin.set("stroke", "black")
+            pin.shadow = null;
+        }
+    }
+
     update(state: any) {
         // OVDJE SU UPDATE IZ GET STATE
     }
@@ -77,7 +92,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                 left: - 40,
                 top: (pinOffset - lineText.height),
                 subTargetCheck: true,
-                data:{
+                data: {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
@@ -103,7 +118,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                 top: line.top - 4,
                 fill: "black",
                 radius: 4,
-                data : {
+                data: {
                     "type": "pin",
                     "pinType": this.component.definition.pins.input.includes(namePinPair.name) ? "input" : "output",
                     "value": namePinPair,
@@ -115,7 +130,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                 left: componentWidth,
                 top: (pinOffset - lineText.height),
                 subTargetCheck: true,
-                data:{
+                data: {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
@@ -155,7 +170,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                 left: (pinOffset - lineText.height),
                 top: componentHeight,
                 subTargetCheck: true,
-                data:{
+                data: {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
@@ -193,12 +208,12 @@ export class GenericComponentRenderable implements RenderableComponent {
                 left: (pinOffset - lineText.height),
                 top: -(line.height),
                 subTargetCheck: true,
-                data:{
+                data: {
                     type: "pinGroup",
                     pin: pinConnectionPoint
                 }
             });
-            
+
             pins.top.push(pinGroup);
             this.pins.push(pinConnectionPoint);
         }

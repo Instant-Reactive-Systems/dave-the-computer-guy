@@ -22,8 +22,9 @@
 	import { WorkerSimulatorService } from '$lib/services/impl/worker_simulator_service';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import { WorkerCircuitBuilderService } from '$lib/services/impl/worker_circuit_builder_service';
-	import Modal from 'svelte-simple-modal';
-	import PageTransition from '$lib/components/page_transition.svelte';
+    import Modal from 'svelte-simple-modal';
+	import PageTransition from '$lib/components/page_transition.svelte'; 
+	import Notifications from 'svelte-notifications'; 
 	import { page } from '$app/stores';
 	import type { QuestService } from '$lib/services/quest_service';
 	import { MockQuestsService } from '$lib/services/impl/mock_quest_service';
@@ -65,8 +66,10 @@
 	});
 </script>
 
-<Modal>
-	<PageTransition refresh={$page.routeId}>
-		<slot />
-	</PageTransition>
-</Modal>
+<Notifications>
+    <Modal>
+	    <PageTransition refresh={$page.routeId}>
+		    <slot />
+	    </PageTransition>
+    </Modal>
+</Notifications>

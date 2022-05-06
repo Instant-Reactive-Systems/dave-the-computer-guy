@@ -3,7 +3,7 @@ import { Connection } from "./connection"
 import { Param } from "./param"
 import { DirectLink, Wire } from "./wire"
 import { ComponentRef } from "./component_ref"
-import { Connector } from "./connector"
+import type { Connector } from "./connector"
 
 
 @toJson
@@ -41,6 +41,8 @@ export class Junction {
 
 export class WiringRenderingEntry {
     wires: number[];
+    connectors: Connector[]
+    junctions: Junction[]
 }
 
 @toJson
@@ -55,7 +57,7 @@ export class RenderingMetadata {
     @jsonArrayMember(Junction)
     junctions: Junction[];
 
-    /*@jsonMember({deserializer: value => {console.log('desrializing'); return new Map();}, serializer: value => "cetnik"})*/
+    //Json ignore equivalent, TODO
     @jsonMember(AnyT)
     wiringRendering: Map<string,WiringRenderingEntry>;
 }
