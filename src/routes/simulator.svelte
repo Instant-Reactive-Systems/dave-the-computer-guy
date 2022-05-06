@@ -533,7 +533,6 @@
 		</div>
 	</div>
 	<aside id="side-menu" class="aside col-span-3">
-<<<<<<< Updated upstream
         {#if isExporting}
             <ExportTab 
                 on:cancelExport={cancelExport}
@@ -547,18 +546,6 @@
 			    ]}
 		    />
         {/if}
-=======
-		{#if isExporting}
-			<ExportTab />
-		{:else}
-			<TabSystem
-				tabs={[
-					{ title: 'Components', innerComponent: ComponentsTab },
-					{ title: 'Properties', innerComponent: PropertiesTab }
-				]}
-			/>
-		{/if}
->>>>>>> Stashed changes
 	</aside>
 </div>
 <svelte:window on:keydown|trusted={handleKeyPress} />
