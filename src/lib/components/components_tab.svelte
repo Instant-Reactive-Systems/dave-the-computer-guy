@@ -18,6 +18,7 @@
 		subscriptions.push(
 			componentDefinitionLoaderService.getDefinitionsBehaviourSubject().subscribe((loadedDefs) => {
 				defs = Array.from(loadedDefs.values());
+                console.log('defs: ', defs);
 			})
 		);
 	});

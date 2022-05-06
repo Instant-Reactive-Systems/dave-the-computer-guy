@@ -3,8 +3,8 @@ import type { ComponentDefinition } from "./models/component_definition";
 import type { UserEvent } from "./models/user_event";
 import init, { set_panic_hook, Simulation, Config } from "digisim";
 
-export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinition';
-export type WorkerPayload = ComponentDefinition | Circuit | UserEvent;
+export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinitions';
+export type WorkerPayload = ComponentDefinition[] | Circuit | UserEvent;
 
 export type WorkerMessage = {
     action: WorkerAction,
@@ -56,8 +56,8 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
         case 'insertUserEvent':
             insertUserEvent(payload as UserEvent);
             break;
-        case 'insertDefinition':
-            insertDefinition(payload as ComponentDefinition);
+        case 'insertDefinitions':
+            insertDefinitions(payload as ComponentDefinition[]);
             break;
         case 'setCircuit':
             setCircuit(payload as Circuit);
@@ -71,9 +71,11 @@ function setCircuit(circuit: Circuit) {
     simulation.set_circuit(circuit);
 }
 
-function insertDefinition(definition: ComponentDefinition) {
-    console.log("Inserting definition into registry", definition);
-    simulation.update_registry(definition);
+function insertDefinitions(defs: ComponentDefinition[]) {
+    console.log("Inserting definitions into registry: ", defs);
+    for (const def of defs) {
+        simulation.update_registry(def);
+    }
 }
 
 function startSimulation() {

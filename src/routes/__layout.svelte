@@ -30,7 +30,7 @@
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
 	let componentDefinitionLoaderService: ComponentDefinitionLoaderService =
 		new MockComponentDefinitonLoaderService();
-	let simulatorService: SimulatorService = new WorkerSimulatorService();
+	let simulatorService: SimulatorService = new WorkerSimulatorService(componentDefinitionLoaderService);
 	let circuitBuilderService: CircuitBuilderService = new WorkerCircuitBuilderService();
 	setContext(AUTH_SERVICE, authService);
 	setContext(CIRCUIT_LOADER_SERVICE, circuitLoaderService);

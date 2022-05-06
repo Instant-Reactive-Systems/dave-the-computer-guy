@@ -9,6 +9,7 @@
 	import {
 		CIRCUIT_BUILDER_SERVICE,
 		CIRCUIT_LOADER_SERVICE,
+		COMPONENT_DEFINITION_LOADER_SERVICE,
 		SIMULATOR_SERVICE
 	} from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
@@ -44,6 +45,7 @@
 	import TutorialIcon from '$lib/icons/tutorial.svelte';
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
+    import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 
 	const { open, close } = getContext('simple-modal');
 	const notifier = new Notifier(getNotificationsContext());
@@ -59,6 +61,7 @@
 	let currentCircuitTab: CircuitTab;
 	let simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
 	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
+	let defLoader: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
 	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
 	let isInSimulation = false;
@@ -68,6 +71,7 @@
 		open(SaveCircuit, {
 			onSend: (name: string, description: string) => {
 				const circuit = $circuitStore;
+                console.log('double nigger circuit: ', circuit);
 				circuit.name = name;
 				circuit.description = description;
 				circuitLoader.insertCircuit(circuit).then((circ) => {
@@ -368,6 +372,7 @@
 	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
 		console.log('Exported: ', event.detail.definition);
 		isExporting = false;
+        defLoader.insertDefinition(event.detail.definition, true);
 	}
 
 	function cancelExport() {
@@ -383,6 +388,7 @@
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
+        console.log('nigger circuit: ', circuit);
 		circuitStore.set(circuit);
 	}
 

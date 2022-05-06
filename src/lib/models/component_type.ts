@@ -1,2 +1,2 @@
-export type ComponentType = 'builtin' | 'table' | 'bool' | 'transparent';
+export type ComponentType = 'Builtin' | 'Compiled' | 'Functional' | 'Transparent';
 

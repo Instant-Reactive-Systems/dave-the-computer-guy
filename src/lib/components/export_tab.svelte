@@ -3,21 +3,24 @@
     import { circuitStore } from '$lib/stores/circuit';
     import { createEventDispatcher, getContext } from 'svelte';
     import type { Circuit } from '$lib/models/circuit';
-    import { ComponentDefinition, NameAndPinPair } from '$lib/models/component_definition';
+    import { ComponentDefinition, NameAndPinPair, PinMapping } from '$lib/models/component_definition';
     import type { ComponentRef } from '$lib/models/component_ref';
-    import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
+    import { CIRCUIT_BUILDER_SERVICE, COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
     import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
     import ValidationErrorViewer from '$lib/components/overlays/simulator/validation_error_viewer.svelte';
     import type { TableEntry, Entry } from '$lib/models/entry';
     import { ValidationError, ValidationErrorType } from '$lib/models/validation_error';
     import { makeArray } from '$lib/util/common';
+    import { Connector } from '$lib/models/connector';
+    import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 
     const dispatch = createEventDispatcher();
     const defLoader: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
+    const circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
     const { open } = getContext('simple-modal');
 
-    let name: string;
-    let description: string;
+    let name: string = '';
+    let description: string = '';
     let outputEntries: TableEntry[] = [];
     let inputEntries: TableEntry[] = [];
 
@@ -30,160 +33,152 @@
 
     function onExport() {
         const circuit = $circuitStore;
-        const outs = outputEntries.map((entry) => {
-            return {
-                pinName: entry.pinName,
-                pinPosition: entry.pinPosition,
-                componentId: Number.parseInt(entry.componentId),
-                pinId: Number.parseInt(entry.pinId),
-            };
-        });
-        
-        const ins = inputEntries.map((entry) => {
-            return {
-                pinName: entry.pinName,
-                pinPosition: entry.pinPosition,
-                componentId: Number.parseInt(entry.componentId),
-                pinId: Number.parseInt(entry.pinId),
-            };
-        });
-
-        let errors: ValidationError[] = [];
-        let def = new ComponentDefinition();
-        def.name = name;
-        def.description = description;
-        def.pinsMapping = {input: makeArray<NameAndPinPair>(ins.length, []), output: makeArray<NameAndPinPair>(outs.length, [])};
-
-        let i = 0;
-        for (const entry of outs) {
-            const componentRef = getComponent(circuit, entry.componentId);
-            if (componentRef == null) {
-                const err = new ValidationError(
-                    ValidationErrorType.ComponentNotFound, 
-                    `Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
-                    i,
-                    'output',
-                );
-
-                errors.push(err);
-                i += 1;
-                continue;
-            }
-
-            const componentDef = defLoader.getDefinition(componentRef.definitionId);
-            if (!pinExists(componentDef, entry.pinId)) {
-                const err = new ValidationError(
-                    ValidationErrorType.PinNotFound, 
-                    `Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
-                    i,
-                    'output',
-                );
-
-                errors.push(err);
-                i += 1;
-                continue;
-            }
-
-            if (!pinTypeMatches(componentDef, entry.pinId, false)) {
-                const err = new ValidationError(
-                    ValidationErrorType.PinTypeMismatch, 
-                    `Pin with id '${entry.pinId}' is not an output pin. You cannot connect an input pin to an output pin of a transparent component.`,
-                    i,
-                    'output',
-                );
-
-                errors.push(err);
-                i += 1;
-                continue;
-            }
-
-            console.log(def.pinsMapping);
-            def.pins.output.push(entry.pinName);
-            def.pinsMapping.output[i].push({
-                componentId: entry.componentId,
-                pin: entry.pinId,
+        circuitBuilder.deductConnections(circuit).then((circ) => {
+            const outs = outputEntries.map((entry) => {
+                return {
+                    pinName: entry.pinName,
+                    pinPosition: entry.pinPosition,
+                    componentId: Number.parseInt(entry.componentId),
+                    pinId: Number.parseInt(entry.pinId),
+                };
             });
             
-            let locMap: NameAndPinPair[];
-            switch (entry.pinPosition) {
-                case 'left': locMap = def.metadata.pinLocationMapping.left; break;
-                case 'right': locMap = def.metadata.pinLocationMapping.right; break;
-                case 'top': locMap = def.metadata.pinLocationMapping.top; break;
-                case 'bottom': locMap = def.metadata.pinLocationMapping.left; break;
-            }
-            locMap.push({name: entry.pinName, pin: entry.pinId});
-
-            i += 1;
-        }
-
-        i = 0;
-        for (const entry of ins) {
-            const componentRef = getComponent(circuit, entry.componentId);
-            if (componentRef == null) {
-                const err = new ValidationError(
-                    ValidationErrorType.ComponentNotFound, 
-                    `Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
-                    i,
-                    'input',
-                );
-
-                errors.push(err);
-                i += 1;
-                continue;
-            }
-
-            const componentDef = defLoader.getDefinition(componentRef.definitionId);
-            if (!pinExists(componentDef, entry.pinId)) {
-                const err = new ValidationError(
-                    ValidationErrorType.PinNotFound, 
-                    `Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
-                    i,
-                    'input',
-                );
-
-                errors.push(err);
-                i += 1;
-                continue;
-            }
-
-            if (!pinTypeMatches(componentDef, entry.pinId, true)) {
-                const err = new ValidationError(
-                    ValidationErrorType.PinTypeMismatch, 
-                    `Pin with id '${entry.pinId}' is not an input pin. You cannot connect an output pin to an input pin of a transparent component.`,
-                    i,
-                    'input',
-                );
-
-                errors.push(err);
-                i += 1;
-                continue;
-            }
-
-            def.pins.output.push(entry.pinName);
-            def.pinsMapping.input[i].push({
-                componentId: entry.componentId,
-                pin: entry.pinId,
+            const ins = inputEntries.map((entry) => {
+                return {
+                    pinName: entry.pinName,
+                    pinPosition: entry.pinPosition,
+                    componentId: Number.parseInt(entry.componentId),
+                    pinId: Number.parseInt(entry.pinId),
+                };
             });
 
-            let locMap: NameAndPinPair[];
-            switch (entry.pinPosition) {
-                case 'left': locMap = def.metadata.pinLocationMapping.left; break;
-                case 'right': locMap = def.metadata.pinLocationMapping.right; break;
-                case 'top': locMap = def.metadata.pinLocationMapping.top; break;
-                case 'bottom': locMap = def.metadata.pinLocationMapping.left; break;
+            let errors: ValidationError[] = [];
+            let def = new ComponentDefinition();
+            def.name = name;
+            def.description = description;
+            def.circuit = circ;
+            def.pinMapping = new PinMapping(makeArray<Connector[]>(ins.length, () => []), makeArray<Connector[]>(outs.length, () => []));
+
+            let i = 0;
+            for (const entry of outs) {
+                const componentRef = getComponent(circ, entry.componentId);
+                if (componentRef == null) {
+                    const err = new ValidationError(
+                        ValidationErrorType.ComponentNotFound, 
+                        `Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
+                        i,
+                        'output',
+                    );
+
+                    errors.push(err);
+                    i += 1;
+                    continue;
+                }
+
+                const componentDef = defLoader.getDefinition(componentRef.definitionId);
+                if (!pinExists(componentDef, entry.pinId)) {
+                    const err = new ValidationError(
+                        ValidationErrorType.PinNotFound, 
+                        `Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
+                        i,
+                        'output',
+                    );
+
+                    errors.push(err);
+                    i += 1;
+                    continue;
+                }
+
+                if (!pinTypeMatches(componentDef, entry.pinId, false)) {
+                    const err = new ValidationError(
+                        ValidationErrorType.PinTypeMismatch, 
+                        `Pin with id '${entry.pinId}' is not an output pin. You cannot connect an input pin to an output pin of a transparent component.`,
+                        i,
+                        'output',
+                    );
+
+                    errors.push(err);
+                    i += 1;
+                    continue;
+                }
+
+                def.pins.output.push(entry.pinName);
+                def.pinMapping.output[i].push(new Connector(entry.componentId, entry.pinId));
+                
+                switch (entry.pinPosition) {
+                    case 'left': def.metadata.pinLocationMapping.left = componentDef.metadata.pinLocationMapping.left; break;
+                    case 'right': def.metadata.pinLocationMapping.right = componentDef.metadata.pinLocationMapping.right; break;
+                    case 'top': def.metadata.pinLocationMapping.top = componentDef.metadata.pinLocationMapping.top; break;
+                    case 'bottom': def.metadata.pinLocationMapping.bottom = componentDef.metadata.pinLocationMapping.bottom; break;
+                }
+
+                i += 1;
             }
-            locMap.push({name: entry.pinName, pin: entry.pinId});
 
-            i += 1;
-        }
+            i = 0;
+            for (const entry of ins) {
+                const componentRef = getComponent(circ, entry.componentId);
+                if (componentRef == null) {
+                    const err = new ValidationError(
+                        ValidationErrorType.ComponentNotFound, 
+                        `Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
+                        i,
+                        'input',
+                    );
 
-        if (errors.length != 0) {
-            open(ValidationErrorViewer, { errors: errors });
-            return;
-        }
+                    errors.push(err);
+                    i += 1;
+                    continue;
+                }
 
-        dispatch('export', {
-            definition: def,
+                const componentDef = defLoader.getDefinition(componentRef.definitionId);
+                if (!pinExists(componentDef, entry.pinId)) {
+                    const err = new ValidationError(
+                        ValidationErrorType.PinNotFound, 
+                        `Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
+                        i,
+                        'input',
+                    );
+
+                    errors.push(err);
+                    i += 1;
+                    continue;
+                }
+
+                if (!pinTypeMatches(componentDef, entry.pinId, true)) {
+                    const err = new ValidationError(
+                        ValidationErrorType.PinTypeMismatch, 
+                        `Pin with id '${entry.pinId}' is not an input pin. You cannot connect an output pin to an input pin of a transparent component.`,
+                        i,
+                        'input',
+                    );
+
+                    errors.push(err);
+                    i += 1;
+                    continue;
+                }
+
+                def.pins.input.push(entry.pinName);
+                def.pinMapping.input[i].push(new Connector(entry.componentId, entry.pinId));
+
+                switch (entry.pinPosition) {
+                    case 'left': def.metadata.pinLocationMapping.left = componentDef.metadata.pinLocationMapping.left; break;
+                    case 'right': def.metadata.pinLocationMapping.right = componentDef.metadata.pinLocationMapping.right; break;
+                    case 'top': def.metadata.pinLocationMapping.top = componentDef.metadata.pinLocationMapping.top; break;
+                    case 'bottom': def.metadata.pinLocationMapping.bottom = componentDef.metadata.pinLocationMapping.bottom; break;
+                }
+
+                i += 1;
+            }
+
+            if (errors.length != 0) {
+                open(ValidationErrorViewer, { errors: errors });
+                return;
+            }
+
+            dispatch('export', {
+                definition: def,
+            });
         });
     }
 

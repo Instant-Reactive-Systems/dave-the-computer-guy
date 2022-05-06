@@ -5,12 +5,17 @@ import { Connector } from "./connector";
 
 @toJson
 @jsonObject
-export class PinsMapping {
+export class PinMapping {
     @jsonArrayMember(Connector, { dimensions: 2 })
     input: Connector[][];
 
     @jsonArrayMember(Connector, { dimensions: 2 })
     output: Connector[][];
+
+    constructor(input: Connector[][], output: Connector[][]) {
+        this.input = input;
+        this.output = output;
+    }
 }
 
 @toJson
@@ -80,6 +85,11 @@ export class Pins {
 
     @jsonArrayMember(String)
     output: string[]
+
+    constructor(input: string[], output: string[]) {
+        this.input = input;
+        this.output = output;
+    }
 }
 
 @toJson
@@ -98,8 +108,8 @@ export class ComponentDefinition {
     @jsonMember(String)
     description: string;
 
-    @jsonMember(PinsMapping, { isRequired: false })
-    pinsMapping: PinsMapping;
+    @jsonMember(PinMapping, { isRequired: false })
+    pinMapping: PinMapping;
 
     @jsonMember(Pins)
     pins: Pins;
@@ -119,14 +129,13 @@ export class ComponentDefinition {
     constructor() {
         this.id = 0;
         this.name = '';
-        this.type = 'transparent';
+        this.type = 'Transparent';
         this.description = '';
-        this.pinsMapping = null;
-        this.pins = {input: [], output: []};
+        this.pinMapping = null;
+        this.pins = new Pins([], []);
         this.circuit = null;
         this.truthTable = null;
         this.booleanFunction = null;
         this.metadata = new ComponentDefinitionMetadata();
     }
-
 }

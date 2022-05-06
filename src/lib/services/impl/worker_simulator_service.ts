@@ -3,14 +3,20 @@ import type { ComponentDefinition } from "$lib/models/component_definition";
 import type { UserEvent } from "$lib/models/user_event";
 import type { WorkerMessage, WorkerResponse } from "$lib/simulator_worker";
 import Worker from "$lib/simulator_worker?worker";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
+import type {ComponentDefinitionLoaderService} from "../component_definition_loader_service";
 import type { SimulatorService } from "../simulator_service";
 
 export class WorkerSimulatorService implements SimulatorService {
     private worker: Worker = null;
     private circuit: Circuit = null;
     private circuitStateBehaviourSubject = new BehaviorSubject<Map<number, any>>(null);
+    private defLoader: ComponentDefinitionLoaderService;
+    private defSubscription: Subscription;
 
+    constructor(defLoader: ComponentDefinitionLoaderService) {
+        this.defLoader = defLoader;
+    }
 
     init(): void {
         this.worker = new Worker();
@@ -23,11 +29,17 @@ export class WorkerSimulatorService implements SimulatorService {
         this.worker.onerror = (e) => {
             console.error(e);
         };
+
+        this.defSubscription = this.defLoader.getDefinitionsBehaviourSubject().subscribe((defs) => {
+            const arrDefs = Array.from(defs.values());
+            this.insertDefinitions(arrDefs.filter((x) => x.id >= 0));
+        })
     }
 
     dispose(): void {
         if (this.worker != null) {
             this.worker.terminate();
+            this.defSubscription.unsubscribe();
         }
     }
 
@@ -91,11 +103,11 @@ export class WorkerSimulatorService implements SimulatorService {
         };
         this.worker.postMessage(message);
     }
-
-    insertDefinition(definition: ComponentDefinition) {
+    
+    insertDefinitions(defs: ComponentDefinition[]) {
         let message: WorkerMessage = {
-            action: 'insertDefinition',
-            payload: definition,
+            action: 'insertDefinitions',
+            payload: defs,
         };
         this.worker.postMessage(message);
     }
