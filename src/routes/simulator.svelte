@@ -14,10 +14,7 @@
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { Command } from '$lib/models/command';
-	import { get } from 'svelte/store';
-	import { undoStore } from '$lib/stores/undo_store';
-	import { redoStore } from '$lib/stores/redo_store';
-	import _ from 'lodash';
+	import { get } from 'svelte/store';	import _ from 'lodash';
 	import type { Wire } from '$lib/models/wire';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
@@ -54,6 +51,8 @@
 	type CircuitTab = {
 		name: string;
 		circuit: Circuit;
+		undoStack: Command[],
+		redoStack: Command[]
 	};
 
 	let circuitTabs: CircuitTab[] = [];
@@ -98,7 +97,9 @@
 				// Open new tab
 				let newCircuitTab = {
 					name: circuit.name,
-					circuit: circuit
+					circuit: circuit,
+					undoStack: [] as Command[],
+					redoStack: [] as Command[]
 				};
 				circuitTabs = [...circuitTabs, newCircuitTab];
 				currentCircuitTab = newCircuitTab;
@@ -115,7 +116,9 @@
 		console.log('Creating new circuit');
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
-			circuit: new Circuit()
+			circuit: new Circuit(),
+			undoStack: [] as Command[],
+			redoStack: [] as Command[]
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
@@ -127,35 +130,27 @@
 	}
 
 	function undo() {
-		const commandStack = get(undoStore);
-		const commandToUndo: Command = commandStack.pop();
+		const commandToUndo: Command = currentCircuitTab.undoStack.pop();
 		if (commandToUndo != undefined) {
 			commandToUndo.undo();
 		} else {
 			console.log('Undo stack empty');
 			return;
 		}
-		undoStore.set(commandStack);
-		const redoStack = get(redoStore);
 		if (commandToUndo.redoable) {
-			redoStack.push(commandToUndo);
+			currentCircuitTab.redoStack.push(commandToUndo);
 		}
-		redoStore.set(redoStack);
 	}
 
 	function redo() {
-		const redoStack = get(redoStore);
-		const commandToRedo: Command = redoStack.pop();
+		const commandToRedo: Command = currentCircuitTab.redoStack.pop();
 		if (commandToRedo != undefined) {
 			commandToRedo.do();
 		} else {
 			console.log('Redo stack empty');
 			return;
 		}
-		redoStore.set(redoStack);
-		const undoStack = get(undoStore);
-		undoStack.push(commandToRedo);
-		undoStore.set(undoStack);
+		currentCircuitTab.undoStack.push(commandToRedo);
 	}
 
 	function startSimulation() {
@@ -313,9 +308,7 @@
 	}
 
 	function addComandToUndoStack(command: Command) {
-		const undoCommandsStack = get(undoStore);
-		undoCommandsStack.push(command);
-		undoStore.set(undoCommandsStack);
+		currentCircuitTab.undoStack.push(command);
 	}
 
 	//TODO handle undo and redo
@@ -372,19 +365,30 @@
 		}
 	}
 
-    function exportCircuit(event: CustomEvent<{definition: ComponentDefinition}>) {
-        console.log('Exported: ', event.detail.definition);
-        isExporting = false;
-    }
-    
-    function cancelExport() {
-        console.log('Cancelled exporting: ');
-        isExporting = false;
-    }
+	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
+		console.log('Exported: ', event.detail.definition);
+		isExporting = false;
+	}
+
+	function cancelExport() {
+		console.log('Cancelled exporting: ');
+		isExporting = false;
+	}
+
+	function updateCircuitTab(circuit: Circuit) {
+		if (currentCircuitTab != null && circuit != null) {
+			currentCircuitTab.circuit = circuit;
+		}
+	}
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
 		circuitStore.set(circuit);
+	}
+
+	$: {
+		const circuit = $circuitStore;
+		updateCircuitTab(circuit);
 	}
 
 	// Set 'isInSimulation' state to disable controls based on editor mode
@@ -533,19 +537,16 @@
 		</div>
 	</div>
 	<aside id="side-menu" class="aside col-span-3">
-        {#if isExporting}
-            <ExportTab 
-                on:cancelExport={cancelExport}
-                on:export={exportCircuit}
-            />
-        {:else}
-            <TabSystem
-			    tabs={[
-				    { title: 'Components', innerComponent: ComponentsTab },
-				    { title: 'Properties', innerComponent: PropertiesTab }
-			    ]}
-		    />
-        {/if}
+		{#if isExporting}
+			<ExportTab on:cancelExport={cancelExport} on:export={exportCircuit} />
+		{:else}
+			<TabSystem
+				tabs={[
+					{ title: 'Components', innerComponent: ComponentsTab },
+					{ title: 'Properties', innerComponent: PropertiesTab }
+				]}
+			/>
+		{/if}
 	</aside>
 </div>
 <svelte:window on:keydown|trusted={handleKeyPress} />
