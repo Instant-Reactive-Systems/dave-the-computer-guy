@@ -32,9 +32,11 @@ export class WireRenderable {
 
     update(val: boolean) {
         if (val) {
-            this.fabricObject.set("stroke","green");
-        }else{
-            this.fabricObject.set("stroke","black")
+            this.fabricObject.set("stroke", "green");
+            this.fabricObject.shadow = new fabric.Shadow({ color: "green", blur: 5, affectStroke: true, })
+        } else {
+            this.fabricObject.set("stroke", "black")
+            this.fabricObject.shadow = null;
         }
     }
 

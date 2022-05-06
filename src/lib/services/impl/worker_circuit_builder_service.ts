@@ -6,6 +6,9 @@ import type { ComponentDefinition } from "$lib/models/component_definition";
 import _ from "lodash"
 import { ComponentRef } from "$lib/models/component_ref";
 import type { Wire } from "$lib/models/wire";
+import type { Connector } from "$lib/models/connector";
+
+
 export class WorkerCircuitBuilderService implements CircuitBuilderService {
 
     private worker: Worker;
@@ -29,9 +32,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
         this.worker.onerror = (e) => {
             console.log(e);
         }
-
     }
-
 
     private handleMessageFromWorker(msg: WorkerResponse) {
         const { id, action, payload, err } = msg
@@ -111,7 +112,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
     }
 
     private disconnectConnectorsForComponent(circuit: Circuit, id: number): void {
-        console.log("Disconnecting connector for component");
+        console.log("Disconnecting connector for component", id, circuit.metadata.rendering);
         //we only disconnect connections in rendering because the real sim connections will be deducted from rendering
         circuit.metadata.rendering.wires
             .forEach(wire => wire.links = wire.links.filter(link => {
@@ -135,6 +136,56 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
             }
         }
         return circuitCopy;
+    }
+
+    async deleteComponent(circuit: Circuit, componentId: number): Promise<Circuit> {
+        const circuitCopy = _.cloneDeep(circuit);
+        this.disconnectConnectorsForComponent(circuit, componentId);
+
+        circuitCopy.metadata.rendering.components.splice(componentId, 1)
+        circuitCopy.metadata.rendering.components.forEach((component, id) => {
+            if (id != component.id) {
+                circuitCopy.metadata.rendering.wires.flatMap(wire => wire.links)
+                    .filter(link => link.type == 'pin')
+                    .filter(link => ((link.value as any).conn as Connector).componentId == component.id)
+                    .forEach(link => ((link.value as any).conn as Connector).componentId = id)
+                component.id = id
+            }
+        }
+        )
+        circuitCopy.components.splice(componentId, 1);
+        circuitCopy.components.forEach((component, id) => {
+            if (id != component.id) {
+                component.id = id;
+            }
+        })
+        circuitCopy.connections = [];
+        this.disconnectConnectorsForComponent(circuit, componentId);
+        return circuitCopy;
+    }
+    async deleteWire(circuit: Circuit, wireId: number): Promise<Circuit> {
+        const circuitCopy = _.cloneDeep(circuit);
+        circuitCopy.metadata.rendering.wires.splice(wireId, 1);
+        circuitCopy.metadata.rendering.junctions = circuitCopy.metadata.rendering.junctions.filter(junction => junction.sourceWire != wireId);
+        circuitCopy.metadata.rendering.wires.forEach(wire => {
+            wire.links = wire.links.filter((link) => !(link.type == 'wire' && link.value == wireId))
+        })
+
+        circuitCopy.metadata.rendering.wires.forEach((wire, id) => {
+            if (id != wire.id) {
+                circuitCopy.metadata.rendering.wires.flatMap(wire => wire.links)
+                    .filter(link => link.type = 'wire')
+                    .filter(link => link.value == wire.id)
+                    .forEach(link => link.value = id);
+                circuitCopy.metadata.rendering.junctions.filter(junction => junction.sourceWire == wire.id)
+                    .forEach(junction => junction.sourceWire = id)
+                wire.id = id;
+            }
+        })
+
+        circuitCopy.connections = [];
+        return circuitCopy;
+
     }
 
 

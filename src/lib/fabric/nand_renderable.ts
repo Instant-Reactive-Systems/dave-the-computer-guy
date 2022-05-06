@@ -1,6 +1,6 @@
 import { fabric } from 'fabric'
 import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/util/fabric_utils';
-import type {RenderableComponent} from './renderable_component';
+import type { RenderableComponent } from './renderable_component';
 import type { Component } from '$lib/models/component';
 import type { UserEvent } from '$lib/models/user_event';
 
@@ -30,7 +30,20 @@ export class NandRenderable implements RenderableComponent {
     update(state: any) {
         // none
     }
-
+    updatePin(pinId: number, val: boolean) {
+        console.log(pinId, this.component)
+        if (val) {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId);
+            pin.set("fill", "green");
+            pin.set("stroke", "green")
+            pin.shadow = new fabric.Shadow({ color: "green", blur: 2, })
+        } else {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId)
+            pin.set("fill", "black");
+            pin.set("stroke", "black")
+            pin.shadow = null;
+        }
+    }
     buildFabricObject(): fabric.Object {
         let outline = loadSvg(NandRenderable.SVG);
         normalizeLook(outline);
@@ -46,7 +59,7 @@ export class NandRenderable implements RenderableComponent {
             top: this.top,
             subTargetCheck: true,
         });
-        
+
         normalizeLook(this.fabricObject);
 
         // Embed metadata
@@ -54,7 +67,7 @@ export class NandRenderable implements RenderableComponent {
             type: 'component',
             ref: this
         };
-        
+
         return this.fabricObject;
     }
 }

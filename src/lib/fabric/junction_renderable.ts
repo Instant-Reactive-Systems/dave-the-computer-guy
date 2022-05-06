@@ -5,6 +5,7 @@ import { fabric } from 'fabric'
 
 
 export class JunctionRenderable {
+	fabricObject: fabric.Object;
     junction: Junction;
 
     constructor(junction: Junction) {
@@ -24,7 +25,20 @@ export class JunctionRenderable {
 			}
 		});
 
-        normalizeLook(obj);
+    	normalizeLook(obj);
+		this.fabricObject = obj;
         return obj;
     }
+
+	update(val: boolean){
+		if (val) {
+            this.fabricObject.set("fill", "green");
+            this.fabricObject.set("stroke", "green")
+            this.fabricObject.shadow = new fabric.Shadow({ color: "green", blur: 2, })
+        } else {
+            this.fabricObject.set("fill", "black");
+            this.fabricObject.set("stroke", "black")
+            this.fabricObject.shadow = null;
+        }
+	}
 }

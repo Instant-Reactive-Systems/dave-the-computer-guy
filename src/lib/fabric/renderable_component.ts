@@ -9,5 +9,6 @@ export interface RenderableComponent {
     buildFabricObject(): fabric.Object;
     onClick(): UserEvent;
     update(state: any): void;
+    updatePin(pinId: number, value: boolean): void
 }
 

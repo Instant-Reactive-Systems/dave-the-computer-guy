@@ -22,6 +22,22 @@ export class LedRenderable implements RenderableComponent {
         return null;
     }
 
+
+    updatePin(pinId: number,val: boolean) {
+        console.log(pinId,this.component)
+        if(val){
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId);
+            pin.set("fill", "green");
+            pin.set("stroke","green")
+            pin.shadow = new fabric.Shadow({ color: "green", blur: 2, })
+        }else{
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId)
+            pin.set("fill", "black");
+            pin.set("stroke","black")
+            pin.shadow = null;
+        }
+    }
+
     update(state: any) {
         const fill = state.value ? 'red' : 'transparent';
         this.outline.set("fill", fill);

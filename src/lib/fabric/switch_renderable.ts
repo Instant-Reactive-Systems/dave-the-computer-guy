@@ -18,6 +18,21 @@ export class SwitchRenderable implements RenderableComponent {
         this.component = component;
     }
 
+    updatePin(pinId: number,val: boolean) {
+        console.log(pinId,this.component)
+        if(val){
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId);
+            pin.set("fill", "green");
+            pin.set("stroke","green")
+            pin.shadow = new fabric.Shadow({ color: "green", blur: 2, })
+        }else{
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId)
+            pin.set("fill", "black");
+            pin.set("stroke","black")
+            pin.shadow = null;
+        }
+    }
+
     onClick(): UserEvent {
         const currentFill = this.outline.get("fill");
         console.log("current fill", currentFill);
