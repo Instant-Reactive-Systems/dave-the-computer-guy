@@ -115,4 +115,4 @@ export class WorkerSimulatorService implements SimulatorService {
         throw new Error("Method not implemented.");
     }
 }
-}
+
