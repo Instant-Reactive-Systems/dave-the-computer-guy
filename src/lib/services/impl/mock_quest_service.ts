@@ -1,3 +1,4 @@
+import questSvelte from "$lib/icons/quest.svelte";
 import { Quest, QuestRequirement } from "$lib/models/quest";
 import type { User } from "$lib/models/user";
 import { BehaviorSubject } from "rxjs";
@@ -9,11 +10,11 @@ import type { QuestService } from "../quest_service";
 const QUEST_TEMPLATE: Quest = new Quest();
 const QUEST_TEMPLATE_TIME_STEADY_STATE: QuestRequirement = new QuestRequirement();
 QUEST_TEMPLATE_TIME_STEADY_STATE.description = "Time to reach steady state, circuit is stable"
-QUEST_TEMPLATE_TIME_STEADY_STATE.id = 1;
 QUEST_TEMPLATE_TIME_STEADY_STATE.name = "Time To Steady State"
 QUEST_TEMPLATE_TIME_STEADY_STATE.value = 10
 QUEST_TEMPLATE.id = 1;
-QUEST_TEMPLATE.name = "First quest"
+QUEST_TEMPLATE.name = "First quest";
+QUEST_TEMPLATE.reward = 100;
 QUEST_TEMPLATE.description = "This is the first quest";
 QUEST_TEMPLATE.requirements = [QUEST_TEMPLATE_TIME_STEADY_STATE];
 QUEST_TEMPLATE.verificationData = null;
@@ -47,7 +48,7 @@ export class MockQuestsService implements QuestService {
     }
 
     async getAvailableQuests(user: User): Promise<Quest[]> {
-        return Array.from(ALL_QUESTS.values())
+        return this.availableQuestsBehaviourSubject.getValue();
     }
 
     async getCompletedQuests(user: User): Promise<Quest[]> {
@@ -65,6 +66,8 @@ export class MockQuestsService implements QuestService {
 
     async addQuestToActiveQuests(user: User, questId: number): Promise<Quest> {
         this.activeQuestIds.push(questId);
+        const availableQuests = this.availableQuestsBehaviourSubject.getValue().filter((q) => q.id != questId);
+        this.availableQuestsBehaviourSubject.next(availableQuests);
         return ALL_QUESTS.get(questId);
     }
     getAvailableQuestsBehaviourSubject(): BehaviorSubject<Quest[]> {

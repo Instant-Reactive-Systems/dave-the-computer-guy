@@ -568,6 +568,10 @@
 
 	function resizeCanvas(_event) {
 		const parent = document.getElementById('canvas-wrapper');
+		if(parent == null){
+			return;
+		}
+		
 		const width = parent.clientWidth;
 		const height = parent.clientHeight;
 

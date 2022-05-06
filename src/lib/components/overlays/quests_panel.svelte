@@ -1,21 +1,30 @@
 <script lang="ts">
-import type { Quest } from '$lib/models/quest';
+	import type { Quest } from '$lib/models/quest';
+	import type { AuthService } from '$lib/services/auth_service';
 
 	import type { QuestService } from '$lib/services/quest_service';
-	import { QUEST_SERVICE } from '$lib/services/service';
+	import { AUTH_SERVICE, QUEST_SERVICE } from '$lib/services/service';
 
 	import type { Subscription } from 'rxjs';
 	import { getContext, onDestroy, onMount } from 'svelte';
 
 	const serviceSubscriptions: Subscription[] = [];
 	const questService: QuestService = getContext(QUEST_SERVICE) as QuestService;
-	let availableQuests:Quest[] = [];
+	const userService: AuthService = getContext(AUTH_SERVICE);
+	let selectedQuest: Quest;
+	let availableQuests: Quest[] = [];
+
+	function takeQuest(quest: Quest) {
+		questService.addQuestToActiveQuests(userService.getUserBehaviourSubject().getValue(), quest.id);
+		selectedQuest = null;
+	}
 
 	onMount(() => {
 		serviceSubscriptions.push(
-			questService
-				.getAvailableQuestsBehaviourSubject()
-				.subscribe((quests) => (availableQuests = quests))
+			questService.getAvailableQuestsBehaviourSubject().subscribe((quests) => {
+				availableQuests = quests;
+				console.log('Available quests', availableQuests);
+			})
 		);
 	});
 
@@ -25,26 +34,34 @@ import type { Quest } from '$lib/models/quest';
 </script>
 
 <div class="w-full h-screen grid grid-cols-2 divide-x">
-		<div class="text-center">
-				<h1>Available quests</h1>
-				<div class="quests">
-					{#each availableQuests as quest}
-						<p>{quest.name}</p>
-					{:else}
-					<p>No work at the moment!</p>
-					{/each}
-
+	<div class="text-center overflow-y-scroll py-2">
+		<h1>Available quests</h1>
+		<div class="quests">
+			{#each availableQuests as quest (quest.id)}
+				<div
+					on:click={() => (selectedQuest = quest)}
+					class="py-4 border-solid border-4 border-black"
+				>
+					<h1>{quest.name}</h1>
 				</div>
+			{:else}
+				<p>No work at the moment!</p>
+			{/each}
 		</div>
-		<div class="text-center">
-			<h1>Here quests</h1>
-			<h1>Available quests</h1>
-			<h1>Available quests</h1>
-			<h1>Available quests</h1>
-			<h1>Available quests</h1>
-			<h1>Available quests</h1>
-			<h1>Available quests</h1>
-		</div>
+	</div>
+	<div class="text-center">
+		{#if selectedQuest != null}
+			<h2>
+				NAME:{selectedQuest.name}
+			</h2>
+			<p>DESCRIPTION:{selectedQuest.description}</p>
+			<p>REWARD:{selectedQuest.reward}</p>
+			<p>Requirements:{JSON.stringify(selectedQuest.requirements)}</p>
+			<button on:click={()=> takeQuest(selectedQuest)}>Take quest</button>
+		{:else}
+			<p>No quest selected</p>
+		{/if}
+	</div>
 </div>
 
 <style>
