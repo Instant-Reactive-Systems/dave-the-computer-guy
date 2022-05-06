@@ -10,7 +10,7 @@ export type EditorMode = {
 export type EditorModeType = 'delete' | 'wire' | 'edit' | 'running' | 'paused';
 
 // TODO: Implement delete and use the data if necessary
-export type DeleteData = null;
+export type DeleteData = 'pressed' | 'released';
 
 export type WireData = {
     source: DirectLink,

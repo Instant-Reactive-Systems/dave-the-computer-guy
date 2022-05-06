@@ -25,32 +25,31 @@
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
-    import { 
-        type EditorModeType, 
-        DEFAULT_DELETE_MODE, 
-        DEFAULT_WIRE_MODE, 
-        DEFAULT_EDIT_MODE,
-        DEFAULT_RUNNING_MODE,
-        DEFAULT_PAUSED_MODE,
-    } from '$lib/models/editor_mode';
-    import Notifier from '$lib/util/notifier';
-    import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
-    import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
-    import PlayIcon from '$lib/icons/play.svelte';
-    import PauseIcon from '$lib/icons/pause.svelte';
-    import StopIcon from '$lib/icons/stop.svelte';
-    import StepIcon from '$lib/icons/step.svelte';
-    import EditIcon from '$lib/icons/edit.svelte';
-    import DeleteIcon from '$lib/icons/delete.svelte';
-    import WireIcon from '$lib/icons/wire.svelte';
-    import QuestIcon from '$lib/icons/quest.svelte';
-    import TutorialIcon from '$lib/icons/tutorial.svelte';
-    import { getNotificationsContext } from 'svelte-notifications';
-    import ExportTab from '$lib/components/export_tab.svelte';
-import ComponentDefinition from '$lib/components/component_definition.svelte';
+	import {
+		type EditorModeType,
+		DEFAULT_DELETE_MODE,
+		DEFAULT_WIRE_MODE,
+		DEFAULT_EDIT_MODE,
+		DEFAULT_RUNNING_MODE,
+		DEFAULT_PAUSED_MODE
+	} from '$lib/models/editor_mode';
+	import Notifier from '$lib/util/notifier';
+	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
+	import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
+	import PlayIcon from '$lib/icons/play.svelte';
+	import PauseIcon from '$lib/icons/pause.svelte';
+	import StopIcon from '$lib/icons/stop.svelte';
+	import StepIcon from '$lib/icons/step.svelte';
+	import EditIcon from '$lib/icons/edit.svelte';
+	import DeleteIcon from '$lib/icons/delete.svelte';
+	import WireIcon from '$lib/icons/wire.svelte';
+	import QuestIcon from '$lib/icons/quest.svelte';
+	import TutorialIcon from '$lib/icons/tutorial.svelte';
+	import { getNotificationsContext } from 'svelte-notifications';
+	import ExportTab from '$lib/components/export_tab.svelte';
 
-    const { open, close } = getContext('simple-modal');
-    const notifier = new Notifier(getNotificationsContext());
+	const { open, close } = getContext('simple-modal');
+	const notifier = new Notifier(getNotificationsContext());
 
 	type CircuitTab = {
 		name: string;
@@ -63,50 +62,54 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
 	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
-    let isInSimulation = false;
-    let isExporting = false;
+	let isInSimulation = false;
+	let isExporting = false;
 
-    function openSaveCircuitModal() {
-        open(SaveCircuit, { onSend: (name: string, description: string) => {
-            const circuit = $circuitStore;
-            circuit.name = name;
-            circuit.description = description;
-            circuitLoader.insertCircuit(circuit).then((circ) => {
-                console.log('Loaded circuit: ', circ);
-                currentCircuitTab.name = name;
-                currentCircuitTab.circuit = circ;
-                circuitTabs = circuitTabs;
-                currentCircuitTab = currentCircuitTab;
-            });
-            close();
-        }});
-    }
+	function openSaveCircuitModal() {
+		open(SaveCircuit, {
+			onSend: (name: string, description: string) => {
+				const circuit = $circuitStore;
+				circuit.name = name;
+				circuit.description = description;
+				circuitLoader.insertCircuit(circuit).then((circ) => {
+					console.log('Loaded circuit: ', circ);
+					currentCircuitTab.name = name;
+					currentCircuitTab.circuit = circ;
+					circuitTabs = circuitTabs;
+					currentCircuitTab = currentCircuitTab;
+				});
+				close();
+			}
+		});
+	}
 
-    function openLoadCircuitModal() {
-        open(LoadCircuit, { onLoad: (circuit: Circuit) => {
-            // Load opened tab
-            const found = circuitTabs.find((x) => x.circuit.id == circuit.id);
-            if (found != null) {
-                currentCircuitTab = found;
-                circuitTabs = circuitTabs;
-                close();
-                return;
-            }
+	function openLoadCircuitModal() {
+		open(LoadCircuit, {
+			onLoad: (circuit: Circuit) => {
+				// Load opened tab
+				const found = circuitTabs.find((x) => x.circuit.id == circuit.id);
+				if (found != null) {
+					currentCircuitTab = found;
+					circuitTabs = circuitTabs;
+					close();
+					return;
+				}
 
-            // Open new tab
-            let newCircuitTab = {
-			    name: circuit.name,
-			    circuit: circuit,
-		    };
-		    circuitTabs = [...circuitTabs, newCircuitTab];
-		    currentCircuitTab = newCircuitTab;
-            close();
-        }});
-    }
+				// Open new tab
+				let newCircuitTab = {
+					name: circuit.name,
+					circuit: circuit
+				};
+				circuitTabs = [...circuitTabs, newCircuitTab];
+				currentCircuitTab = newCircuitTab;
+				close();
+			}
+		});
+	}
 
-    function startExportCircuit() {
-        isExporting = true;
-    }
+	function startExportCircuit() {
+		isExporting = true;
+	}
 
 	function createNewCircuit() {
 		console.log('Creating new circuit');
@@ -155,96 +158,112 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 		undoStore.set(undoStack);
 	}
 
-    function startSimulation() {
-        deductConnections().then((circuit) => {
-            switch ($editorModeStore.type) {
-                case 'edit':
-                case 'wire':
-                case 'delete':
+	function startSimulation() {
+		deductConnections().then((circuit) => {
+			switch ($editorModeStore.type) {
+				case 'edit':
+				case 'wire':
+				case 'delete':
 					circuitStore.set(circuit);
 					editorModeStore.set(DEFAULT_RUNNING_MODE);
 					simulator.setCircuit(circuit);
 					simulator.start();
 					break;
-                case 'paused': {
-                    simulator.start();
-                    editorModeStore.set(DEFAULT_RUNNING_MODE);
-                    break;
-                }
-                default: {
-                    notifier.info('Simulation already running!');
-                }
-            }
-        });
+				case 'paused': {
+					simulator.start();
+					editorModeStore.set(DEFAULT_RUNNING_MODE);
+					break;
+				}
+				default: {
+					notifier.info('Simulation already running!');
+				}
+			}
+		});
 	}
 
 	function pauseSimulation() {
-        switch ($editorModeStore.type) {
-            case 'running': {
-                simulator.pause();
-                editorModeStore.set(DEFAULT_PAUSED_MODE);
-                break;
-            }
-            case 'paused': {
-                console.log('Simulation already paused!');
-                break;
-            }
-            default: {
-                console.log('Simulation not running!');
-            }
-        }
+		switch ($editorModeStore.type) {
+			case 'running': {
+				simulator.pause();
+				editorModeStore.set(DEFAULT_PAUSED_MODE);
+				break;
+			}
+			case 'paused': {
+				console.log('Simulation already paused!');
+				break;
+			}
+			default: {
+				console.log('Simulation not running!');
+			}
+		}
+	}
+
+	function deleteWire(e) {
+		const circuit = $circuitStore;
+		const wireId = e.detail.wireId;
+		console.log(`Deleting wire ${wireId}`);
+		circuitBuilder.deleteWire(circuit, wireId).then((circuit) => circuitStore.set(circuit));
+	}
+
+	function deleteComponent(e) {
+		const componentId = e.detail.componentId;
+		const circuit = $circuitStore;
+		console.log(`Deleting component ${componentId}`);
+		circuitBuilder
+			.deleteComponent(circuit, componentId)
+			.then((circuit) => circuitStore.set(circuit));
 	}
 
 	function stopSimulation() {
-        switch ($editorModeStore.type) {
-            case 'paused':
-            case 'running': {
-                simulator.stop();
-                editorModeStore.set(DEFAULT_EDIT_MODE);
-                circuitStateStore.set(null); // Remove simulation visuals
-                break;
-            }
-            default: {
-                console.log('Simulation not running!');
-            }
-        }
-	}
-    
-	function stepSimulation() {
-        switch ($editorModeStore.type) {
-            case 'paused': {
-                simulator.step();
-                break;
-            }
-            case 'running': {
-			    console.log("Can not step while simulator is rurnning");
-                break;
-            }
-            default: {
-                deductConnections().then((circuit) => {
-                    circuitStore.set(circuit);
-                    simulator.setCircuit(circuit);
-            	    simulator.step();
-            	    editorModeStore.set(DEFAULT_PAUSED_MODE);
-                });
-            }
-        }
+		switch ($editorModeStore.type) {
+			case 'paused':
+			case 'running': {
+				simulator.stop();
+				editorModeStore.set(DEFAULT_EDIT_MODE);
+				circuitStateStore.set(null); // Remove simulation visuals
+				break;
+			}
+			default: {
+				console.log('Simulation not running!');
+			}
+		}
 	}
 
-    function deductConnections(): Promise<Circuit> {
-        const circuit = $circuitStore;
+	function stepSimulation() {
+		switch ($editorModeStore.type) {
+			case 'paused': {
+				simulator.step();
+				break;
+			}
+			case 'running': {
+				console.log('Can not step while simulator is rurnning');
+				break;
+			}
+			default: {
+				deductConnections().then((circuit) => {
+					circuitStore.set(circuit);
+					simulator.setCircuit(circuit);
+					simulator.step();
+					editorModeStore.set(DEFAULT_PAUSED_MODE);
+				});
+			}
+		}
+	}
+
+	function deductConnections(): Promise<Circuit> {
+		const circuit = $circuitStore;
 		return circuitBuilder.deductConnections(circuit);
-    }
+	}
 
 	function handleKeyPress(e: KeyboardEvent) {
 		if (e.ctrlKey == true && e.key.toLowerCase() == 'z') {
 			undo();
-            e.preventDefault();
+			e.preventDefault();
 		}
 		if (e.ctrlKey == true && e.key.toLowerCase() == 'y') {
 			console.log('Redoing');
 			redo();
-            e.preventDefault();
+			e.preventDefault();
 		}
 	}
 
@@ -308,7 +327,7 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 		const addNewWireCommand: Command = {
 			name: 'Add new wire',
 			do: () => {
-                const circuit = $circuitStore;
+				const circuit = $circuitStore;
 				circuitBuilder.addNewWire(circuit, wire, junction).then((circ) => {
 					const mode = _.cloneDeep(get(editorModeStore));
 					if (mode.type == 'wire') {
@@ -334,22 +353,24 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 		addComandToUndoStack(addNewWireCommand);
 	}
 
-	function deleteComponent(circuit: Circuit, id: number) {
-		console.log('Connector disconnecting not implemented');
-	}
-
 	function processUserEvent(e) {
 		const event: UserEvent = e.detail.event;
 		simulator.insertUserEvent(event);
 	}
 
-    function switchEditorMode(type: EditorModeType) {
-        switch (type) {
-            case 'delete': $editorModeStore = DEFAULT_DELETE_MODE; break;
-            case 'wire': $editorModeStore = DEFAULT_WIRE_MODE; break;
-            case 'edit': $editorModeStore = DEFAULT_EDIT_MODE; break;
-        }
-    }
+	function switchEditorMode(type: EditorModeType) {
+		switch (type) {
+			case 'delete':
+				$editorModeStore = DEFAULT_DELETE_MODE;
+				break;
+			case 'wire':
+				$editorModeStore = DEFAULT_WIRE_MODE;
+				break;
+			case 'edit':
+				$editorModeStore = DEFAULT_EDIT_MODE;
+				break;
+		}
+	}
 
     function exportCircuit(event: CustomEvent<{definition: ComponentDefinition}>) {
         console.log('Exported: ', event.detail.definition);
@@ -366,20 +387,19 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 		circuitStore.set(circuit);
 	}
 
-    // Set 'isInSimulation' state to disable controls based on editor mode
-    $: {
-        const mode = $editorModeStore;
-        switch (mode.type) {
-            case 'paused':
-            case 'running':
-                isInSimulation = true;
-                break;
-            default:
-                isInSimulation = false;
-        }
-    }
+	// Set 'isInSimulation' state to disable controls based on editor mode
+	$: {
+		const mode = $editorModeStore;
+		switch (mode.type) {
+			case 'paused':
+			case 'running':
+				isInSimulation = true;
+				break;
+			default:
+				isInSimulation = false;
+		}
+	}
 
-	
 	onMount(() => {
 		createNewCircuit();
 		serviceSubscriptions.push(
@@ -409,7 +429,7 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 					<li>
 						<button on:click={openLoadCircuitModal}>Load circuit</button>
 					</li>
-                    <li>
+					<li>
 						<button on:click={startExportCircuit}>Export as component</button>
 					</li>
 				</ul>
@@ -438,35 +458,39 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 			</button>
 		</li>
 	</ul>
-    <ul class="editor-tools">
-        <li>
-            <button on:click={() => switchEditorMode('edit')} disabled={isInSimulation} title="Edit mode">
-                <EditIcon/>
-            </button>
-        </li>
-        <li>
-            <button on:click={() => switchEditorMode('wire')} disabled={isInSimulation} title="Wire mode">
-                <WireIcon/>
-            </button>
-        </li>
-        <li>
-            <button on:click={() => switchEditorMode('delete')} disabled={isInSimulation} title="Delete mode">
-                <DeleteIcon/>
-            </button>
-        </li>
-    </ul>
-    <ul class="game-tools">
-        <li>
-            <button on:click={() => {}} title="Quests">
-                <QuestIcon/>
-            </button>
-        </li>
-        <li>
-            <button on:click={() => {}} title="Tutorial">
-                <TutorialIcon/>
-            </button>
-        </li>
-    </ul>
+	<ul class="editor-tools">
+		<li>
+			<button on:click={() => switchEditorMode('edit')} disabled={isInSimulation} title="Edit mode">
+				<EditIcon />
+			</button>
+		</li>
+		<li>
+			<button on:click={() => switchEditorMode('wire')} disabled={isInSimulation} title="Wire mode">
+				<WireIcon />
+			</button>
+		</li>
+		<li>
+			<button
+				on:click={() => switchEditorMode('delete')}
+				disabled={isInSimulation}
+				title="Delete mode"
+			>
+				<DeleteIcon />
+			</button>
+		</li>
+	</ul>
+	<ul class="game-tools">
+		<li>
+			<button on:click={() => {}} title="Quests">
+				<QuestIcon />
+			</button>
+		</li>
+		<li>
+			<button on:click={() => {}} title="Tutorial">
+				<TutorialIcon />
+			</button>
+		</li>
+	</ul>
 </nav>
 
 <div id="main-content-wrapper" class="grid grid-cols-12">
@@ -478,33 +502,38 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 					on:addNewComponent={addNewComponent}
 					on:addNewWire={addNewWire}
 					on:userEventGenerated={processUserEvent}
+					on:deleteWire={deleteWire}
+					on:deleteComponent={deleteComponent}
 				/>
 			</main>
 			<div class="bottom-bar">
-                <div class="editor-mode"
-                    class:editmode={$editorModeStore.type == 'edit'}
-                    class:wiremode={$editorModeStore.type == 'wire'}
-                    class:delmode={$editorModeStore.type == 'delete'}
-                    class:runningmode={$editorModeStore.type == 'running'}
-                    class:pausedmode={$editorModeStore.type == 'paused'}
-                    title="Editor mode">
-                        {$editorModeStore.type}
-                </div>
-                <nav class="circuit-tabs scroll-shadows-x">
-				    <ul>
-					    {#each circuitTabs as tab (tab)}
-						<li class:selected={tab.name == currentCircuitTab.name}>
-							<button on:click={() => switchCircuitTab(tab)}>
-                                {tab.name}
-                            </button>
-					    </li>
-					    {/each}
-				    </ul>
-                </nav>
+				<div
+					class="editor-mode"
+					class:editmode={$editorModeStore.type == 'edit'}
+					class:wiremode={$editorModeStore.type == 'wire'}
+					class:delmode={$editorModeStore.type == 'delete'}
+					class:runningmode={$editorModeStore.type == 'running'}
+					class:pausedmode={$editorModeStore.type == 'paused'}
+					title="Editor mode"
+				>
+					{$editorModeStore.type}
+				</div>
+				<nav class="circuit-tabs scroll-shadows-x">
+					<ul>
+						{#each circuitTabs as tab (tab)}
+							<li class:selected={tab.name == currentCircuitTab.name}>
+								<button on:click={() => switchCircuitTab(tab)}>
+									{tab.name}
+								</button>
+							</li>
+						{/each}
+					</ul>
+				</nav>
 			</div>
 		</div>
 	</div>
 	<aside id="side-menu" class="aside col-span-3">
+<<<<<<< Updated upstream
         {#if isExporting}
             <ExportTab 
                 on:cancelExport={cancelExport}
@@ -518,6 +547,18 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 			    ]}
 		    />
         {/if}
+=======
+		{#if isExporting}
+			<ExportTab />
+		{:else}
+			<TabSystem
+				tabs={[
+					{ title: 'Components', innerComponent: ComponentsTab },
+					{ title: 'Properties', innerComponent: PropertiesTab }
+				]}
+			/>
+		{/if}
+>>>>>>> Stashed changes
 	</aside>
 </div>
 <svelte:window on:keydown|trusted={handleKeyPress} />
@@ -565,14 +606,14 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 	.editor-tools > li > button {
 		@apply p-2 disabled:cursor-not-allowed;
 	}
-    
-    .game-tools {
-        @apply mr-4 w-full justify-end;
-    }
 
-    .game-tools > li > button {
-        @apply p-2;
-    }
+	.game-tools {
+		@apply mr-4 w-full justify-end;
+	}
+
+	.game-tools > li > button {
+		@apply p-2;
+	}
 
 	/*
     Dropdown menu styles
@@ -603,17 +644,17 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 	/*
     Editor mode styles
     */
-    .editor-mode {
-        @apply px-4 py-2 uppercase text-lg font-bold;
-    }
+	.editor-mode {
+		@apply px-4 py-2 uppercase text-lg font-bold;
+	}
 
-    .editmode {
-        @apply bg-yellow-500;
-    }
-    
-    .wiremode {
-        @apply bg-purple-700;
-    }
+	.editmode {
+		@apply bg-yellow-500;
+	}
+
+	.wiremode {
+		@apply bg-purple-700;
+	}
 
 	.delmode {
 		@apply bg-red-700;
@@ -627,39 +668,39 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 		@apply bg-green-400;
 	}
 
-    /*Bottom bar*/
-    .bottom-bar {
-        @apply inline-flex;
-    }
+	/*Bottom bar*/
+	.bottom-bar {
+		@apply inline-flex;
+	}
 
-    .bottom-bar > * {
-        @apply h-10;
-    }
+	.bottom-bar > * {
+		@apply h-10;
+	}
 
-    .circuit-tabs {
-        @apply grow overflow-x-auto overflow-y-clip border-t-2 border-gray-200;
-    }
+	.circuit-tabs {
+		@apply grow overflow-x-auto overflow-y-clip border-t-2 border-gray-200;
+	}
 
-    .circuit-tabs > ul {
-        @apply inline-flex;
-    }
+	.circuit-tabs > ul {
+		@apply inline-flex;
+	}
 
-    .circuit-tabs > ul > li {
-        @apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
-    }
+	.circuit-tabs > ul > li {
+		@apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
+	}
 
-    .circuit-tabs > ul > li > button {
-        @apply px-4 py-2;
-    }
+	.circuit-tabs > ul > li > button {
+		@apply px-4 py-2;
+	}
 
-    /*Aside*/
-    .aside {
-        --hgt: calc(theme(height.full));
-        height: var(--hgt);
-        max-height: var(--hgt);
-        min-height: var(--hgt);
-        @apply border-l-2 border-gray-200;
-    }
+	/*Aside*/
+	.aside {
+		--hgt: calc(theme(height.full));
+		height: var(--hgt);
+		max-height: var(--hgt);
+		min-height: var(--hgt);
+		@apply border-l-2 border-gray-200;
+	}
 
 	/*Main content styles*/
 	#main-content-wrapper {
@@ -669,7 +710,7 @@ import ComponentDefinition from '$lib/components/component_definition.svelte';
 		min-height: var(--hgt);
 	}
 
-    #canvas-wrapper {
-        @apply grow;
-    }
+	#canvas-wrapper {
+		@apply grow;
+	}
 </style>

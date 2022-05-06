@@ -21,7 +21,8 @@
 		DEFAULT_WIRE_MODE,
 		DEFAULT_EDIT_MODE
 	} from '$lib/models/editor_mode';
-import { get } from 'svelte/store';
+import type { ComponentRef } from '$lib/models/component_ref';
+import type { WireRenderable } from '$lib/fabric/wire_renderable';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -126,10 +127,22 @@ import { get } from 'svelte/store';
 			console.log('mouse down');
 			// Drag has precedence over all other mouse down events
 			if (handleDrag(event)) return;
-
 			// Handle mouse down event depending on editor mode
 			handleMousedown(event);
 		});
+
+		canvas.on('mouse:up',(event: fabric.IEvent<MouseEvent>) => {
+			console.log("mouse up");
+			switch($editorModeStore.type){
+				case 'delete':
+					const mode = _.cloneDeep($editorModeStore)
+					mode.data  = "released"
+					editorModeStore.set(mode);
+					break;
+				default:
+					break;
+			}
+		})
 
 		canvas.on('object:modified', (e: any) => {
 			switch (e.action) {
@@ -139,7 +152,7 @@ import { get } from 'svelte/store';
 		});
 
 		canvas.on('mouse:move', (event: fabric.IEvent<MouseEvent>) => {
-			const pt = canvas.getPointer(event.e);
+
 			if (canvas.isDragging) {
 				canvas.viewportTransform[4] += event.e.clientX - canvas.lastPosX;
 				canvas.viewportTransform[5] += event.e.clientY - canvas.lastPosY;
@@ -151,7 +164,13 @@ import { get } from 'svelte/store';
 
 			if ($editorModeStore.type == 'wire') {
 				showTemporaryWire(event);
+			}else if($editorModeStore.type == 'delete'){
+				console.log("Editor mode",$editorModeStore)
+				if($editorModeStore.data == 'pressed'){
+					deleteObject(event);
+				}
 			}
+
 		});
 
 		canvas.on('mouse:up', (_) => {
@@ -171,6 +190,39 @@ import { get } from 'svelte/store';
 		}
 
 		return false;
+	}
+
+	function deleteObject(mouseEvent){
+		const pt =  canvas.getPointer(mouseEvent.evt)
+		const x = pt.x;
+		const y = pt.y;
+		const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
+
+		for(const obj of canvas.getObjects()){
+			if (obj.intersectsWithObject(hitCircle, true)) {
+				switch (obj.data.type) {
+					case 'component': {
+						const componentId = (obj.data.ref as RenderableComponent).component.id
+						deleteComponent(componentId);
+						break;
+					}
+					case 'wire': {
+						if (!obj.data.isTemp) {
+							const wireId = (obj.data.ref as WireRenderable).wire.id;
+							deleteWire(wireId);
+						}
+					}
+					default: {
+					}
+				}
+			}
+		}
+	}
+
+	function deleteWire(wireId){
+		dispatch("deleteWire",{
+			wireId: wireId
+		})
 	}
 
 	function rerenderCircuit(circuit: Circuit) {
@@ -202,6 +254,9 @@ import { get } from 'svelte/store';
 				break;
 			}
 			case 'delete': {
+				const mode = _.cloneDeep($editorModeStore);
+				mode.data = 'pressed';
+				editorModeStore.set(mode);
 				break;
 			}
 		}
@@ -467,6 +522,23 @@ import { get } from 'svelte/store';
 		});
 	}
 
+	function initDeleteMode(){
+		const mode = DEFAULT_DELETE_MODE;
+		mode.data = 'released';
+		editorModeStore.set(mode);
+	}
+
+	function deleteComponent(componentId: number){
+		dispatch("deleteComponent",{
+			componentId: componentId
+		})
+	}
+
+	function quitDeleteMode(){
+		const mode  =DEFAULT_EDIT_MODE;
+		editorModeStore.set(mode);
+	}
+
 	function handleKeydown(event: KeyboardEvent) {
 		switch ($editorModeStore.type) {
 			case 'edit': {
@@ -475,6 +547,8 @@ import { get } from 'svelte/store';
 
 				// Switch to wire mode
 				if (event.key == 'w') initWireMode();
+
+				if(event.key == 'd') initDeleteMode();
 				break;
 			}
 			case 'wire': {
@@ -483,6 +557,7 @@ import { get } from 'svelte/store';
 				break;
 			}
 			case 'delete': {
+				if (event.key == 'Escape') quitDeleteMode();
 				break;
 			}
 			case 'running': {
@@ -497,7 +572,6 @@ import { get } from 'svelte/store';
 	function quitWireMode() {
 		const mode = DEFAULT_EDIT_MODE;
 		editorModeStore.set(mode);
-		console.log('Quitting wire mode');
 	}
 
 	function resizeCanvas(_event) {
