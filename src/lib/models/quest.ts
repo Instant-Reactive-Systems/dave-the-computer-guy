@@ -1,127 +1,79 @@
-import { AnyT, jsonArrayMember, jsonMember, jsonObject, toJson } from "typedjson";
 
 
 
-@toJson
-@jsonObject
-export class QuestRequirement {
-    @jsonMember(String)
+export type QuestRequirement =  {
     name: string
 
-    @jsonMember(String)
     description: string
 
-    @jsonMember(AnyT)
     value: any
 }
 
-@toJson
-@jsonObject
-export class TruthTable {
-    @jsonArrayMember(Boolean, { dimensions: 2 })
+export type TruthTable =  {
     input: boolean[][];
 
-    @jsonArrayMember(Boolean, { dimensions: 2 })
     output: boolean[][];
 }
 
-@toJson
-@jsonObject
-export class CombinationalVerificationRestrictions {
-    @jsonMember(Number)
+export type CombinationalVerificationRestrictions  = {
     maxDelay: number;
 
-    @jsonMember(TruthTable)
     truthTable: TruthTable;
 
-    @jsonMember(Number)
     maxComponents: number
 }
 
-@toJson
-@jsonObject
-export class CombinationalVerificationData {
-    @jsonMember(String)
+export type CombinationalVerificationData = {
     type: 'Combinational';
 
-    @jsonMember(CombinationalVerificationRestrictions)
     restrictions: CombinationalVerificationRestrictions;
 }
 
-@toJson
-@jsonObject
-export class SequentialStateTrigger {
-    @jsonMember(Number)
+export type SequentialStateTrigger =  {
     pin: number;
 
-    @jsonMember(Boolean)
     value: boolean;
 
 }
 
-@toJson
-@jsonObject
-export class SequentialStateOutput {
-    @jsonMember(Number)
+export type SequentialStateOutput =  {
     pin: number;
 
-    @jsonMember(Boolean)
     value: boolean;
 }
 
-@toJson
-@jsonObject
-export class SequentialState {
-    @jsonArrayMember(SequentialStateTrigger)
+export type SequentialState =  {
     triggers: SequentialStateTrigger[];
 
-    @jsonArrayMember(SequentialStateOutput)
     outputs: SequentialStateOutput[];
 
 }
 
-@toJson
-@jsonObject
-export class SequentialVerificationRestrictions {
-    @jsonArrayMember(SequentialState)
+export type SequentialVerificationRestrictions =  {
     stateMachine: SequentialState[]
 
-    @jsonMember(Number)
     maxComponents: number
 }
 
 
-@toJson
-@jsonObject
-export class SequentialVerificationData {
-    @jsonMember(String)
+export type SequentialVerificationData =  {
     type: 'Sequential'
 
-    @jsonMember(SequentialVerificationRestrictions)
     restrictions: SequentialVerificationRestrictions;
 }
 
-@toJson
-@jsonObject
-export class Quest {
-    @jsonMember(Number)
+export type Quest =  {
     id: number;
 
-    @jsonMember(String)
     name: string;
 
-    @jsonMember(String)
     description: string;
 
-    @jsonArrayMember(QuestRequirement)
     requirements: QuestRequirement[];
 
 
-    //TODO make custom deserializer and serializer
-    @jsonMember(AnyT)
     verificationData: CombinationalVerificationData | SequentialVerificationData;
 
-    @jsonMember(Number)
     reward: number;
 
 }
