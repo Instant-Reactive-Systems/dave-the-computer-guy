@@ -45,34 +45,30 @@
 	function onExport() {
 		const circuit = $circuitStore;
 		circuitBuilder.deductConnections(circuit).then((circ) => {
-			const outs = outputEntries.map((entry) => {
+            const mapEntries = (entry: TableEntry) => {
 				return {
 					pinName: entry.pinName,
 					pinPosition: entry.pinPosition,
 					componentId: Number.parseInt(entry.componentId),
 					pinId: Number.parseInt(entry.pinId)
 				};
-			});
+			};
 
-			const ins = inputEntries.map((entry) => {
-				return {
-					pinName: entry.pinName,
-					pinPosition: entry.pinPosition,
-					componentId: Number.parseInt(entry.componentId),
-					pinId: Number.parseInt(entry.pinId)
-				};
-			});
+            type InsertedPin = {
+                name: string,
+                index: number,
+            };
 
+			const outs = outputEntries.map(mapEntries);
+			const ins = inputEntries.map(mapEntries);
 			let errors: ValidationError[] = [];
+            let insertedPins: InsertedPin[] = [];
 			let def = DEFAULT_COMPONENT_DEFINITION;
 			def.name = name;
 			def.description = description;
 			def.circuit = circ;
+			def.pinMapping = { input: [], output: [] };
 
-			def.pinMapping = {
-				input: makeArray<Connector[]>(ins.length, () => []),
-				output: makeArray<Connector[]>(outs.length, () => [])
-			};
 			let i = 0;
 			for (const entry of outs) {
 				const componentRef = getComponent(circ, entry.componentId);
@@ -116,28 +112,18 @@
 					continue;
 				}
 
-				def.pins.output.push(entry.pinName);
-				def.pinMapping.output[i].push({
-                    componentId: entry.componentId,
-                    pin: entry.pinId
-                });
-                
-
-				switch (entry.pinPosition) {
-					case 'left':
-						def.metadata.pinLocationMapping.left = componentDef.metadata.pinLocationMapping.left;
-						break;
-					case 'right':
-						def.metadata.pinLocationMapping.right = componentDef.metadata.pinLocationMapping.right;
-						break;
-					case 'top':
-						def.metadata.pinLocationMapping.top = componentDef.metadata.pinLocationMapping.top;
-						break;
-					case 'bottom':
-						def.metadata.pinLocationMapping.bottom =
-							componentDef.metadata.pinLocationMapping.bottom;
-						break;
-				}
+                const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
+                const found = insertedPins.find((x) => entry.pinName == x.name);
+                console.log('Found: ', found);
+                if (found == null) {
+                    const index = def.pins.output.length;
+				    def.pins.output.push(entry.pinName);
+				    def.pinMapping.output.push([connector]);
+                    insertedPins.push({name: entry.pinName, index});
+                    addToPinLocationMapping(entry, def);
+                } else {
+				    def.pinMapping.output[found.index].push(connector);
+                }
 
 				i += 1;
 			}
@@ -185,28 +171,18 @@
 					continue;
 				}
 
-				def.pins.input.push(entry.pinName);
-				const connector: Connector = {
-					componentId: entry.componentId,
-					pin: entry.pinId
-				};
-				def.pinMapping.input[i].push(connector);
-
-				switch (entry.pinPosition) {
-					case 'left':
-						def.metadata.pinLocationMapping.left = componentDef.metadata.pinLocationMapping.left;
-						break;
-					case 'right':
-						def.metadata.pinLocationMapping.right = componentDef.metadata.pinLocationMapping.right;
-						break;
-					case 'top':
-						def.metadata.pinLocationMapping.top = componentDef.metadata.pinLocationMapping.top;
-						break;
-					case 'bottom':
-						def.metadata.pinLocationMapping.bottom =
-							componentDef.metadata.pinLocationMapping.bottom;
-						break;
-				}
+                const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
+                const found = insertedPins.find((x) => entry.pinName == x.name);
+                console.log('Found: ', found);
+                if (found == null) {
+                    const index = def.pins.input.length;
+				    def.pins.input.push(entry.pinName);
+				    def.pinMapping.input.push([connector]);
+                    insertedPins.push({name: entry.pinName, index});
+                    addToPinLocationMapping(entry, def);
+                } else {
+				    def.pinMapping.input[found.index].push(connector);
+                }
 
 				i += 1;
 			}
@@ -243,6 +219,23 @@
 			return mappedId >= 0 && mappedId < def.pins.output.length;
 		}
 	}
+
+    function addToPinLocationMapping(entry: Entry, def: ComponentDefinition) {
+        switch (entry.pinPosition) {
+			case 'left':
+				def.metadata.pinLocationMapping.left.push({ name: entry.pinName, pin: entry.pinId });
+				break;
+			case 'right':
+				def.metadata.pinLocationMapping.right.push({ name: entry.pinName, pin: entry.pinId });
+				break;
+			case 'top':
+				def.metadata.pinLocationMapping.top.push({ name: entry.pinName, pin: entry.pinId });
+				break;
+			case 'bottom':
+				def.metadata.pinLocationMapping.bottom.push({ name: entry.pinName, pin: entry.pinId });
+				break;
+		}
+    }
 </script>
 
 <div class="wrapper">
@@ -319,7 +312,7 @@
 				</li>
 				<li>
 					<button
-						title="Remove selected entry"
+						title="Remove entry"
 						on:click={() => {
 							outputEntries.pop();
 							outputEntries = outputEntries;
@@ -379,7 +372,7 @@
 				</li>
 				<li>
 					<button
-						title="Remove selected entry"
+						title="Remove entry"
 						on:click={() => {
 							inputEntries.pop();
 							inputEntries = inputEntries;
