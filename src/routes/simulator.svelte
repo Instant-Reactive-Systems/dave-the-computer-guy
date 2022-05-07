@@ -72,7 +72,6 @@ type WireData
 		open(SaveCircuit, {
 			onSend: (name: string, description: string) => {
 				const circuit = $circuitStore;
-                console.log('double nigger circuit: ', circuit);
 				circuit.name = name;
 				circuit.description = description;
 				circuitLoader.insertCircuit(circuit).then((circ) => {
@@ -389,7 +388,6 @@ type WireData
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
-        console.log('nigger circuit: ', circuit);
 		circuitStore.set(circuit);
 	}
 
