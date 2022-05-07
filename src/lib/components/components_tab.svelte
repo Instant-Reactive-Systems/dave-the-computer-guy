@@ -6,7 +6,6 @@
     import ComponentDefinitionComponent from './component_definition.svelte';
 	import type { Subscription } from 'rxjs';
 	import { eventStore } from '$lib/stores/event_store';
-	import { Event } from '$lib/models/event';
 
 	let componentDefinitionLoaderService: ComponentDefinitionLoaderService = getContext(
 		COMPONENT_DEFINITION_LOADER_SERVICE
@@ -32,9 +31,13 @@
 
 	function onComponentDefinitionSelected(event: CustomEvent) {
 		eventStore.set(
-			new Event('ComponentDefinitionComponent', 'click', {
-				componentDefinition: event.detail.componentDefinition
-			})
+			{
+				source: 'ComponentDefinitionComponent',
+				type: 'click',
+				payload: {
+					componentDefinition: event.detail.componentDefinition
+				}
+			}
 		);
 	}
 	$: {

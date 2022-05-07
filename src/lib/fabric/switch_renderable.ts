@@ -2,7 +2,7 @@ import { fabric } from 'fabric'
 import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/util/fabric_utils';
 import type {RenderableComponent} from './renderable_component';
 import type { Component } from '$lib/models/component';
-import { UserEvent } from '$lib/models/user_event';
+import type { UserEvent } from '$lib/models/user_event';
 
 export class SwitchRenderable implements RenderableComponent {
     component: Component;
@@ -42,7 +42,10 @@ export class SwitchRenderable implements RenderableComponent {
             this.outline.set("fill", "transparent");
         }
 
-        const event = new UserEvent(this.component.id, "toggle");
+        const event:UserEvent = {
+               componentId: this.component.id,
+               payload: "toggle"
+        }
         return event;
     }
 

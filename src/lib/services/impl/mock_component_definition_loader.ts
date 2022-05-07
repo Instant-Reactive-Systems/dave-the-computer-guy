@@ -1,11 +1,9 @@
-import {  ComponentDefinition } from "$lib/models/component_definition";
+import type {  ComponentDefinition } from "$lib/models/component_definition";
 import type { User } from "$lib/models/user";
 import {getRandomInt} from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
 import type { ComponentDefinitionLoaderService } from "../component_definition_loader_service";
 import _ from 'lodash';
-import { cloneCircuit } from '$lib/util/common';
-import {TypedJSON} from "typedjson";
 
 export class MockComponentDefinitonLoaderService implements ComponentDefinitionLoaderService {
 
@@ -40,9 +38,9 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
         let defs = new Map();
         const defsJson = localStorage.getItem('userDefinitions');
         if (defsJson != null) {
-            const serializer = new TypedJSON(ComponentDefinition);
-            const parsed: ComponentDefinition[] = serializer.parseAsArray(defsJson);
+            const parsed: ComponentDefinition[] = JSON.parse(defsJson);
             for (const def of parsed) {
+                console.log("Parsed user def",def);
                 defs.set(def.id, def);
             }
         }
@@ -62,8 +60,7 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
         defs.set(id, definition);
         map.set(id, definition);
         console.log('insertDefinition(): Defs is ', definition);
-        const serializer = new TypedJSON(ComponentDefinition);
-        localStorage.setItem('userDefinitions', serializer.stringifyAsArray(Array.from(defs.values())));
+        localStorage.setItem('userDefinitions', JSON.stringify(Array.from(defs.values())));
         this.definitionsBehaviourSubject.next(map);
         return;
     }
@@ -114,7 +111,7 @@ const NAND_DEFINITION: ComponentDefinition = {
             left: [{ name: "A", pin: 0 }, { name: "B", pin: 1 }],
             right: [{ name: "Y", pin: 2 }]
         },
-        imageUrl: `nand_gate.png`
+        imageUrl: "nand_gate.png"
     }
 }
 
@@ -140,7 +137,7 @@ const TRISTATE_DEFINITION: ComponentDefinition = {
             left: [{ name: "A", pin: 0 }, { name: "B", pin: 1 }],
             right: [{ name: "Y", pin: 2 }]
         },
-        imageUrl: `tristate.png`
+        imageUrl: "tristate.png"
     }
 
 }
@@ -168,7 +165,7 @@ const CLOCK_DEFINITION: ComponentDefinition = {
             left: [],
             right: [{ name: "Y", pin: 0 }]
         },
-        imageUrl: `clock.png`
+        imageUrl: "clock.png"
     }
 }
 
@@ -195,7 +192,7 @@ const GROUND_DEFINITION: ComponentDefinition = {
             left: [],
             right: [{ name: "Y", pin: 0 }]
         },
-        imageUrl: `ground.png`
+        imageUrl: "ground.png"
     }
 }
 
@@ -222,7 +219,7 @@ const SOURCE_DEFINITION: ComponentDefinition = {
             left: [],
             right: [{ name: "Y", pin: 0 }]
         },
-        imageUrl: `source.png`
+        imageUrl: "source.png"
     }
 }
 
@@ -249,7 +246,7 @@ const SWITCH_DEFININITION: ComponentDefinition = {
             left: [],
             right: [{ name: "Y", pin: 0 }]
         },
-        imageUrl: `switch.png`
+        imageUrl: "switch.png"
     }
 }
 
@@ -276,11 +273,11 @@ const LED_DEFINITION: ComponentDefinition = {
             left: [{ name: "Y", pin: 0 }],
             right: []
         },
-        imageUrl: `led.png`
+        imageUrl: "led.png"
     }
 }
 
-const BUILTIN_DEFINITIONS = [
+const BUILTIN_DEFINITIONS: ComponentDefinition[] = [
     NAND_DEFINITION, 
     TRISTATE_DEFINITION, 
     CLOCK_DEFINITION,

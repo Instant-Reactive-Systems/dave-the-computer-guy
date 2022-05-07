@@ -1,13 +1,13 @@
-import { ComponentRenderingData, Junction, type Circuit } from "$lib/models/circuit";
+import type { ComponentRenderingData, Junction, Circuit } from "$lib/models/circuit";
 import type { CircuitBuilderService } from "../circuit_builder_serivce";
 import Worker from "$lib/circuit_builder_worker?worker";
 import type { WorkerResponse, WorkerMessage } from "$lib/circuit_builder_worker";
 import type { ComponentDefinition } from "$lib/models/component_definition";
 import _ from "lodash"
-import { ComponentRef } from "$lib/models/component_ref";
+import type { ComponentRef } from "$lib/models/component_ref";
 import type { Wire } from "$lib/models/wire";
 import type { Connector } from "$lib/models/connector";
-import { cloneCircuit } from '$lib/util/common';
+import { copy } from "$lib/util/common";
 
 
 export class WorkerCircuitBuilderService implements CircuitBuilderService {
@@ -79,16 +79,17 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
     }
 
     async addNewComponent(circuit: Circuit, definition: ComponentDefinition, x: number, y: number): Promise<Circuit> {
-        console.log("Adding new component");
-        console.log('addNewComponent() before: ', circuit);
-        const circuitCopy: Circuit = cloneCircuit(circuit)
-        console.log('addNewComponent() after: ', circuitCopy);
-        const componentRenderingData = new ComponentRenderingData();
+        const circuitCopy: Circuit = copy(circuit)
         const id = circuitCopy.components.length;
-        const component = new ComponentRef(id, definition.id);
-        componentRenderingData.x = x;
-        componentRenderingData.y = y;
-        componentRenderingData.id = circuitCopy.components.length;
+        const component: ComponentRef = {
+            id: id,
+            definitionId: definition.id
+        }
+        const componentRenderingData:ComponentRenderingData = {
+            x: x,
+            y: y,
+            id: circuitCopy.components.length
+        }
         circuitCopy.metadata.rendering.components.push(componentRenderingData);
         circuitCopy.components.push(component);
         return circuitCopy;
@@ -96,7 +97,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
 
     async popComponent(circuit: Circuit): Promise<Circuit> {
         console.log("Popping component");
-        const circuitCopy: Circuit = cloneCircuit(circuit);
+        const circuitCopy: Circuit = copy(circuit);
         circuitCopy.metadata.rendering.components.pop();
         circuitCopy.components.pop();
         return circuitCopy;
@@ -104,11 +105,12 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
 
     async moveComponent(circuit: Circuit, id: number, x: number, y: number): Promise<Circuit> {
         console.log("Moving component");
-        const circuitCopy = cloneCircuit(circuit)
-        const componentRenderingData = new ComponentRenderingData();
-        componentRenderingData.x = x;
-        componentRenderingData.y = y;
-        componentRenderingData.id = id;
+        const circuitCopy = copy(circuit)
+        const componentRenderingData = {
+            x: x,
+            y: y,
+            id: id
+        }
         circuitCopy.metadata.rendering.components[id] = componentRenderingData;
         this.disconnectConnectorsForComponent(circuitCopy, id);
         return circuitCopy;
@@ -131,7 +133,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
 
     async addNewWire(circuit: Circuit, wire: Wire, junctions: Junction[]): Promise<Circuit> {
         console.log("Adding new wire");
-        const circuitCopy = cloneCircuit(circuit);
+        const circuitCopy = copy(circuit);
         circuitCopy.metadata.rendering.wires.push(wire);
         for (const junction of junctions) {
             if (junction != null) {
@@ -142,7 +144,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
     }
 
     async deleteComponent(circuit: Circuit, componentId: number): Promise<Circuit> {
-        const circuitCopy = cloneCircuit(circuit);
+        const circuitCopy = copy(circuit);
         this.disconnectConnectorsForComponent(circuit, componentId);
 
         circuitCopy.metadata.rendering.components.splice(componentId, 1)
@@ -167,7 +169,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
         return circuitCopy;
     }
     async deleteWire(circuit: Circuit, wireId: number): Promise<Circuit> {
-        const circuitCopy = cloneCircuit(circuit);
+        const circuitCopy = copy(circuit);
         circuitCopy.metadata.rendering.wires.splice(wireId, 1);
         circuitCopy.metadata.rendering.junctions = circuitCopy.metadata.rendering.junctions.filter(junction => junction.sourceWire != wireId);
         circuitCopy.metadata.rendering.wires.forEach(wire => {

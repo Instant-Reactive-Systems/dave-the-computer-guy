@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, Junction } from '$lib/models/circuit';
+	import {type Circuit, DEFAULT_CIRCUIT, type Junction } from '$lib/models/circuit';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -29,7 +29,8 @@
 		DEFAULT_WIRE_MODE,
 		DEFAULT_EDIT_MODE,
 		DEFAULT_RUNNING_MODE,
-		DEFAULT_PAUSED_MODE
+		DEFAULT_PAUSED_MODE,
+type WireData
 	} from '$lib/models/editor_mode';
 	import Notifier from '$lib/util/notifier';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
@@ -120,7 +121,7 @@
 		console.log('Creating new circuit');
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
-			circuit: new Circuit(),
+			circuit: DEFAULT_CIRCUIT,
 			undoStack: [] as Command[],
 			redoStack: [] as Command[]
 		};
@@ -328,8 +329,8 @@
 				circuitBuilder.addNewWire(circuit, wire, junction).then((circ) => {
 					const mode = _.cloneDeep(get(editorModeStore));
 					if (mode.type == 'wire') {
-						mode.data.lastX = wire.endX;
-						mode.data.lastY = wire.endY;
+						(mode.data as WireData).lastX = wire.endX;
+						(mode.data as WireData).lastY = wire.endY;
 					}
 					editorModeStore.set(mode);
 					circuitStore.set(circ);
@@ -338,8 +339,8 @@
 			undo: () => {
 				const mode = _.cloneDeep(get(editorModeStore));
 				if (mode.type == 'wire') {
-					mode.data.lastX = wire.startX;
-					mode.data.lastY = wire.startY;
+					(mode.data as WireData).lastX = wire.startX;
+					(mode.data as WireData).lastY = wire.startY;
 				}
 				editorModeStore.set(mode);
 				circuitStore.set(preCommandCircuit);

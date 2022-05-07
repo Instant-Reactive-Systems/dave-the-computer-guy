@@ -1,11 +1,9 @@
-import { Circuit } from "$lib/models/circuit";
+import type { Circuit } from "$lib/models/circuit";
 import type { User } from "$lib/models/user";
-import {getRandomInt} from "$lib/util/common";
+import {copy, getRandomInt} from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
 import type { CircuitLoaderService } from "../circuit_loader_service";
 import _ from 'lodash';
-import { cloneCircuit } from '$lib/util/common';
-import {TypedJSON} from "typedjson";
 
 export class MockCircuitLoaderService implements CircuitLoaderService{
     private circuitsBehaviourSubject: BehaviorSubject<Circuit[]> = new BehaviorSubject<Circuit[]>([]);
@@ -18,10 +16,9 @@ export class MockCircuitLoaderService implements CircuitLoaderService{
 
     async loadUserCircuits(user: User, offset: number, limit: number): Promise<Circuit[]> {
         let circuits: Circuit[] = [];
-        const serializer = new TypedJSON(Circuit);
         const circuitJson = localStorage.getItem('circuits');
         if (circuitJson != null) {
-            circuits = serializer.parseAsArray(circuitJson);
+            circuits = JSON.parse(circuitJson)
         }
         console.log('loadUserCircuits(): Circuits in localStorage: ', circuits);
         this.circuitsBehaviourSubject.next(circuits);
@@ -29,12 +26,11 @@ export class MockCircuitLoaderService implements CircuitLoaderService{
     }
 
     insertCircuit(circ: Circuit): Promise<Circuit> {
-        const circuit = cloneCircuit(circ);
+        const circuit = copy(circ);
         let circuits: Circuit[] = [];
-        const serializer = new TypedJSON(Circuit);
         const circuitJson = localStorage.getItem('circuits');
         if (circuitJson != null) {
-            circuits = serializer.parseAsArray(circuitJson);
+            circuits = JSON.parse(circuitJson);
         }
 
         let index = circuits.findIndex((x) => x.id == circuit.id);
@@ -54,10 +50,9 @@ export class MockCircuitLoaderService implements CircuitLoaderService{
 
     async deleteCircuit(circuitId: number): Promise<Circuit> {
         let circuits: Circuit[] = [];
-        const serializer = new TypedJSON(Circuit);
         const circuitJson = localStorage.getItem('circuits');
         if (circuitJson != null) {
-            circuits = serializer.parseAsArray(circuitJson);
+            circuits = JSON.parse(circuitJson);
         }
         console.log('deleteCircuit(): Circuits in localStorage: ', circuits);
 

@@ -1,12 +1,7 @@
-import { jsonMember, jsonObject, toJson } from "typedjson"
 
-@toJson
-@jsonObject
-export class Item{
-    @jsonMember(Number)
+export type Item = {
     componentDefinitionId: number;
 
-    @jsonMember(Number)
     amount: number;
 }
 

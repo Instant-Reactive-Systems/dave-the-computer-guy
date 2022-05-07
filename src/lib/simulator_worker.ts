@@ -26,20 +26,33 @@ let simulatorInitted = false;
 let simulation: Simulation | undefined = undefined;
 let state: SimulationState = SimulationState.STOPPED;
 let startTime: number;
+let unprocessedMessageQueue: WorkerMessage[] = [];
 
 init().then(() => {
     set_panic_hook();
 
     simulation = Simulation.new(Config.new(1000));
     simulatorInitted = true;
+    for(const msg of unprocessedMessageQueue){
+        processMessage(msg)
+    }
+    unprocessedMessageQueue = [];
 });
 
 declare var self: DedicatedWorkerGlobalScope;
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
-    if (!simulatorInitted) return;
+    if (!simulatorInitted) 
+    {   
+        unprocessedMessageQueue.push(msg.data);
+        return
+    }
 
-    const action = msg.data.action;
-    const payload = msg.data.payload;
+    processMessage(msg.data);
+}
+
+function processMessage(msg: WorkerMessage){
+    const action = msg.action;
+    const payload = msg.payload;
     switch (action) {
         case 'start':
             startSimulation();
@@ -63,7 +76,7 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
             setCircuit(payload as Circuit);
             break;
         default: break;
-    }
+}
 }
 
 function setCircuit(circuit: Circuit) {
@@ -154,5 +167,4 @@ function simulate() {
 
 function getCircuitState(): Map<number, any> {
     return new Map(Object.entries(simulation.circuit_state()).map(val => [parseInt(val[0]), val[1]]));
-}
-
+}   

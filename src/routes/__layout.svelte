@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount, setContext, getContext, SvelteComponent } from 'svelte';
 	import '../app.css';
-	import { Connector } from '$lib/models/connector';
-	import { TypedJSON } from 'typedjson';
-	import { Connection } from '$lib/models/connection';
 	import {
 		AUTH_SERVICE,
 		CIRCUIT_BUILDER_SERVICE,

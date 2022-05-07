@@ -2,14 +2,14 @@ import { createComponent } from '$lib/fabric/component_factory';
 import { JunctionRenderable } from '$lib/fabric/junction_renderable';
 import { WireRenderable } from '$lib/fabric/wire_renderable';
 import type { Circuit, Junction, WiringRenderingEntry } from '$lib/models/circuit';
-import { Component } from '$lib/models/component';
+import type { Component } from '$lib/models/component';
 import type { ComponentDefinition } from '$lib/models/component_definition';
 import type { Size } from '$lib/models/size';
 import type { Wire } from '$lib/models/wire';
 import type { WiringState } from '$lib/models/wiring_state';
 import { todo } from '$lib/util/common';
 import type { fabric } from 'fabric';
-import type { EditorMode } from '$lib/models/editor_mode';
+import type { EditorMode, WireData } from '$lib/models/editor_mode';
 import type { RenderableComponent } from '$lib/fabric/renderable_component';
 import type { Point } from '$lib/models/point';
 import _ from 'lodash';
@@ -38,7 +38,15 @@ export class Canvas {
     public render(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
         console.log("Rerendering whole circuit: ", circuit);
         this.clear();
-        const components = circuit.components.map((c) => new Component(c.id, definitions.get(c.definitionId)));
+        const components: Component[] = circuit.components.map((c) => {
+            const component: Component = {
+                id: c.id,
+                definition: definitions.get(c.definitionId)
+
+            }
+            return component;
+        });
+
         const wires = circuit.metadata.rendering.wires;
         const junctions = circuit.metadata.rendering.junctions;
 
@@ -58,16 +66,16 @@ export class Canvas {
     public renderEditorMode(mode: EditorMode) {
         switch (mode.type) {
             case 'wire': {
-                if (mode.data.currentWire != null) {
+                if ((mode.data as WireData).currentWire != null) {
                     if (this.tempWire != null) this.canvas.remove(this.tempWire!);
-                    const fabricWire = new WireRenderable(mode.data.currentWire).buildFabricObject();
+                    const fabricWire = new WireRenderable((mode.data as WireData).currentWire).buildFabricObject();
                     fabricWire.data.isTemp = true;
                     this.tempWire = fabricWire;
                     this.canvas.add(this.tempWire);
                 }
-                if (mode.data.currentJunction != null) {
+                if ((mode.data as WireData).currentJunction != null) {
                     if (this.tempJunction != null) this.canvas.remove(this.tempJunction!);
-                    const fabricJunction = new JunctionRenderable(mode.data.currentJunction).buildFabricObject();
+                    const fabricJunction = new JunctionRenderable((mode.data as WireData).currentJunction).buildFabricObject();
                     fabricJunction.data.isTemp = true
                     this.tempJunction = fabricJunction;
                     this.canvas.add(this.tempJunction);

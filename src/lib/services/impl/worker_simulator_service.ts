@@ -105,6 +105,7 @@ export class WorkerSimulatorService implements SimulatorService {
     }
     
     insertDefinitions(defs: ComponentDefinition[]) {
+        console.log("Inserting defs into worker via post message",defs);
         let message: WorkerMessage = {
             action: 'insertDefinitions',
             payload: defs,
