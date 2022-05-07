@@ -1,4 +1,3 @@
-import type { Entry } from '$lib/models/entry';
 
 export enum ValidationErrorType {
     PinNotFound,
