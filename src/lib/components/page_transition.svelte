@@ -8,8 +8,7 @@
   
   {#key refresh}
     <div
-      in:blur="{{duration: 2500, amount: 1000}}"
-      out:blur="{{ duration: 2500 }}" 
+      in:blur="{{duration: 500, amount: 1000}}"
       >
       <slot/>
     </div>

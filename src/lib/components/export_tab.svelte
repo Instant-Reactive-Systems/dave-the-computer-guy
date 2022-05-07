@@ -62,8 +62,8 @@
 			const outs = outputEntries.map(mapEntries);
 			const ins = inputEntries.map(mapEntries);
 			let errors: ValidationError[] = [];
-            let insertedPins: InsertedPin[] = [];
-			let def = DEFAULT_COMPONENT_DEFINITION;
+      let insertedPins: InsertedPin[] = [];
+			let def = copy(DEFAULT_COMPONENT_DEFINITION);
 			def.name = name;
 			def.description = description;
 			def.circuit = circ;

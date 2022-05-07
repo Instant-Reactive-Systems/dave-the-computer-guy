@@ -11,8 +11,9 @@ export type User = {
 
     preferences: Map<string,any>;
 
-    completedQuestIds: number[]; 
+    completedQuests: number[]; 
 
+    activeQuests: number[];
   
   
 

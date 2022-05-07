@@ -15,7 +15,7 @@
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { Command } from '$lib/models/command';
-	import { get } from 'svelte/store';	import _ from 'lodash';
+	import { get } from 'svelte/store';	import _, { clone } from 'lodash';
 	import type { Wire } from '$lib/models/wire';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
@@ -47,6 +47,7 @@ type WireData
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
     import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
+import { copy } from '$lib/util/common';
 
 	const { open, close } = getContext('simple-modal');
 	const notifier = new Notifier(getNotificationsContext());
@@ -120,7 +121,7 @@ type WireData
 		console.log('Creating new circuit');
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
-			circuit: DEFAULT_CIRCUIT,
+			circuit: copy(DEFAULT_CIRCUIT),
 			undoStack: [] as Command[],
 			redoStack: [] as Command[]
 		};
@@ -218,7 +219,7 @@ type WireData
 			case 'paused':
 			case 'running': {
 				simulator.stop();
-				editorModeStore.set(DEFAULT_EDIT_MODE);
+				editorModeStore.set(copy(DEFAULT_EDIT_MODE));
 				circuitStateStore.set(null); // Remove simulation visuals
 				break;
 			}
@@ -243,7 +244,7 @@ type WireData
 					circuitStore.set(circuit);
 					simulator.setCircuit(circuit);
 					simulator.step();
-					editorModeStore.set(DEFAULT_PAUSED_MODE);
+					editorModeStore.set(copy(DEFAULT_PAUSED_MODE));
 				});
 			}
 		}
@@ -326,7 +327,7 @@ type WireData
 			do: () => {
 				const circuit = $circuitStore;
 				circuitBuilder.addNewWire(circuit, wire, junction).then((circ) => {
-					const mode = _.cloneDeep(get(editorModeStore));
+					const mode = clone(get(editorModeStore));
 					if (mode.type == 'wire') {
 						(mode.data as WireData).lastX = wire.endX;
 						(mode.data as WireData).lastY = wire.endY;
@@ -336,7 +337,7 @@ type WireData
 				});
 			},
 			undo: () => {
-				const mode = _.cloneDeep(get(editorModeStore));
+				const mode = clone(get(editorModeStore));
 				if (mode.type == 'wire') {
 					(mode.data as WireData).lastX = wire.startX;
 					(mode.data as WireData).lastY = wire.startY;

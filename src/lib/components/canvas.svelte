@@ -471,7 +471,7 @@
 	}
 
 	function initWireMode() {
-		const mode = DEFAULT_WIRE_MODE;
+		const mode = copy(DEFAULT_WIRE_MODE);
 		editorModeStore.set(mode);
 	}
 
@@ -539,7 +539,7 @@
 	}
 
 	function initDeleteMode() {
-		const mode = DEFAULT_DELETE_MODE;
+		const mode = copy(DEFAULT_DELETE_MODE);
 		mode.data = 'released';
 		editorModeStore.set(mode);
 	}
@@ -551,7 +551,7 @@
 	}
 
 	function quitDeleteMode() {
-		const mode = DEFAULT_EDIT_MODE;
+		const mode = copy(DEFAULT_EDIT_MODE);
 		editorModeStore.set(mode);
 	}
 
@@ -559,7 +559,7 @@
 		switch ($editorModeStore.type) {
 			case 'edit': {
 				// Reset component selection
-				if (event.key == 'Escape') editorModeStore.set(DEFAULT_EDIT_MODE);
+				if (event.key == 'Escape') editorModeStore.set(copy(DEFAULT_EDIT_MODE));
 
 				// Switch to wire mode
 				if (event.key == 'w') initWireMode();
@@ -586,12 +586,16 @@
 	}
 
 	function quitWireMode() {
-		const mode = DEFAULT_EDIT_MODE;
+		const mode = copy(DEFAULT_EDIT_MODE);
 		editorModeStore.set(mode);
 	}
 
 	function resizeCanvas(_event) {
 		const parent = document.getElementById('canvas-wrapper');
+		if(parent == null){
+			return;
+		}
+		
 		const width = parent.clientWidth;
 		const height = parent.clientHeight;
 
@@ -604,6 +608,7 @@
 		prepareCanvas();
 
 		return () => {
+			console.log("Destroying canvas");
 			canvas.dispose();
 		};
 	});

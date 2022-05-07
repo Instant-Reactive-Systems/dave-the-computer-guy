@@ -15,13 +15,14 @@ export class MockAuthService implements AuthService {
     }
 
     async getUserData(username): Promise<User> {
-        const user = {
+        const user:User = {
             username: username,
             email: `${username}}@gmail.com`,
             inventory: [],
             balance: 1000,
             preferences: new Map<string, any>(),
-            completedQuestIds: []
+            completedQuests: [],
+            activeQuests: []
         };
         this.userBehaviorSubject.next(user);
         return user;

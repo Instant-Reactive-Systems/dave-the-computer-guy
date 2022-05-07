@@ -6,6 +6,7 @@
 		CIRCUIT_BUILDER_SERVICE,
 		CIRCUIT_LOADER_SERVICE,
 		COMPONENT_DEFINITION_LOADER_SERVICE,
+		QUEST_SERVICE,
 		SIMULATOR_SERVICE
 	} from '$lib/services/service';
 	import { MockAuthService } from '$lib/services/impl/mock_auth_service';
@@ -22,6 +23,8 @@
 	import PageTransition from '$lib/components/page_transition.svelte'; 
 	import Notifications from 'svelte-notifications'; 
 	import { page } from '$app/stores';
+	import type { QuestService } from '$lib/services/quest_service';
+	import { MockQuestsService } from '$lib/services/impl/mock_quest_service';
 
 	let authService: AuthService = new MockAuthService();
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
@@ -29,21 +32,24 @@
 		new MockComponentDefinitonLoaderService();
 	let simulatorService: SimulatorService = new WorkerSimulatorService(componentDefinitionLoaderService);
 	let circuitBuilderService: CircuitBuilderService = new WorkerCircuitBuilderService();
+	let questsService: QuestService = new MockQuestsService();
 	setContext(AUTH_SERVICE, authService);
 	setContext(CIRCUIT_LOADER_SERVICE, circuitLoaderService);
 	setContext(COMPONENT_DEFINITION_LOADER_SERVICE, componentDefinitionLoaderService);
 	setContext(SIMULATOR_SERVICE, simulatorService);
 	setContext(CIRCUIT_BUILDER_SERVICE, circuitBuilderService);
+	setContext(QUEST_SERVICE, questsService);
 
 	const services = [
 		authService,
 		circuitLoaderService,
 		componentDefinitionLoaderService,
 		simulatorService,
-		circuitBuilderService
+		circuitBuilderService,
+		questsService
 	];
 	onMount(() => {
-		console.log("App root initted")
+		console.log('App root initted');
 		for (const service of services) {
 			service.init();
 		}
