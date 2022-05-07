@@ -1,6 +1,6 @@
 import type { Circuit } from "$lib/models/circuit";
 import type { User } from "$lib/models/user";
-import {getRandomInt} from "$lib/util/common";
+import {copy, getRandomInt} from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
 import type { CircuitLoaderService } from "../circuit_loader_service";
 import _ from 'lodash';
@@ -18,7 +18,7 @@ export class MockCircuitLoaderService implements CircuitLoaderService{
         let circuits: Circuit[] = [];
         const circuitJson = localStorage.getItem('circuits');
         if (circuitJson != null) {
-            circuits = JSON.parse(circuitJson);
+            circuits = JSON.parse(circuitJson)
         }
         console.log('loadUserCircuits(): Circuits in localStorage: ', circuits);
         this.circuitsBehaviourSubject.next(circuits);
@@ -26,7 +26,7 @@ export class MockCircuitLoaderService implements CircuitLoaderService{
     }
 
     insertCircuit(circ: Circuit): Promise<Circuit> {
-        const circuit = _.cloneDeep(circ);
+        const circuit = copy(circ);
         let circuits: Circuit[] = [];
         const circuitJson = localStorage.getItem('circuits');
         if (circuitJson != null) {

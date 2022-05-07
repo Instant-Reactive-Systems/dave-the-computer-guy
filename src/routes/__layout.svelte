@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount, setContext, getContext, SvelteComponent } from 'svelte';
 	import '../app.css';
-	import { Connector } from '$lib/models/connector';
-	import { TypedJSON } from 'typedjson';
-	import { Connection } from '$lib/models/connection';
 	import {
 		AUTH_SERVICE,
 		CIRCUIT_BUILDER_SERVICE,
@@ -33,7 +30,7 @@
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
 	let componentDefinitionLoaderService: ComponentDefinitionLoaderService =
 		new MockComponentDefinitonLoaderService();
-	let simulatorService: SimulatorService = new WorkerSimulatorService();
+	let simulatorService: SimulatorService = new WorkerSimulatorService(componentDefinitionLoaderService);
 	let circuitBuilderService: CircuitBuilderService = new WorkerCircuitBuilderService();
 	let questsService: QuestService = new MockQuestsService();
 	setContext(AUTH_SERVICE, authService);

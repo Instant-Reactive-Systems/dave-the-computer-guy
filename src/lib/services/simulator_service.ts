@@ -17,7 +17,7 @@ export type SimulatorService = {
     stop(): void;
     step(): void;
     insertUserEvent(userEvent: UserEvent): void;
-    insertDefinition(definition: ComponentDefinition): void;
+    insertDefinitions(defs: ComponentDefinition[]): void;
     setCircuit(circuit: Circuit): void;
     verifyComponent(component: ComponentRef,verificationData: any): Promise<VerificationResult>;
 };

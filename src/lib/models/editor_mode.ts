@@ -2,9 +2,10 @@ import type {DirectLink, Wire} from "./wire";
 import type {Junction} from "./circuit";
 import type {Component} from "./component";
 
+
 export type EditorMode = {
-    type: EditorModeType,
-    data: DeleteData | WireData | EditData | null,
+    type: EditorModeType;
+    data: DeleteData | WireData | EditData | null;
 };
 
 export type EditorModeType = 'delete' | 'wire' | 'edit' | 'running' | 'paused';

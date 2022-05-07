@@ -1,12 +1,8 @@
-import {jsonMember, jsonObject, toJson} from "typedjson";
 
-@toJson
-@jsonObject
-export class Point {
-    @jsonMember(Number)
+export type Point = {
     x: number;
 
-    @jsonMember(Number)
     y: number;
+
 };
 

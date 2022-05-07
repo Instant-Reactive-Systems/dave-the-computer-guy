@@ -1,6 +1,5 @@
 import { fabric } from 'fabric'
 import type { PinType } from '$lib/models/pin_type';
-import { NameAndPinPair } from '$lib/models/component_definition';
 import { assert } from './common';
 import type { Component } from '$lib/models/component'
 import type { Direction } from '$lib/models/direction';
