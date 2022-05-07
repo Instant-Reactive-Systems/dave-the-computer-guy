@@ -84,14 +84,16 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
         entry.wires = Array.from(ignoreIdSet);
         entry.connectors = [...new Set(Array.from(ignoreIdSet)
             .map(id => wires[id])
-            .flatMap(wire => wire.links
+            .flatMap(wire => 
+                wire.links
                 .filter(link => link.type == "pin")
-                .map(link => (link.value as any).conn as Connector))
+                .map(link => (link.value as any).conn as Connector)
+            )
             .filter(conn => conn != undefined)
         )]
 
         entry.junctions = circuit.metadata.rendering.junctions.filter(junction => ignoreIdSet.has(junction.sourceWire));
-
+        console.log("Entry is",entry);        
         circuit.metadata.rendering.wiringRendering.set(JSON.stringify(conn), entry)
     }
     const end = performance.now();

@@ -64,7 +64,7 @@
 			});
 
 			let errors: ValidationError[] = [];
-			let def = DEFAULT_COMPONENT_DEFINITION;
+			let def = copy(DEFAULT_COMPONENT_DEFINITION);
 			def.name = name;
 			def.description = description;
 			def.circuit = circ;

@@ -145,6 +145,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
 
     async deleteComponent(circuit: Circuit, componentId: number): Promise<Circuit> {
         const circuitCopy = copy(circuit);
+        
         this.disconnectConnectorsForComponent(circuit, componentId);
 
         circuitCopy.metadata.rendering.components.splice(componentId, 1)
@@ -165,7 +166,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
             }
         })
         circuitCopy.connections = [];
-        this.disconnectConnectorsForComponent(circuit, componentId);
+        this.disconnectConnectorsForComponent(circuitCopy, componentId);
         return circuitCopy;
     }
     async deleteWire(circuit: Circuit, wireId: number): Promise<Circuit> {
@@ -179,7 +180,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
         circuitCopy.metadata.rendering.wires.forEach((wire, id) => {
             if (id != wire.id) {
                 circuitCopy.metadata.rendering.wires.flatMap(wire => wire.links)
-                    .filter(link => link.type = 'wire')
+                    .filter(link => link.type == 'wire')
                     .filter(link => link.value == wire.id)
                     .forEach(link => link.value = id);
                 circuitCopy.metadata.rendering.junctions.filter(junction => junction.sourceWire == wire.id)

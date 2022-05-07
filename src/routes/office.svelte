@@ -8,7 +8,7 @@
 		HemisphereLight,
 		Mesh,
 		OrbitControls,
-		PerspectiveCamera
+		PerspectiveCamera,
 	} from 'threlte';
 	import RoomPanel from '$lib/components/room_panel.svelte';
 	import { getContext } from 'svelte';
@@ -46,6 +46,7 @@
     function navigateToSimulator(){
         goto('simulator',{replaceState: true})
     }
+	
 </script>
 
 {#if roomPanelVisible}
