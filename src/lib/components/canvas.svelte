@@ -608,6 +608,7 @@
 		prepareCanvas();
 
 		return () => {
+			console.log("Destroying canvas");
 			canvas.dispose();
 		};
 	});
