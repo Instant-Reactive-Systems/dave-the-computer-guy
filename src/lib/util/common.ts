@@ -18,11 +18,15 @@ export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
 }
 
-export function makeArray<T>(len: number, value: T): Array<T> {
+export function makeArray<T>(len: number, factory: () => T): Array<T> {
     const array = Array(len);
     for (let i = 0; i < array.length; ++i) {
-        array[i] = _.cloneDeep(value);
+        array[i] = factory();
     }
     return array;
 }
+export function copy(obj: any){
+    return _.cloneDeep(obj);
+}
+
 

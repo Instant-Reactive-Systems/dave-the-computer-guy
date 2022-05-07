@@ -1,6 +1,6 @@
 import _ from "lodash";
-import { WiringRenderingEntry, type Circuit } from "./models/circuit";
-import { Connection } from "./models/connection";
+import type { WiringRenderingEntry, Circuit } from "./models/circuit";
+import type { Connection } from "./models/connection";
 import type { Connector } from "./models/connector";
 import type { DirectLink, Wire } from "./models/wire";
 
@@ -65,26 +65,35 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
         for (const connector of outputConnectors) {
             let connection = circuit.connections.find((conn) => _.isEqual(connector, conn.from));
             if (connection == undefined) {
-                connection = new Connection(connector, [...inputConnectors]);
+                const connection: Connection = {
+                    from: connector,
+                    to: [...inputConnectors]
+                }
                 circuit.connections.push(connection);
             } else {
                 connection.to = _.uniq([...connection.to, ...inputConnectors]);
             }
         }
 
-        const entry = new WiringRenderingEntry();
+        const entry:WiringRenderingEntry = {
+            wires: [],
+            connectors: [],
+            junctions: []
+        } 
         const conn = wireOutpinPinsTuple[1][0];
         entry.wires = Array.from(ignoreIdSet);
         entry.connectors = [...new Set(Array.from(ignoreIdSet)
             .map(id => wires[id])
-            .flatMap(wire => wire.links
+            .flatMap(wire => 
+                wire.links
                 .filter(link => link.type == "pin")
-                .map(link => (link.value as any).conn as Connector))
+                .map(link => (link.value as any).conn as Connector)
+            )
             .filter(conn => conn != undefined)
         )]
 
         entry.junctions = circuit.metadata.rendering.junctions.filter(junction => ignoreIdSet.has(junction.sourceWire));
-
+        console.log("Entry is",entry);        
         circuit.metadata.rendering.wiringRendering.set(JSON.stringify(conn), entry)
     }
     const end = performance.now();

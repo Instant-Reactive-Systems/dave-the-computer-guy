@@ -3,8 +3,8 @@ import type { ComponentDefinition } from "./models/component_definition";
 import type { UserEvent } from "./models/user_event";
 import init, { set_panic_hook, Simulation, Config } from "digisim";
 
-export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinition';
-export type WorkerPayload = ComponentDefinition | Circuit | UserEvent;
+export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinitions';
+export type WorkerPayload = ComponentDefinition[] | Circuit | UserEvent;
 
 export type WorkerMessage = {
     action: WorkerAction,
@@ -26,20 +26,33 @@ let simulatorInitted = false;
 let simulation: Simulation | undefined = undefined;
 let state: SimulationState = SimulationState.STOPPED;
 let startTime: number;
+let unprocessedMessageQueue: WorkerMessage[] = [];
 
 init().then(() => {
     set_panic_hook();
 
     simulation = Simulation.new(Config.new(1000));
     simulatorInitted = true;
+    for(const msg of unprocessedMessageQueue){
+        processMessage(msg)
+    }
+    unprocessedMessageQueue = [];
 });
 
 declare var self: DedicatedWorkerGlobalScope;
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
-    if (!simulatorInitted) return;
+    if (!simulatorInitted) 
+    {   
+        unprocessedMessageQueue.push(msg.data);
+        return
+    }
 
-    const action = msg.data.action;
-    const payload = msg.data.payload;
+    processMessage(msg.data);
+}
+
+function processMessage(msg: WorkerMessage){
+    const action = msg.action;
+    const payload = msg.payload;
     switch (action) {
         case 'start':
             startSimulation();
@@ -56,14 +69,14 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
         case 'insertUserEvent':
             insertUserEvent(payload as UserEvent);
             break;
-        case 'insertDefinition':
-            insertDefinition(payload as ComponentDefinition);
+        case 'insertDefinitions':
+            insertDefinitions(payload as ComponentDefinition[]);
             break;
         case 'setCircuit':
             setCircuit(payload as Circuit);
             break;
         default: break;
-    }
+}
 }
 
 function setCircuit(circuit: Circuit) {
@@ -71,9 +84,11 @@ function setCircuit(circuit: Circuit) {
     simulation.set_circuit(circuit);
 }
 
-function insertDefinition(definition: ComponentDefinition) {
-    console.log("Inserting definition into registry", definition);
-    simulation.update_registry(definition);
+function insertDefinitions(defs: ComponentDefinition[]) {
+    console.log("Inserting definitions into registry: ", defs);
+    for (const def of defs) {
+        simulation.update_registry(def);
+    }
 }
 
 function startSimulation() {
@@ -152,5 +167,4 @@ function simulate() {
 
 function getCircuitState(): Map<number, any> {
     return new Map(Object.entries(simulation.circuit_state()).map(val => [parseInt(val[0]), val[1]]));
-}
-
+}   

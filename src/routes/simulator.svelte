@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Circuit, Junction } from '$lib/models/circuit';
+	import {type Circuit, DEFAULT_CIRCUIT, type Junction } from '$lib/models/circuit';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -9,12 +9,13 @@
 	import {
 		CIRCUIT_BUILDER_SERVICE,
 		CIRCUIT_LOADER_SERVICE,
+		COMPONENT_DEFINITION_LOADER_SERVICE,
 		SIMULATOR_SERVICE
 	} from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { Command } from '$lib/models/command';
-	import { get } from 'svelte/store';	import _ from 'lodash';
+	import { get } from 'svelte/store';	import _, { clone } from 'lodash';
 	import type { Wire } from '$lib/models/wire';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
@@ -28,7 +29,8 @@
 		DEFAULT_WIRE_MODE,
 		DEFAULT_EDIT_MODE,
 		DEFAULT_RUNNING_MODE,
-		DEFAULT_PAUSED_MODE
+		DEFAULT_PAUSED_MODE,
+type WireData
 	} from '$lib/models/editor_mode';
 	import Notifier from '$lib/util/notifier';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
@@ -44,6 +46,8 @@
 	import TutorialIcon from '$lib/icons/tutorial.svelte';
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
+    import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
+import { copy } from '$lib/util/common';
 
 	const { open, close } = getContext('simple-modal');
 	const notifier = new Notifier(getNotificationsContext());
@@ -59,6 +63,7 @@
 	let currentCircuitTab: CircuitTab;
 	let simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
 	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
+	let defLoader: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
 	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
 	let isInSimulation = false;
@@ -68,6 +73,7 @@
 		open(SaveCircuit, {
 			onSend: (name: string, description: string) => {
 				const circuit = $circuitStore;
+                console.log('double nigger circuit: ', circuit);
 				circuit.name = name;
 				circuit.description = description;
 				circuitLoader.insertCircuit(circuit).then((circ) => {
@@ -116,7 +122,7 @@
 		console.log('Creating new circuit');
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
-			circuit: new Circuit(),
+			circuit: copy(DEFAULT_CIRCUIT),
 			undoStack: [] as Command[],
 			redoStack: [] as Command[]
 		};
@@ -214,7 +220,7 @@
 			case 'paused':
 			case 'running': {
 				simulator.stop();
-				editorModeStore.set(DEFAULT_EDIT_MODE);
+				editorModeStore.set(copy(DEFAULT_EDIT_MODE));
 				circuitStateStore.set(null); // Remove simulation visuals
 				break;
 			}
@@ -239,7 +245,7 @@
 					circuitStore.set(circuit);
 					simulator.setCircuit(circuit);
 					simulator.step();
-					editorModeStore.set(DEFAULT_PAUSED_MODE);
+					editorModeStore.set(copy(DEFAULT_PAUSED_MODE));
 				});
 			}
 		}
@@ -322,20 +328,20 @@
 			do: () => {
 				const circuit = $circuitStore;
 				circuitBuilder.addNewWire(circuit, wire, junction).then((circ) => {
-					const mode = _.cloneDeep(get(editorModeStore));
+					const mode = clone(get(editorModeStore));
 					if (mode.type == 'wire') {
-						mode.data.lastX = wire.endX;
-						mode.data.lastY = wire.endY;
+						(mode.data as WireData).lastX = wire.endX;
+						(mode.data as WireData).lastY = wire.endY;
 					}
 					editorModeStore.set(mode);
 					circuitStore.set(circ);
 				});
 			},
 			undo: () => {
-				const mode = _.cloneDeep(get(editorModeStore));
+				const mode = clone(get(editorModeStore));
 				if (mode.type == 'wire') {
-					mode.data.lastX = wire.startX;
-					mode.data.lastY = wire.startY;
+					(mode.data as WireData).lastX = wire.startX;
+					(mode.data as WireData).lastY = wire.startY;
 				}
 				editorModeStore.set(mode);
 				circuitStore.set(preCommandCircuit);
@@ -368,6 +374,7 @@
 	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
 		console.log('Exported: ', event.detail.definition);
 		isExporting = false;
+        defLoader.insertDefinition(event.detail.definition, true);
 	}
 
 	function cancelExport() {
@@ -383,6 +390,7 @@
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
+        console.log('nigger circuit: ', circuit);
 		circuitStore.set(circuit);
 	}
 
