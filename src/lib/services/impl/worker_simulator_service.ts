@@ -6,11 +6,15 @@ import type { VerificationResult } from "$lib/models/verification_result";
 import type { WorkerMessage, WorkerResponse } from "$lib/simulator_worker";
 import Worker from "$lib/simulator_worker?worker";
 import { BehaviorSubject, Subscription } from "rxjs";
-import type {ComponentDefinitionLoaderService} from "../component_definition_loader_service";
+import type { ComponentDefinitionLoaderService } from "../component_definition_loader_service";
 import type { SimulatorService } from "../simulator_service";
 
 export class WorkerSimulatorService implements SimulatorService {
     private worker: Worker = null;
+    private resolves = {};
+    private rejects = {};
+    // Used for numbering promises
+    private idCounter: number;
     private circuit: Circuit = null;
     private circuitStateBehaviourSubject = new BehaviorSubject<Map<number, any>>(null);
     private defLoader: ComponentDefinitionLoaderService;
@@ -22,19 +26,16 @@ export class WorkerSimulatorService implements SimulatorService {
 
     init(): void {
         this.worker = new Worker();
+        this.initWorker();
+        this.resolves = {};
+        this.rejects = {};
+        this.idCounter = 0;
 
-        // Attach listeners
-        this.worker.onmessage = (e) => {
-            const data = e.data;
-            this.handleMessageFromWorker(data);
-        };
-        this.worker.onerror = (e) => {
-            console.error(e);
-        };
 
         this.defSubscription = this.defLoader.getDefinitionsBehaviourSubject().subscribe((defs) => {
             const arrDefs = Array.from(defs.values());
-            this.insertDefinitions(arrDefs.filter((x) => x.id >= 0));
+            this.insertDefinitions(arrDefs.filter((x) => x.id >= 0))
+
         })
     }
 
@@ -45,83 +46,161 @@ export class WorkerSimulatorService implements SimulatorService {
         }
     }
 
-    private handleMessageFromWorker(msg: WorkerResponse) {
-        console.log("Got message from worker: ", msg);
+    private initWorker(): void {
+        this.worker.onmessage = (e) => {
+            const data = e.data;
+            this.handleMessageFromWorker(data);
+        };
+        this.worker.onerror = (e) => {
+            console.error(e);
+        };
+    }
+
+
+    private handleMessage(msg: WorkerResponse) {
         switch (msg.action) {
             case "circuitStateUpdate":
                 console.log("Updating state");
                 this.circuitStateBehaviourSubject.next(msg.payload as Map<number, any>);
                 break;
             default:
-                console.log(`Default message handler msg=${JSON.stringify(msg)}`);
+                console.error(`Invalid action, payload = ${JSON.stringify(msg)}`);
         }
+    }
+
+    private handleMessageFromWorker(msg: WorkerResponse) {
+        const { id, action, payload, err } = msg;
+        if (id == null) {
+            //If there is no id then the response has no handler (is not promise based)
+            this.handleMessage(msg);
+        }
+        if (action && payload) {
+            const resolve = this.resolves[id];
+            if (resolve) {
+                resolve(payload);
+            }
+        } else {
+            // error condition
+            const reject = this.rejects[id]
+            if (reject) {
+                if (err) {
+                    reject(err);
+                } else {
+                    reject('Got nothing');
+                }
+            }
+        }
+        delete this.resolves[id];
+        delete this.rejects[id];
     }
 
     getCircuitStateBehaviourSubject(): BehaviorSubject<Map<number, any>> {
         return this.circuitStateBehaviourSubject;
     }
-        
+
     getCircuit(): Circuit {
         return this.circuit;
     }
 
     // ============== API for digisim
-    start(): void {
-        let message: WorkerMessage = {
+    async start(): Promise<void> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
             action: 'start',
             payload: null,
+            id: msgId
         };
-        this.worker.postMessage(message);
+
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        });
     }
-    
-    pause(): void {
-        let message: WorkerMessage = {
+
+    async pause(): Promise<void> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
             action: 'pause',
             payload: null,
+            id: msgId
         };
-        this.worker.postMessage(message);
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        })
     }
 
-    stop(): void {
-        let message: WorkerMessage = {
+    async stop(): Promise<void> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
             action: 'stop',
             payload: null,
+            id: msgId
         };
-        this.worker.postMessage(message);
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        })
     }
 
-    step(): void {
-        let message: WorkerMessage = {
+    async step(): Promise<void> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
             action: 'step',
             payload: null,
+            id: msgId
         };
-        this.worker.postMessage(message);
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        })
     }
 
-    insertUserEvent(userEvent: UserEvent): void {
-        let message: WorkerMessage = {
+    async insertUserEvent(userEvent: UserEvent): Promise<void> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
             action: 'insertUserEvent',
             payload: userEvent,
+            id: msgId
         };
-        this.worker.postMessage(message);
-    }
-    
-    insertDefinitions(defs: ComponentDefinition[]) {
-        console.log("Inserting defs into worker via post message",defs);
-        let message: WorkerMessage = {
-            action: 'insertDefinitions',
-            payload: defs,
-        };
-        this.worker.postMessage(message);
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        })
     }
 
-    setCircuit(circuit: Circuit): void {
-        let message: WorkerMessage = {
+    async insertDefinitions(defs: ComponentDefinition[]): Promise<void> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
+            action: 'insertDefinitions',
+            payload: defs,
+            id: msgId
+        };
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        })
+    }
+
+    async setCircuit(circuit: Circuit): Promise<void> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
             action: 'setCircuit',
             payload: circuit,
+            id: msgId
         };
-        this.worker.postMessage(message)
         this.circuit = circuit;
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        })
     }
 
     verifyComponent(component: ComponentRef, verificationData: any): Promise<VerificationResult> {

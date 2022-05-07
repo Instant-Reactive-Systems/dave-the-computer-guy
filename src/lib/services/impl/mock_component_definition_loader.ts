@@ -1,6 +1,6 @@
-import type {  ComponentDefinition } from "$lib/models/component_definition";
+import type { ComponentDefinition } from "$lib/models/component_definition";
 import type { User } from "$lib/models/user";
-import {getRandomInt} from "$lib/util/common";
+import { assert, getRandomInt } from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
 import type { ComponentDefinitionLoaderService } from "../component_definition_loader_service";
 import _ from 'lodash';
@@ -8,18 +8,19 @@ import _ from 'lodash';
 export class MockComponentDefinitonLoaderService implements ComponentDefinitionLoaderService {
 
     private definitionsBehaviourSubject: BehaviorSubject<Map<number, ComponentDefinition>> = new BehaviorSubject<Map<number, ComponentDefinition>>(new Map());
-    async loadDefinitions(user: User, offset: number, limit: number): Promise<Map<number, ComponentDefinition>> {
-        const builtinDefs = this.loadBuiltinDefinitions();
-        const allDefs = this.loadUserDefinitions();
-        for (const def of builtinDefs.values()) {
+
+    async loadDefinitions(user: User): Promise<Map<number, ComponentDefinition>> {
+        const allDefs = this.loadBuiltinDefinitions();
+        const userDefs = this.loadUserDefinitions();
+        for (const def of userDefs.values()) {
             allDefs.set(def.id, def);
         }
         this.definitionsBehaviourSubject.next(allDefs);
         return this.definitionsBehaviourSubject.getValue();
     }
-   
+
     init() {
-        this.loadDefinitions(null, null, null);
+        this.loadDefinitions(null);
     }
 
     dispose() {
@@ -40,7 +41,6 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
         if (defsJson != null) {
             const parsed: ComponentDefinition[] = JSON.parse(defsJson);
             for (const def of parsed) {
-                console.log("Parsed user def",def);
                 defs.set(def.id, def);
             }
         }
@@ -52,14 +52,13 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
         throw new Error("Method not implemented.");
     }
 
-    insertDefinition(definition: ComponentDefinition, force: boolean): Promise<void> {
+    async insertDefinition(definition: ComponentDefinition, force: boolean): Promise<void> {
         let defs = this.loadUserDefinitions();
         const id = getRandomInt(0, 2500000);
         const map = this.definitionsBehaviourSubject.getValue();
         definition.id = id;
         defs.set(id, definition);
         map.set(id, definition);
-        console.log('insertDefinition(): Defs is ', definition);
         localStorage.setItem('userDefinitions', JSON.stringify(Array.from(defs.values())));
         this.definitionsBehaviourSubject.next(map);
         return;
@@ -71,11 +70,9 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
 
     getDefinition(id: number): ComponentDefinition {
         const def = this.definitionsBehaviourSubject.getValue().get(id);
-        if(def != undefined){
-            return def;
-        }else{
-            throw new Error(`No definition with id=${id}`);
-        }
+        assert(def != undefined, `No definition with id=${id}`);
+        return def;
+
     }
 
     getDefinitions(ids: number[]): Map<number, ComponentDefinition> {
@@ -278,11 +275,11 @@ const LED_DEFINITION: ComponentDefinition = {
 }
 
 const BUILTIN_DEFINITIONS: ComponentDefinition[] = [
-    NAND_DEFINITION, 
-    TRISTATE_DEFINITION, 
+    NAND_DEFINITION,
+    TRISTATE_DEFINITION,
     CLOCK_DEFINITION,
-    GROUND_DEFINITION, 
-    SOURCE_DEFINITION, 
+    GROUND_DEFINITION,
+    SOURCE_DEFINITION,
     SWITCH_DEFININITION,
     LED_DEFINITION,
 ];

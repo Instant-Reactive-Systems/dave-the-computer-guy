@@ -7,12 +7,15 @@ export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 
 export type WorkerPayload = ComponentDefinition[] | Circuit | UserEvent;
 
 export type WorkerMessage = {
+    id: number,
     action: WorkerAction,
     payload: WorkerPayload,
 };
 
 export type WorkerResponse = {
-    action: 'circuitStateUpdate',
+    id: number,
+    err: string,
+    action: 'circuitStateUpdate' | WorkerAction,
     payload: Map<number, any>,
 };
 
@@ -33,7 +36,7 @@ init().then(() => {
 
     simulation = Simulation.new(Config.new(1000));
     simulatorInitted = true;
-    for(const msg of unprocessedMessageQueue){
+    for (const msg of unprocessedMessageQueue) {
         processMessage(msg)
     }
     unprocessedMessageQueue = [];
@@ -41,57 +44,77 @@ init().then(() => {
 
 declare var self: DedicatedWorkerGlobalScope;
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
-    if (!simulatorInitted) 
-    {   
-        unprocessedMessageQueue.push(msg.data);
+    if (!simulatorInitted) {
+        if (msg.data.action == 'insertDefinitions') {
+            unprocessedMessageQueue.push(msg.data);
+        }
         return
     }
 
     processMessage(msg.data);
 }
 
-function processMessage(msg: WorkerMessage){
+function processMessage(msg: WorkerMessage) {
     const action = msg.action;
-    const payload = msg.payload;
     switch (action) {
         case 'start':
-            startSimulation();
+            startSimulation(msg);
             break;
         case 'pause':
-            pauseSimulation();
+            pauseSimulation(msg);
             break;
         case 'stop':
-            stopSimulation();
+            stopSimulation(msg);
             break;
         case 'step':
-            stepSimulation();
+            stepSimulation(msg);
             break;
         case 'insertUserEvent':
-            insertUserEvent(payload as UserEvent);
+            insertUserEvent(msg);
             break;
         case 'insertDefinitions':
-            insertDefinitions(payload as ComponentDefinition[]);
+            insertDefinitions(msg);
             break;
         case 'setCircuit':
-            setCircuit(payload as Circuit);
+            setCircuit(msg);
             break;
         default: break;
-}
-}
-
-function setCircuit(circuit: Circuit) {
-    console.log("Setting circuit", circuit);
-    simulation.set_circuit(circuit);
-}
-
-function insertDefinitions(defs: ComponentDefinition[]) {
-    console.log("Inserting definitions into registry: ", defs);
-    for (const def of defs) {
-        simulation.update_registry(def);
     }
 }
 
-function startSimulation() {
+function setCircuit(msg: WorkerMessage) {
+    const circuit = msg.payload;
+    console.log("Setting circuit", circuit);
+
+    simulation.set_circuit(circuit);
+
+    const response: WorkerResponse = {
+        id: msg.id,
+        action: msg.action,
+        payload: null,
+        err: null
+    }
+    postMessage(response);
+}
+
+function insertDefinitions(msg: WorkerMessage) {
+    const defs = msg.payload as ComponentDefinition[];
+    console.log("Inserting definitions into registry: ", defs);
+
+    for (const def of defs) {
+        simulation.update_registry(def);
+    }
+
+    const response: WorkerResponse = {
+        id: msg.id,
+        action: msg.action,
+        payload: null,
+        err: null
+    }
+    postMessage(response);
+}
+
+function startSimulation(msg: WorkerMessage) {
     console.log("Starting simulation");
     // Initialize the simulation only if the sim is stopped
     // Otherwise we resume loop from the paused state
@@ -101,46 +124,84 @@ function startSimulation() {
     state = SimulationState.RUNNING;
     startTime = performance.now();
     simulate();
+
+    const response: WorkerResponse = {
+        id: msg.id,
+        action: msg.action,
+        payload: null,
+        err: null,
+    }
+
+    postMessage(response);
 }
 
-function pauseSimulation() {
+function pauseSimulation(msg: WorkerMessage) {
     console.log("Pausing simulation");
     state = SimulationState.PAUSED;
+    const response: WorkerResponse = {
+        id: msg.id,
+        action: msg.action,
+        payload: null,
+        err: null
+    }
+    postMessage(response);
 }
 
-function stopSimulation() {
+function stopSimulation(msg: WorkerMessage) {
     console.log("Stopping simulation");
     state = SimulationState.STOPPED;
-    const message: WorkerResponse = {
-        action: "circuitStateUpdate",
+    const response: WorkerResponse = {
+        id: msg.id,
+        action: msg.action,
         payload: null,
+        err: null
     };
-    console.log("Clearing state", message)
-    postMessage(message)
+    postMessage(response)
 
 }
 
-function stepSimulation() {
+function stepSimulation(msg: WorkerMessage) {
     console.log("Stepping simulation");
 
     // Initialize simulation if not started
     if (state == SimulationState.STOPPED) {
         simulation.init();
     }
+
     state = SimulationState.PAUSED;
     simulation.tick();
 
     const circuitState = getCircuitState();
-    const message: WorkerResponse = {
+    const stateMsg: WorkerResponse = {
         action: "circuitStateUpdate",
         payload: circuitState,
+        err: null,
+        id: null
     };
-    postMessage(message)
+
+    const response: WorkerResponse = {
+        id: msg.id,
+        action: msg.action,
+        payload: null,
+        err: null,
+    };
+
+    postMessage(stateMsg);
+    postMessage(response);
+
 }
 
-function insertUserEvent(event: UserEvent) {
-    console.log("Inserting user event", event);
+function insertUserEvent(msg: WorkerMessage) {
+    const event = msg.payload as UserEvent;
     simulation.insert_input_event(event);
+    const response: WorkerResponse = {
+        id: msg.id,
+        action: msg.action,
+        payload: null,
+        err: null,
+    };
+
+    postMessage(response);
 }
 
 function simulate() {
@@ -157,8 +218,9 @@ function simulate() {
             const message: WorkerResponse = {
                 action: "circuitStateUpdate",
                 payload: circuitState,
+                err: null,
+                id: null,
             };
-            console.log("Sending state", message)
             postMessage(message)
         }
         simulate();

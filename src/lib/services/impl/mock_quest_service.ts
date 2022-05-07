@@ -1,14 +1,14 @@
 import questSvelte from "$lib/icons/quest.svelte";
 import type { Quest, QuestRequirement } from "$lib/models/quest";
 import type { User } from "$lib/models/user";
+import { copy } from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
-import { destroy_component } from "svelte/internal";
 import type { QuestService } from "../quest_service";
 
 
 
-const QUEST_TEMPLATE_TIME_STEADY_STATE: QuestRequirement = {
-    description:"Time to reach steady state, circuit is stable",
+const EXAMPLE_QUEST_REQUIREMENT: QuestRequirement = {
+    description: "Time to reach steady state, circuit is stable",
     name: "Time To Steady State",
     value: 10
 }
@@ -18,17 +18,16 @@ const QUEST_TEMPLATE: Quest = {
     name: "First quest",
     reward: 100,
     description: "This is the first quest",
-    requirements: [QUEST_TEMPLATE_TIME_STEADY_STATE],
+    requirements: [EXAMPLE_QUEST_REQUIREMENT],
     verificationData: null,
-
-
 }
 
 const ALL_QUESTS: Map<number, Quest> = new Map();
-for(let i = 0;i<20;i++){
-    const quest:Quest = JSON.parse(JSON.stringify(QUEST_TEMPLATE));
+
+for (let i = 0; i < 20; i++) {
+    const quest: Quest = copy(QUEST_TEMPLATE)
     quest.id = i;
-    ALL_QUESTS.set(quest.id,quest);
+    ALL_QUESTS.set(quest.id, quest);
 }
 
 
@@ -76,8 +75,8 @@ export class MockQuestsService implements QuestService {
         this.availableQuestsBehaviourSubject.next(availableQuests);
         return ALL_QUESTS.get(questId);
     }
+
     getAvailableQuestsBehaviourSubject(): BehaviorSubject<Quest[]> {
         return this.availableQuestsBehaviourSubject;
-
     }
 }

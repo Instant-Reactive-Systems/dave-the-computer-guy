@@ -12,13 +12,13 @@ export type SimulatorService = {
     getCircuit(): Circuit;
 
     // API for digisim
-    start(): void;
-    pause(): void;
-    stop(): void;
-    step(): void;
-    insertUserEvent(userEvent: UserEvent): void;
-    insertDefinitions(defs: ComponentDefinition[]): void;
-    setCircuit(circuit: Circuit): void;
+    start(): Promise<void>;
+    pause(): Promise<void>;
+    stop(): Promise<void>;
+    step(): Promise<void>;
+    insertUserEvent(userEvent: UserEvent): Promise<void>;
+    insertDefinitions(defs: ComponentDefinition[]): Promise<void>;
+    setCircuit(circuit: Circuit): Promise<void>;
     verifyComponent(component: ComponentRef,verificationData: any): Promise<VerificationResult>;
 };
 

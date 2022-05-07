@@ -5,12 +5,12 @@ import type { BehaviorSubject } from "rxjs";
 
 
 export type ComponentDefinitionLoaderService = {
-    loadDefinitions(user: User, offset: number, limit: number): Promise<Map<number, ComponentDefinition>>,
-    deleteDefinition(id: number):Promise<ComponentDefinition>,
-    insertDefinition(definition: ComponentDefinition, force: boolean): Promise<void>,
-    getDefinitionsBehaviourSubject(): BehaviorSubject<Map<number, ComponentDefinition>>,
-    getDefinition(id: number): ComponentDefinition,
-    getDefinitions(ids: number[]): Map<number, ComponentDefinition>,
-    init(),
-    dispose()
+    loadDefinitions(user: User): Promise<Map<number, ComponentDefinition>>;
+    deleteDefinition(id: number): Promise<ComponentDefinition>;
+    insertDefinition(definition: ComponentDefinition, force: boolean): Promise<void>;
+    getDefinitionsBehaviourSubject(): BehaviorSubject<Map<number, ComponentDefinition>>;
+    getDefinition(id: number): ComponentDefinition;
+    getDefinitions(ids: number[]): Map<number, ComponentDefinition>;
+    init();
+    dispose();
 }
