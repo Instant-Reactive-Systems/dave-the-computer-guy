@@ -110,13 +110,13 @@ function deductConnectionsFromWires(circuit: Circuit): Circuit {
         const conn = wireOutpinPinsTuple[1][0];
 
         //Add entry to wiring rendering data, used for wire state rendering
-        addWiringRenderingData(circuit, conn,ignoreIdSet)
+        addWiringRenderingData(circuit, conn,ignoreIdSet);
 
     }
 
     const end = performance.now();
     console.log(`Deducting connections takes ${end - start}ms`);
-    
+    console.log(`Resulting circuit from deduction`,circuit);
     return circuit;
 }
 

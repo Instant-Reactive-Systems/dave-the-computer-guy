@@ -165,10 +165,8 @@
 					simulator
 						.setCircuit(circuit)
 						.then(() => simulator.start())
-						.then(() => {
-							updateCircuitTab(circuit);
-							tick().then(() => editorModeStore.set(defaultRunningMode()));
-						});
+						.then(() => updateCircuitTab(circuit))
+						.then(() => editorModeStore.set(defaultRunningMode()))
 
 					break;
 				case 'paused': {
@@ -384,10 +382,11 @@
 		isExporting = false;
 	}
 
-	function updateCircuitTab(circuit: Circuit) {
+	function updateCircuitTab(circuit: Circuit): Promise<void> {
 		if (currentCircuitTab != null && circuit != null) {
 			currentCircuitTab.circuit = circuit;
 		}
+		return tick();
 	}
 
 	$: {
@@ -422,7 +421,6 @@
 		serviceSubscriptions.forEach((sub) => sub.unsubscribe());
 	});
 </script>
-
 <nav id="toolbar" class="shadow-md inline-flex w-full">
 	<ul class="app-tab-menu">
 		<li>

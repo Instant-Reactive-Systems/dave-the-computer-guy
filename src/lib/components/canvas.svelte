@@ -4,7 +4,7 @@
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { DirectLink, Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher, getContext, tick } from 'svelte';
 	import { circuitStore } from '$lib/stores/circuit';
 	import { eventStore } from '$lib/stores/event_store';
 	import { fabric } from 'fabric';
@@ -50,7 +50,6 @@
 	}
 
 	$: {
-		const circuit  = $circuitStore;
 		rerenderCircuit($circuitStore);
 	}
 
@@ -79,8 +78,6 @@
 			clearAllState();
 		}
 	}
-
-
 
 	function refreshCanvas() {
 		canvas.refresh();
@@ -216,7 +213,7 @@
 		renderCircuit(circuit, definitions);
 	}
 
-	function clearAllState(){
+	function clearAllState() {
 		//We clear the state by rerendering the circuit freshly
 		const circuit = $circuitStore;
 		rerenderCircuit(circuit);
@@ -351,12 +348,13 @@
 				y: currentWire.endY,
 				sourceWire: currentWire.id
 			};
-			dispatch('addNewWire', {
-				wire: currentWire,
-				junction: [junction, mode.data.currentJunction]
-			});
 
-			quitWireMode();
+			quitWireMode().then(() => {
+				dispatch('addNewWire', {
+					wire: currentWire,
+					junction: [junction, mode.data.currentJunction]
+				});
+			});
 		}
 	}
 
@@ -575,9 +573,14 @@
 		}
 	}
 
-	function quitWireMode() {
+	function quitWireMode(): Promise<void>{
 		const mode = defaultEditorMode();
+		return setEditorMode(mode);
+	}
+
+	function setEditorMode(mode: EditorMode): Promise<void> {
 		editorModeStore.set(mode);
+		return tick();
 	}
 
 	function resizeCanvas(_event) {
@@ -594,9 +597,11 @@
 	}
 
 	onMount(() => {
+		console.log('Mounted canvas');
 		prepareCanvas();
 
 		return () => {
+			console.log('Disposing canvas');
 			canvas.dispose();
 		};
 	});

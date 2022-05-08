@@ -65,8 +65,6 @@
 
 <Notifications>
     <Modal>
-	    <PageTransition refresh={$page.routeId}>
-		    <slot />
-	    </PageTransition>
+				    <slot />
     </Modal>
 </Notifications>

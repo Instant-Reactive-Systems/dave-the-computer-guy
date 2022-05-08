@@ -15,7 +15,6 @@
 	onMount(() => {
 		subscriptions.push(
 			circuitLoader.getCircuitsBehaviourSubject().subscribe((loadedCircuits) => {
-				console.log('subbed', loadedCircuits);
                 circuits = Array.from(loadedCircuits.values());
 			})
 		);

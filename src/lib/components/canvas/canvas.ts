@@ -7,7 +7,6 @@ import type { ComponentDefinition } from '$lib/models/component_definition';
 import type { Size } from '$lib/models/size';
 import type { Wire } from '$lib/models/wire';
 import type { WiringState } from '$lib/models/wiring_state';
-import { todo } from '$lib/util/common';
 import type { fabric } from 'fabric';
 import type { EditorMode, WireData } from '$lib/models/editor_mode';
 import type { RenderableComponent } from '$lib/fabric/renderable_component';

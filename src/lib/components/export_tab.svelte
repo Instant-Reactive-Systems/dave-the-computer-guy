@@ -256,66 +256,7 @@
 					/>
 				</label>
 			</div>
-		</section>
-		<section class="pins">
-			<h2>Output pins</h2>
-			<table>
-				<thead>
-					<tr>
-						<td>Pin name</td>
-						<td>Pin position</td>
-						<td>Component ID</td>
-						<td>Pin ID</td>
-					</tr>
-				</thead>
-				<tbody>
-					{#each outputEntries as entry (entry)}
-						<tr class="non-empty-table">
-							<td
-								on:keydown|stopPropagation
-								contenteditable="true"
-								bind:innerHTML={entry.pinName}
-							/>
-							<td>
-								<select bind:value={entry.pinPosition} class="pin-position">
-									<option value="left">left</option>
-									<option value="right">right</option>
-									<option value="top">top</option>
-									<option value="bottom">bottom</option>
-								</select>
-							</td>
-							<td
-								on:keydown|stopPropagation
-								contenteditable="true"
-								bind:innerHTML={entry.componentId}
-							/>
-							<td on:keydown|stopPropagation contenteditable="true" bind:innerHTML={entry.pinId} />
-						</tr>
-					{:else}
-						<tr class="empty-table">
-							<td colspan="4">No entries.</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-			<ul class="button-row">
-				<li>
-					<button
-						title="Add entry"
-						on:click={() => (outputEntries = [...outputEntries, defaultEntry()])}>+</button
-					>
-				</li>
-				<li>
-					<button
-						title="Remove entry"
-						on:click={() => {
-							outputEntries.pop();
-							outputEntries = outputEntries;
-						}}>-</button
-					>
-				</li>
-			</ul>
-		</section>
+		</section>		
 		<section class="pins">
 			<h2>Input pins</h2>
 			<table>
@@ -371,6 +312,65 @@
 						on:click={() => {
 							inputEntries.pop();
 							inputEntries = inputEntries;
+						}}>-</button
+					>
+				</li>
+			</ul>
+		</section>
+		<section class="pins">
+			<h2>Output pins</h2>
+			<table>
+				<thead>
+					<tr>
+						<td>Pin name</td>
+						<td>Pin position</td>
+						<td>Component ID</td>
+						<td>Pin ID</td>
+					</tr>
+				</thead>
+				<tbody>
+					{#each outputEntries as entry (entry)}
+						<tr class="non-empty-table">
+							<td
+								on:keydown|stopPropagation
+								contenteditable="true"
+								bind:innerHTML={entry.pinName}
+							/>
+							<td>
+								<select bind:value={entry.pinPosition} class="pin-position">
+									<option value="left">left</option>
+									<option value="right">right</option>
+									<option value="top">top</option>
+									<option value="bottom">bottom</option>
+								</select>
+							</td>
+							<td
+								on:keydown|stopPropagation
+								contenteditable="true"
+								bind:innerHTML={entry.componentId}
+							/>
+							<td on:keydown|stopPropagation contenteditable="true" bind:innerHTML={entry.pinId} />
+						</tr>
+					{:else}
+						<tr class="empty-table">
+							<td colspan="4">No entries.</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+			<ul class="button-row">
+				<li>
+					<button
+						title="Add entry"
+						on:click={() => (outputEntries = [...outputEntries, defaultEntry()])}>+</button
+					>
+				</li>
+				<li>
+					<button
+						title="Remove entry"
+						on:click={() => {
+							outputEntries.pop();
+							outputEntries = outputEntries;
 						}}>-</button
 					>
 				</li>
