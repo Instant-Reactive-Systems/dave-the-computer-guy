@@ -74,7 +74,7 @@ export class WorkerSimulatorService implements SimulatorService {
             //If there is no id then the response has no handler (is not promise based)
             this.handleMessage(msg);
         }
-        if (action && payload) {
+        if (action) {   
             const resolve = this.resolves[id];
             if (resolve) {
                 resolve(payload);

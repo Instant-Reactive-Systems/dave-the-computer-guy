@@ -50,6 +50,8 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
         }
         return
     }
+    console.log(msg);
+
 
     processMessage(msg.data);
 }
@@ -91,8 +93,8 @@ function setCircuit(msg: WorkerMessage) {
     const response: WorkerResponse = {
         id: msg.id,
         action: msg.action,
-        payload: null,
-        err: null
+        payload: undefined,
+        err: undefined
     }
     postMessage(response);
 }
@@ -108,8 +110,8 @@ function insertDefinitions(msg: WorkerMessage) {
     const response: WorkerResponse = {
         id: msg.id,
         action: msg.action,
-        payload: null,
-        err: null
+        payload: undefined,
+        err: undefined
     }
     postMessage(response);
 }
@@ -128,8 +130,8 @@ function startSimulation(msg: WorkerMessage) {
     const response: WorkerResponse = {
         id: msg.id,
         action: msg.action,
-        payload: null,
-        err: null,
+        payload: undefined,
+        err: undefined,
     }
 
     postMessage(response);
@@ -141,8 +143,8 @@ function pauseSimulation(msg: WorkerMessage) {
     const response: WorkerResponse = {
         id: msg.id,
         action: msg.action,
-        payload: null,
-        err: null
+        payload: undefined,
+        err: undefined
     }
     postMessage(response);
 }
@@ -153,8 +155,8 @@ function stopSimulation(msg: WorkerMessage) {
     const response: WorkerResponse = {
         id: msg.id,
         action: msg.action,
-        payload: null,
-        err: null
+        payload: undefined,
+        err: undefined
     };
     postMessage(response)
 
@@ -175,15 +177,15 @@ function stepSimulation(msg: WorkerMessage) {
     const stateMsg: WorkerResponse = {
         action: "circuitStateUpdate",
         payload: circuitState,
-        err: null,
-        id: null
+        err: undefined,
+        id: undefined
     };
 
     const response: WorkerResponse = {
         id: msg.id,
         action: msg.action,
-        payload: null,
-        err: null,
+        payload: undefined,
+        err: undefined,
     };
 
     postMessage(stateMsg);
@@ -197,8 +199,8 @@ function insertUserEvent(msg: WorkerMessage) {
     const response: WorkerResponse = {
         id: msg.id,
         action: msg.action,
-        payload: null,
-        err: null,
+        payload: undefined,
+        err: undefined,
     };
 
     postMessage(response);
@@ -218,8 +220,8 @@ function simulate() {
             const message: WorkerResponse = {
                 action: "circuitStateUpdate",
                 payload: circuitState,
-                err: null,
-                id: null,
+                err: undefined,
+                id: undefined,
             };
             postMessage(message)
         }

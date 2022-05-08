@@ -99,6 +99,7 @@ export class Canvas {
                 obj.lockMovementY = true;
             }
         });
+        this.canvas.renderAll();
     }
 
     public unlockComponents() {
@@ -109,6 +110,7 @@ export class Canvas {
                 obj.lockMovementY = false;
             }
         });
+        this.canvas.renderAll();
     }
 
     public updateComponent(id: number, state: any) {
@@ -225,10 +227,9 @@ export class Canvas {
     }
 
     public renderWiringState(state: WiringState, wiringRenderingEntries: Map<string, WiringRenderingEntry>) {
-        console.log("Rendering wire state");
         for (const stateEntry of state) {
-            const json = JSON.stringify(stateEntry.connector);
-            const wiringEntry = wiringRenderingEntries.get(json);
+            const key = `${stateEntry.connector.componentId}-${stateEntry.connector.pin}`
+            const wiringEntry = wiringRenderingEntries.get(key);
             if (wiringEntry == undefined) {
                 continue;
             }

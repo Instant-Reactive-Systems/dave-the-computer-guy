@@ -7,7 +7,6 @@
     
     function onTabClick(index: number) {
         activeTab = index;
-        console.log(tabs[activeTab]);
     }
 </script>
 

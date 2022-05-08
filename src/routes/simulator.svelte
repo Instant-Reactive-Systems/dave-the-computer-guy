@@ -1,5 +1,6 @@
 <script lang="ts">
-	import {type Circuit, DEFAULT_CIRCUIT, type Junction } from '$lib/models/circuit';
+	import type { Circuit, Junction } from '$lib/models/circuit';
+	import { defaultCircuit } from '$lib/models/circuit';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
@@ -15,7 +16,8 @@
 	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { Command } from '$lib/models/command';
-	import { get } from 'svelte/store';	import _, { clone } from 'lodash';
+	import { get } from 'svelte/store';
+	import _, { clone } from 'lodash';
 	import type { Wire } from '$lib/models/wire';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
@@ -23,15 +25,6 @@
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
-	import {
-		type EditorModeType,
-		DEFAULT_DELETE_MODE,
-		DEFAULT_WIRE_MODE,
-		DEFAULT_EDIT_MODE,
-		DEFAULT_RUNNING_MODE,
-		DEFAULT_PAUSED_MODE,
-type WireData
-	} from '$lib/models/editor_mode';
 	import Notifier from '$lib/util/notifier';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
 	import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
@@ -46,8 +39,16 @@ type WireData
 	import TutorialIcon from '$lib/icons/tutorial.svelte';
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
-    import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
-import { copy } from '$lib/util/common';
+	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
+	import {
+		defaultDeleteMode,
+		defaultEditorMode,
+		defaultPausedMode,
+		defaultRunningMode,
+		defaultWireMode,
+		type EditorModeType,
+		type WireData
+	} from '$lib/models/editor_mode';
 
 	const { open, close } = getContext('simple-modal');
 	const notifier = new Notifier(getNotificationsContext());
@@ -55,8 +56,8 @@ import { copy } from '$lib/util/common';
 	type CircuitTab = {
 		name: string;
 		circuit: Circuit;
-		undoStack: Command[],
-		redoStack: Command[]
+		undoStack: Command[];
+		redoStack: Command[];
 	};
 
 	let circuitTabs: CircuitTab[] = [];
@@ -121,7 +122,7 @@ import { copy } from '$lib/util/common';
 		console.log('Creating new circuit');
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
-			circuit: copy(DEFAULT_CIRCUIT),
+			circuit: defaultCircuit(),
 			undoStack: [] as Command[],
 			redoStack: [] as Command[]
 		};
@@ -164,14 +165,20 @@ import { copy } from '$lib/util/common';
 				case 'edit':
 				case 'wire':
 				case 'delete':
-					circuitStore.set(circuit);
-					editorModeStore.set(DEFAULT_RUNNING_MODE);
-					simulator.setCircuit(circuit);
-					simulator.start();
+					simulator
+						.setCircuit(circuit)
+						.then(() => simulator.start())
+						.then(() => {
+							circuitStore.set(circuit);
+							editorModeStore.set(defaultRunningMode());
+						});
+
 					break;
 				case 'paused': {
-					simulator.start();
-					editorModeStore.set(DEFAULT_RUNNING_MODE);
+					simulator.start().then(()=> {
+						editorModeStore.set(defaultRunningMode());
+
+					});
 					break;
 				}
 				default: {
@@ -185,7 +192,7 @@ import { copy } from '$lib/util/common';
 		switch ($editorModeStore.type) {
 			case 'running': {
 				simulator.pause();
-				editorModeStore.set(DEFAULT_PAUSED_MODE);
+				editorModeStore.set(defaultPausedMode());
 				break;
 			}
 			case 'paused': {
@@ -219,7 +226,7 @@ import { copy } from '$lib/util/common';
 			case 'paused':
 			case 'running': {
 				simulator.stop();
-				editorModeStore.set(copy(DEFAULT_EDIT_MODE));
+				editorModeStore.set(defaultEditorMode());
 				circuitStateStore.set(null); // Remove simulation visuals
 				break;
 			}
@@ -244,7 +251,7 @@ import { copy } from '$lib/util/common';
 					circuitStore.set(circuit);
 					simulator.setCircuit(circuit);
 					simulator.step();
-					editorModeStore.set(copy(DEFAULT_PAUSED_MODE));
+					editorModeStore.set(defaultPausedMode());
 				});
 			}
 		}
@@ -359,13 +366,13 @@ import { copy } from '$lib/util/common';
 	function switchEditorMode(type: EditorModeType) {
 		switch (type) {
 			case 'delete':
-				$editorModeStore = DEFAULT_DELETE_MODE;
+				$editorModeStore = defaultDeleteMode();
 				break;
 			case 'wire':
-				$editorModeStore = DEFAULT_WIRE_MODE;
+				$editorModeStore = defaultWireMode();
 				break;
 			case 'edit':
-				$editorModeStore = DEFAULT_EDIT_MODE;
+				$editorModeStore = defaultEditorMode();
 				break;
 		}
 	}
@@ -373,7 +380,7 @@ import { copy } from '$lib/util/common';
 	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
 		console.log('Exported: ', event.detail.definition);
 		isExporting = false;
-        defLoader.insertDefinition(event.detail.definition, true);
+		defLoader.insertDefinition(event.detail.definition, true);
 	}
 
 	function cancelExport() {

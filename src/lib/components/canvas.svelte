@@ -16,15 +16,15 @@
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { Canvas } from './canvas/canvas';
-	import {
-		DEFAULT_DELETE_MODE,
-		DEFAULT_WIRE_MODE,
-		DEFAULT_EDIT_MODE,
-		type WireData,
-		type EditorMode
-	} from '$lib/models/editor_mode';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
 	import { copy } from '$lib/util/common';
+	import {
+		defaultDeleteMode,
+		defaultEditorMode,
+		defaultWireMode,
+		type EditorMode,
+		type WireData
+	} from '$lib/models/editor_mode';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -32,6 +32,24 @@
 		COMPONENT_DEFINITION_LOADER_SERVICE
 	);
 	const dispatch = createEventDispatcher();
+
+	// Locking/unlocking components based on state
+	$: {
+		if (canvas != undefined) {
+			// Disable component dragging when simulation is not stopped or when in wired mode
+			switch ($editorModeStore.type) {
+				case 'wire':
+				case 'running':
+				case 'paused':
+					console.log('Locking components');
+					canvas.lockComponents();
+					break;
+				default:
+					console.log('Unlocking components');
+					canvas.unlockComponents();
+			}
+		}
+	}
 
 	$: {
 		console.log('Called', $circuitStore);
@@ -42,22 +60,6 @@
 	$: {
 		if (canvas != undefined) {
 			canvas.renderEditorMode($editorModeStore);
-		}
-	}
-
-	// Locking/unlocking components based on state
-	$: {
-		if (canvas != undefined) {
-			// Disable component dragging when simulation is not stopped or when in wired mode
-			switch ($editorModeStore.type) {
-				case 'wire':
-				case 'running':
-				case 'paused':
-					canvas.lockComponents();
-					break;
-				default:
-					canvas.unlockComponents();
-			}
 		}
 	}
 
@@ -119,6 +121,7 @@
 	}
 
 	function renderCircuit(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
+		console.log('Rererending');
 		canvas.render(circuit, definitions);
 	}
 
@@ -335,29 +338,29 @@
 			const link: DirectLink = {
 				type: 'wire',
 				value: wire.data.ref.wire.id
-			}
+			};
 			mode.data.source = link;
 			const junction: Junction = {
 				x: pt.x,
 				y: pt.y,
 				sourceWire: canvas.wires.size
-			}
+			};
 			mode.data.currentJunction = junction;
 			editorModeStore.set(mode);
 		} else {
 			const link: DirectLink = {
 				type: 'wire',
 				value: wire.data.ref.wire.id
-			}
+			};
 
 			const currentWire = mode.data.currentWire as Wire;
 			currentWire.links.push(link);
 
 			const junction: Junction = {
-				x:currentWire.endX, 
-				y:currentWire.endY, 
+				x: currentWire.endX,
+				y: currentWire.endY,
 				sourceWire: currentWire.id
-			}
+			};
 			dispatch('addNewWire', {
 				wire: currentWire,
 				junction: [junction, mode.data.currentJunction]
@@ -372,17 +375,17 @@
 		if ((mode.data as WireData).currentWire == null) return;
 
 		const pinType = pin.data.pinType;
-		const sourceConnector:Connector = {
+		const sourceConnector: Connector = {
 			componentId: pin.data.component.id,
 			pin: pin.data.value.pin
-		}
+		};
 		const link: DirectLink = {
 			type: 'pin',
 			value: {
 				conn: sourceConnector,
 				type: pinType
 			}
-		}
+		};
 
 		const currentWire = (mode.data as WireData).currentWire as Wire;
 		currentWire.links.push(link);
@@ -402,8 +405,8 @@
 		(mode.data as WireData).lastX = currentWire.endX;
 		(mode.data as WireData).lastY = currentWire.endY;
 		(mode.data as WireData).source = {
-				type: 'wire',
-				value: canvas.wires.size
+			type: 'wire',
+			value: canvas.wires.size
 		};
 		dispatch('addNewWire', {
 			wire: currentWire,
@@ -427,7 +430,6 @@
 			x = canvas.getPointer(evt.e).x;
 		}
 
-	
 		const wire: Wire = {
 			id: canvas.wires.size,
 			startX: (mode.data as WireData).lastX,
@@ -471,7 +473,7 @@
 	}
 
 	function initWireMode() {
-		const mode = copy(DEFAULT_WIRE_MODE);
+		const mode = defaultWireMode();
 		editorModeStore.set(mode);
 	}
 
@@ -539,7 +541,7 @@
 	}
 
 	function initDeleteMode() {
-		const mode = copy(DEFAULT_DELETE_MODE);
+		const mode = defaultDeleteMode();
 		mode.data = 'released';
 		editorModeStore.set(mode);
 	}
@@ -551,7 +553,7 @@
 	}
 
 	function quitDeleteMode() {
-		const mode = copy(DEFAULT_EDIT_MODE);
+		const mode = defaultEditorMode();
 		editorModeStore.set(mode);
 	}
 
@@ -559,7 +561,7 @@
 		switch ($editorModeStore.type) {
 			case 'edit': {
 				// Reset component selection
-				if (event.key == 'Escape') editorModeStore.set(copy(DEFAULT_EDIT_MODE));
+				if (event.key == 'Escape') editorModeStore.set(defaultEditorMode());
 
 				// Switch to wire mode
 				if (event.key == 'w') initWireMode();
@@ -586,16 +588,16 @@
 	}
 
 	function quitWireMode() {
-		const mode = copy(DEFAULT_EDIT_MODE);
+		const mode = defaultEditorMode();
 		editorModeStore.set(mode);
 	}
 
 	function resizeCanvas(_event) {
 		const parent = document.getElementById('canvas-wrapper');
-		if(parent == null){
+		if (parent == null) {
 			return;
 		}
-		
+
 		const width = parent.clientWidth;
 		const height = parent.clientHeight;
 
@@ -608,7 +610,7 @@
 		prepareCanvas();
 
 		return () => {
-			console.log("Destroying canvas");
+			console.log('Destroying canvas');
 			canvas.dispose();
 		};
 	});
