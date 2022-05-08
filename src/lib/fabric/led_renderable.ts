@@ -24,7 +24,6 @@ export class LedRenderable implements RenderableComponent {
 
 
     updatePin(pinId: number,val: boolean) {
-        console.log(pinId,this.component)
         if(val){
             const pin = this.pins.find(pin => pin.data.value.pin == pinId);
             pin.set("fill", "green");

@@ -41,18 +41,16 @@
 				case 'wire':
 				case 'running':
 				case 'paused':
-					console.log('Locking components');
 					canvas.lockComponents();
 					break;
 				default:
-					console.log('Unlocking components');
 					canvas.unlockComponents();
 			}
 		}
 	}
 
 	$: {
-		console.log('Called', $circuitStore);
+		const circuit  = $circuitStore;
 		rerenderCircuit($circuitStore);
 	}
 
@@ -66,15 +64,10 @@
 	// Handle state rendering
 	$: {
 		const state = $circuitStateStore;
-		console.log('Updated state', state);
 		if (state != null) {
 			for (const stateEntry of state.entries()) {
 				// If the component is the Wiring component (u32::MAX)
 				if (stateEntry[0] == 4294967295) {
-					console.log(
-						'Wiring rendering metadata',
-						$circuitStore.metadata.rendering.wiringRendering
-					);
 					renderWiringState(stateEntry);
 				} else {
 					updateComponentState(stateEntry);
@@ -83,13 +76,11 @@
 
 			refreshCanvas();
 		} else {
-			rerenderCircuit($circuitStore);
+			clearAllState();
 		}
 	}
 
-	$: {
-		console.log('mode is', $editorModeStore);
-	}
+
 
 	function refreshCanvas() {
 		canvas.refresh();
@@ -121,13 +112,11 @@
 	}
 
 	function renderCircuit(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
-		console.log('Rererending');
 		canvas.render(circuit, definitions);
 	}
 
 	function attachListeners() {
 		canvas.on('mouse:down', (event: fabric.IEvent<MouseEvent>) => {
-			console.log('mouse down', event);
 			// Drag has precedence over all other mouse down events
 			if (handleDrag(event)) return;
 			// Handle mouse down event depending on editor mode
@@ -135,7 +124,6 @@
 		});
 
 		canvas.on('mouse:up', (event: fabric.IEvent<MouseEvent>) => {
-			console.log('mouse up', event);
 			canvas.setViewportTransform(canvas.viewportTransform);
 			canvas.isDragging = false;
 			switch ($editorModeStore.type) {
@@ -169,7 +157,6 @@
 			if ($editorModeStore.type == 'wire') {
 				showTemporaryWire(event);
 			} else if ($editorModeStore.type == 'delete') {
-				console.log('Editor mode', $editorModeStore);
 				if ($editorModeStore.data == 'pressed') {
 					deleteObject(event);
 				}
@@ -229,6 +216,12 @@
 		renderCircuit(circuit, definitions);
 	}
 
+	function clearAllState(){
+		//We clear the state by rerendering the circuit freshly
+		const circuit = $circuitStore;
+		rerenderCircuit(circuit);
+	}
+
 	function handleMousedown(event: fabric.IEvent<MouseEvent>) {
 		switch ($editorModeStore.type) {
 			case 'paused':
@@ -261,7 +254,6 @@
 	function handleMousedownInWiredMode(mouseEvent) {
 		const target = getWiredModeTarget(mouseEvent);
 		if (target == null) {
-			console.log('Adding new wire');
 			addNewWire(mouseEvent);
 		} else if (target.data.type == 'wire') {
 			processWirePressedInWireMode(target, mouseEvent);
@@ -271,7 +263,6 @@
 	}
 
 	function generateUserEvent(component: RenderableComponent) {
-		console.log('Generating user event');
 		const event = component.onClick();
 		if (event != null) {
 			dispatch('userEventGenerated', {
@@ -291,7 +282,6 @@
 		const mode = _.cloneDeep($editorModeStore);
 
 		if ((mode.data as WireData).currentWire == null) {
-			console.log('Current wire is null');
 			return getMouseDownTarget(mouseEvent);
 		}
 
@@ -484,7 +474,6 @@
 
 		if (event.subTargets.length >= 1) {
 			if (event.subTargets[0].data != undefined && event.subTargets[0].data.type == 'pin') {
-				console.log('Pressed pin', event, $editorModeStore);
 				return event.subTargets[0];
 			}
 		}
@@ -526,7 +515,6 @@
 				}
 			};
 			eventStore.set(newEvent);
-			console.log('evt is', evt);
 
 			addNewComponentToCircuit(evt.payload.componentDefinition, x, y);
 		}
@@ -606,11 +594,9 @@
 	}
 
 	onMount(() => {
-		console.log('Mounted canvas');
 		prepareCanvas();
 
 		return () => {
-			console.log('Destroying canvas');
 			canvas.dispose();
 		};
 	});

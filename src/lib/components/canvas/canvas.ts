@@ -241,7 +241,6 @@ export class Canvas {
                 renderableComponent.updatePin(connector.pin, stateEntry.value);
             }
             for (const junction of wiringEntry.junctions) {
-                console.log(junction, this.junctions);
                 const junctionRenderable: JunctionRenderable = this.junctions
                     .map(j => j.data.ref as JunctionRenderable)
                     .find(j => _.isEqual(j.junction, junction));

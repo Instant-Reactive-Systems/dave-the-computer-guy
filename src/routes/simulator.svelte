@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Circuit, Junction } from '$lib/models/circuit';
 	import { defaultCircuit } from '$lib/models/circuit';
-	import { getContext, onDestroy, onMount } from 'svelte';
+	import { getContext, onDestroy, onMount, tick } from 'svelte';
 	import TabSystem from '$lib/components/tab_system.svelte';
 	import PropertiesTab from '$lib/components/properties_tab.svelte';
 	import ComponentsTab from '$lib/components/components_tab.svelte';
@@ -14,10 +14,10 @@
 		SIMULATOR_SERVICE
 	} from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
-	import type { ComponentDefinition } from '$lib/models/component_definition';
+	import { defaultComponentDefinition, type ComponentDefinition } from '$lib/models/component_definition';
 	import type { Command } from '$lib/models/command';
 	import { get } from 'svelte/store';
-	import _, { clone } from 'lodash';
+	import _, { clone, update } from 'lodash';
 	import type { Wire } from '$lib/models/wire';
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
@@ -25,7 +25,6 @@
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
-	import Notifier from '$lib/util/notifier';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
 	import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
 	import PlayIcon from '$lib/icons/play.svelte';
@@ -49,9 +48,10 @@
 		type EditorModeType,
 		type WireData
 	} from '$lib/models/editor_mode';
+	import Notifier from '$lib/util/notifier';
 
 	const { open, close } = getContext('simple-modal');
-	const notifier = new Notifier(getNotificationsContext());
+	const notifier: Notifier = new Notifier(getNotificationsContext());
 
 	type CircuitTab = {
 		name: string;
@@ -77,7 +77,6 @@
 				circuit.name = name;
 				circuit.description = description;
 				circuitLoader.insertCircuit(circuit).then((circ) => {
-					console.log('Loaded circuit: ', circ);
 					currentCircuitTab.name = name;
 					currentCircuitTab.circuit = circ;
 					circuitTabs = circuitTabs;
@@ -119,7 +118,6 @@
 	}
 
 	function createNewCircuit() {
-		console.log('Creating new circuit');
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
 			circuit: defaultCircuit(),
@@ -131,7 +129,6 @@
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
-		console.log('Switching circuit tab');
 		currentCircuitTab = tab;
 	}
 
@@ -140,7 +137,7 @@
 		if (commandToUndo != undefined) {
 			commandToUndo.undo();
 		} else {
-			console.log('Undo stack empty');
+			notifier.info('Undo stack empty');
 			return;
 		}
 		if (commandToUndo.redoable) {
@@ -153,7 +150,7 @@
 		if (commandToRedo != undefined) {
 			commandToRedo.do();
 		} else {
-			console.log('Redo stack empty');
+			notifier.info('Redo stack empty');
 			return;
 		}
 		currentCircuitTab.undoStack.push(commandToRedo);
@@ -169,15 +166,14 @@
 						.setCircuit(circuit)
 						.then(() => simulator.start())
 						.then(() => {
-							circuitStore.set(circuit);
-							editorModeStore.set(defaultRunningMode());
+							updateCircuitTab(circuit);
+							tick().then(() => editorModeStore.set(defaultRunningMode()));
 						});
 
 					break;
 				case 'paused': {
-					simulator.start().then(()=> {
+					simulator.start().then(() => {
 						editorModeStore.set(defaultRunningMode());
-
 					});
 					break;
 				}
@@ -196,11 +192,11 @@
 				break;
 			}
 			case 'paused': {
-				console.log('Simulation already paused!');
+				notifier.info('Simulation already paused!');
 				break;
 			}
 			default: {
-				console.log('Simulation not running!');
+				notifier.info('Simulation not running!');
 			}
 		}
 	}
@@ -208,17 +204,15 @@
 	function deleteWire(e) {
 		const circuit = $circuitStore;
 		const wireId = e.detail.wireId;
-		console.log(`Deleting wire ${wireId}`);
-		circuitBuilder.deleteWire(circuit, wireId).then((circuit) => circuitStore.set(circuit));
+		circuitBuilder.deleteWire(circuit, wireId).then((circuit) => updateCircuitTab(circuit));
 	}
 
 	function deleteComponent(e) {
 		const componentId = e.detail.componentId;
 		const circuit = $circuitStore;
-		console.log(`Deleting component ${componentId}`);
 		circuitBuilder
 			.deleteComponent(circuit, componentId)
-			.then((circuit) => circuitStore.set(circuit));
+			.then((circuit) => updateCircuitTab(circuit));
 	}
 
 	function stopSimulation() {
@@ -231,7 +225,7 @@
 				break;
 			}
 			default: {
-				console.log('Simulation not running!');
+				notifier.info('Simulation not running!');
 			}
 		}
 	}
@@ -243,12 +237,12 @@
 				break;
 			}
 			case 'running': {
-				console.log('Can not step while simulator is rurnning');
+				notifier.info('Can not step while simulator is rurnning');
 				break;
 			}
 			default: {
 				deductConnections().then((circuit) => {
-					circuitStore.set(circuit);
+					updateCircuitTab(circuit);
 					simulator.setCircuit(circuit);
 					simulator.step();
 					editorModeStore.set(defaultPausedMode());
@@ -268,14 +262,13 @@
 			e.preventDefault();
 		}
 		if (e.ctrlKey == true && e.key.toLowerCase() == 'y') {
-			console.log('Redoing');
 			redo();
 			e.preventDefault();
 		}
 	}
 
 	function addNewComponent(event) {
-		console.log('Adding new component');
+		notifier.info('Added new component');
 		const definition: ComponentDefinition = event.detail.componentDefinition;
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
@@ -286,10 +279,10 @@
 				const circuit: Circuit = get(circuitStore);
 				circuitBuilder
 					.addNewComponent(circuit, definition, x, y)
-					.then((circuit) => circuitStore.set(circuit));
+					.then((circuit) => updateCircuitTab(circuit));
 			},
 			undo: () => {
-				circuitStore.set(preCommandCircuit);
+				updateCircuitTab(preCommandCircuit);
 			},
 			redoable: false
 		};
@@ -298,7 +291,6 @@
 	}
 
 	function moveComponent(event): void {
-		console.log('Moving component');
 		const preCommandCircuit = $circuitStore;
 		const x = event.detail.x;
 		const y = event.detail.y;
@@ -307,10 +299,13 @@
 			name: 'MoveComponent',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuitBuilder.moveComponent(circuit, id, x, y).then((circ) => circuitStore.set(circ));
+				circuitBuilder
+					.moveComponent(circuit, id, x, y)
+					.then((circ) => updateCircuitTab(circ));
+				notifier.info(`Moved component ${id}`)
 			},
 			undo: () => {
-				circuitStore.set(preCommandCircuit);
+				updateCircuitTab(preCommandCircuit);
 			},
 			redoable: true
 		};
@@ -340,7 +335,7 @@
 						(mode.data as WireData).lastY = wire.endY;
 					}
 					editorModeStore.set(mode);
-					circuitStore.set(circ);
+					updateCircuitTab(circ);
 				});
 			},
 			undo: () => {
@@ -350,7 +345,7 @@
 					(mode.data as WireData).lastY = wire.startY;
 				}
 				editorModeStore.set(mode);
-				circuitStore.set(preCommandCircuit);
+				updateCircuitTab(preCommandCircuit);
 			},
 			redoable: false
 		};
@@ -379,12 +374,13 @@
 
 	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
 		console.log('Exported: ', event.detail.definition);
+		notifier.info(`Exported component named "${event.detail.definition.name}"`)
 		isExporting = false;
 		defLoader.insertDefinition(event.detail.definition, true);
 	}
 
 	function cancelExport() {
-		console.log('Cancelled exporting: ');
+		notifier.info('Cancelled exporting: ');
 		isExporting = false;
 	}
 
@@ -396,12 +392,8 @@
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
+		console.log('Updating circuit');
 		circuitStore.set(circuit);
-	}
-
-	$: {
-		const circuit = $circuitStore;
-		updateCircuitTab(circuit);
 	}
 
 	// Set 'isInSimulation' state to disable controls based on editor mode

@@ -50,9 +50,7 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
         }
         return
     }
-    console.log(msg);
-
-
+    console.log("Received message in worker",msg);
     processMessage(msg.data);
 }
 
@@ -174,6 +172,7 @@ function stepSimulation(msg: WorkerMessage) {
     simulation.tick();
 
     const circuitState = getCircuitState();
+    console.log("Circuit state",circuitState);
     const stateMsg: WorkerResponse = {
         action: "circuitStateUpdate",
         payload: circuitState,

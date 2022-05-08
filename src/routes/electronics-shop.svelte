@@ -25,7 +25,6 @@
 	}
 
     function openShopPanel(){
-        console.log("Opening shop panel");
         open(ShopPanel,{})
     }
 </script>
