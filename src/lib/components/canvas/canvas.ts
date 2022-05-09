@@ -54,7 +54,11 @@ export class Canvas {
     }
 
     public resize(size: Size) {
-        this.canvas.setDimensions(size);
+        const ratio = this.canvas.getWidth() / this.canvas.getHeight();
+        const scale = size.width / this.canvas.getWidth();
+        const zoom  = this.canvas.getZoom() * scale;
+        this.canvas.setDimensions({width: size.width, height: size.height / ratio});
+        this.canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
     }
 
     public on(eventName: string, handler: EventHandlerType) {
