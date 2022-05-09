@@ -36,6 +36,7 @@
 	import WireIcon from '$lib/icons/wire.svelte';
 	import QuestIcon from '$lib/icons/quest.svelte';
 	import TutorialIcon from '$lib/icons/tutorial.svelte';
+	import CloseIcon from '$lib/icons/close.svelte';
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
@@ -297,6 +298,13 @@
 			redo();
 			e.preventDefault();
 		}
+        if (e.altKey == true && e.key.toLowerCase() == 'backspace') {
+            // currentIndex should always be defined (i.e. not -1)
+            // If it isn't, currentCircuitTab is not being updated somewhere
+            const currentIndex = circuitTabs.findIndex((x) => x == currentCircuitTab);
+            removeCircuitTab(currentIndex);
+            e.preventDefault();
+        }
 	}
 
 	function addNewComponent(event) {
@@ -428,6 +436,26 @@
 		return tick();
 	}
 
+    function removeCircuitTab(index: number): Promise<void> {
+        // Do not remove circuit tabs while in simulation
+        if (isInSimulation) return tick();
+
+        const deleted = circuitTabs.splice(index, 1)[0];
+        if (circuitTabs.length == 0) {
+            createNewCircuit(); // Updates circuitTabs inside, so return early
+            return tick();
+        }
+
+        // Make deleting tabs switch to a different tab when necessary intuitively
+        if (deleted == currentCircuitTab) {
+            if (index != 0) currentCircuitTab = circuitTabs[index - 1];
+            else currentCircuitTab = circuitTabs[index];
+        }
+        circuitTabs = circuitTabs;
+
+        return tick();
+    }
+
 	$: {
 		const circuit = currentCircuitTab?.circuit;
 		console.log('Updating circuit');
@@ -460,6 +488,9 @@
 		serviceSubscriptions.forEach((sub) => sub.unsubscribe());
 	});
 </script>
+
+
+
 <nav id="toolbar" class="shadow-md inline-flex w-full">
 	<ul class="app-tab-menu">
 		<li>
@@ -566,10 +597,13 @@
 				</div>
 				<nav class="circuit-tabs scroll-shadows-x">
 					<ul>
-						{#each circuitTabs as tab (tab)}
+						{#each circuitTabs as tab, i (tab)}
 							<li class:selected={tab.name == currentCircuitTab.name}>
 								<button on:click={() => switchCircuitTab(tab)}>
-									{tab.name}
+									<span>{tab.name}</span>
+                                    <button on:click|stopPropagation={() => removeCircuitTab(i)}>
+                                        <CloseIcon/>
+                                    </button>
 								</button>
 							</li>
 						{/each}
@@ -668,8 +702,12 @@
     Selected
     */
 	.selected {
-		@apply border-blue-400 !important;
+		@apply border-t-blue-400 !important;
 	}
+
+    .selected > button > button {
+        @apply visible !important;
+    }
 
 	/*
     Editor mode styles
@@ -716,12 +754,20 @@
 	}
 
 	.circuit-tabs > ul > li {
-		@apply border-t-2 border-white hover:bg-blue-400 hover:text-white hover:border-blue-400;
+		@apply border-t-2 border-t-white border-r last:border-r-0 border-r-slate-200 hover:bg-slate-100 hover:border-t-slate-100;
 	}
 
 	.circuit-tabs > ul > li > button {
-		@apply px-4 py-2;
+		@apply py-2 pl-10 pr-2 inline-flex space-x-2;
 	}
+    
+	.circuit-tabs > ul > li > button:hover > button {
+		@apply visible;
+	}
+
+    .circuit-tabs > ul > li > button > button {
+        @apply invisible rounded-md hover:bg-slate-300 hover:opacity-50;
+    }
 
 	/*Aside*/
 	.aside {
