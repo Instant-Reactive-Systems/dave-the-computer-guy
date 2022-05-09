@@ -11,7 +11,7 @@
 </script>
 
 <nav class="shadow-sm border-b border-slate-200">
-    <ul class="scroll-shadows-x">
+    <ul class="no-scroll-bar">
         {#each tabs as tab, i}
         <li>
             <button on:click={() => onTabClick(i)} class:active={i == activeTab}>

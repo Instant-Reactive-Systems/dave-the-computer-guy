@@ -40,6 +40,7 @@
 }
 
 .scroll-shadows-y::-webkit-scrollbar {
+    height: 0;
     width: 0;
 }
 
@@ -82,6 +83,17 @@
 }
 
 .scroll-shadows-x::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+}
+
+.no-scroll-bar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+
+.no-scroll-bar::-webkit-scrollbar {
     height: 0;
 }
 
