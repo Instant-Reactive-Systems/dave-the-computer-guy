@@ -31,7 +31,8 @@ export class MockCircuitLoaderService implements CircuitLoaderService {
             circuits = JSON.parse(circuitJson);
         }
 
-        let index = circuits.findIndex((x) => x.id == circuit.id);
+        // Replace only if the ID matches and the name isn't changed
+        let index = circuits.findIndex((x) => x.name == circuit.name && x.id == circuit.id);
         if (index != -1) {
             circuits[index] = circuit;
         } else {
