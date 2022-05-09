@@ -72,6 +72,12 @@
 	let isExporting = false;
 
 	function openSaveCircuitModal() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot save circuit while running the simulation.');
+            return;
+        }
+
 		open(SaveCircuit, {
 			onSend: (name: string, description: string) => {
 				const circuit = $circuitStore;
@@ -89,6 +95,12 @@
 	}
 
 	function openLoadCircuitModal() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot load circuit while running the simulation.');
+            return;
+        }
+
 		open(LoadCircuit, {
 			onLoad: (circuit: Circuit) => {
 				// Load opened tab
@@ -115,10 +127,22 @@
 	}
 
 	function startExportCircuit() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot export circuit while running the simulation.');
+            return;
+        }
+
 		isExporting = true;
 	}
 
 	function createNewCircuit() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot create a circuit while running the simulation.');
+            return;
+        }
+
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
 			circuit: defaultCircuit(),
@@ -130,10 +154,22 @@
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot switch circuit tabs while running the simulation.');
+            return;
+        }
+
 		currentCircuitTab = tab;
 	}
 
 	function undo() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot undo while running the simulation.');
+            return;
+        }
+
 		const commandToUndo: Command = currentCircuitTab.undoStack.pop();
 		if (commandToUndo != undefined) {
 			commandToUndo.undo();
@@ -147,6 +183,12 @@
 	}
 
 	function redo() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot redo while running the simulation.');
+            return;
+        }
+
 		const commandToRedo: Command = currentCircuitTab.redoStack.pop();
 		if (commandToRedo != undefined) {
 			commandToRedo.do();
