@@ -25,6 +25,7 @@
 		type EditorMode,
 		type WireData
 	} from '$lib/models/editor_mode';
+import { firstValueFrom } from 'rxjs';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -125,9 +126,9 @@
 			canvas.isDragging = false;
 			switch ($editorModeStore.type) {
 				case 'delete':
-					const mode = _.cloneDeep($editorModeStore);
+					const mode = copy($editorModeStore);
 					mode.data = 'released';
-					editorModeStore.set(mode);
+					setEditorMode(mode);
 					break;
 				default:
 					break;
@@ -157,8 +158,25 @@
 				if ($editorModeStore.data == 'pressed') {
 					deleteObject(event);
 				}
+			} else if($editorModeStore.type == 'edit'){
+				showObjectInfo(event);
 			}
 		});
+	}
+
+	function showObjectInfo(event: fabric.IEvent<MouseEvent>){
+		const target = event.target;
+		const subTargets = event.subTargets;
+		if(target?.data?.type == "component"){
+			for(const subTarget of subTargets){
+				if(subTarget.data?.type == 'pinGroup' ){
+					const component = (target.data.ref as RenderableComponent).component;
+					const pinData = subTarget.data.pin.data;
+					//TODO add rendering ROKO
+
+				}
+			}
+		}
 	}
 
 	function handleDrag(event: fabric.IEvent<MouseEvent>): boolean {
@@ -240,9 +258,9 @@
 				break;
 			}
 			case 'delete': {
-				const mode = _.cloneDeep($editorModeStore);
+				const mode = copy($editorModeStore);
 				mode.data = 'pressed';
-				editorModeStore.set(mode);
+				setEditorMode(mode);
 				break;
 			}
 		}
@@ -270,13 +288,32 @@
 
 	function handleMouseDownInEditMode(mouseEvent) {
 		const target = getMouseDownTarget(mouseEvent);
+		if(target != null){
+			processMouseDownInEditMode(mouseEvent);
+		}
 		if (target == null) {
 			processNoTargetMouseDown(mouseEvent);
 		}
 	}
 
+
+	function processMouseDownInEditMode(event: fabric.IEvent<MouseEvent>){
+		const target = event.target;
+		const subTargets = event.subTargets;
+		if(target?.data?.type == "component"){
+			for(const subTarget of subTargets){
+				if(subTarget.data?.type == 'pinGroup' ){
+					const component = (target.data.ref as RenderableComponent).component;
+					const pinData = subTarget.data.pin.data;
+					//TODO HANDLE EXPORT HERE
+
+				}
+			}
+		}
+	}
+
 	function getWiredModeTarget(mouseEvent) {
-		const mode = _.cloneDeep($editorModeStore);
+		const mode = copy($editorModeStore);
 
 		if ((mode.data as WireData).currentWire == null) {
 			return getMouseDownTarget(mouseEvent);
@@ -296,7 +333,7 @@
 							let pinX = matrix[4]; // translation in X
 							let pinY = matrix[5];
 							if (Math.abs(pinX - x) < pin.width && Math.abs(pinY - y) < pin.height) {
-								editorModeStore.set(mode);
+								setEditorMode(mode);
 								return pin;
 							}
 						}
@@ -333,7 +370,7 @@
 				sourceWire: canvas.wires.size
 			};
 			mode.data.currentJunction = junction;
-			editorModeStore.set(mode);
+			setEditorMode(mode);
 		} else {
 			const link: DirectLink = {
 				type: 'wire',
@@ -402,7 +439,7 @@
 		});
 
 		mode.data.currentJunction = null;
-		editorModeStore.set(mode);
+		setEditorMode(mode);
 	}
 
 	function showTemporaryWire(evt) {
@@ -429,7 +466,7 @@
 
 		(mode.data as WireData).currentWire = wire;
 
-		editorModeStore.set(mode);
+		setEditorMode(mode);
 	}
 
 	function processPinPressedInWireMode(pin: fabric.Object) {
@@ -454,15 +491,15 @@
 				}
 			};
 
-			editorModeStore.set(mode);
+			setEditorMode(mode);
 		} else {
 			addEndWire(pin);
 		}
 	}
 
-	function initWireMode() {
+	function initWireMode(): Promise<void> {
 		const mode = defaultWireMode();
-		editorModeStore.set(mode);
+		return setEditorMode(mode);
 	}
 
 	function getMouseDownTarget(event): fabric.Object {
@@ -526,10 +563,10 @@
 		});
 	}
 
-	function initDeleteMode() {
+	function initDeleteMode(): Promise<void> {
 		const mode = defaultDeleteMode();
 		mode.data = 'released';
-		editorModeStore.set(mode);
+		return setEditorMode(mode);
 	}
 
 	function deleteComponent(componentId: number) {
@@ -538,16 +575,16 @@
 		});
 	}
 
-	function quitDeleteMode() {
+	function quitDeleteMode(): Promise<void> {
 		const mode = defaultEditorMode();
-		editorModeStore.set(mode);
+		return setEditorMode(mode);
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
 		switch ($editorModeStore.type) {
 			case 'edit': {
 				// Reset component selection
-				if (event.key == 'Escape') editorModeStore.set(defaultEditorMode());
+				if (event.key == 'Escape') setEditorMode(defaultEditorMode());
 
 				// Switch to wire mode
 				if (event.key == 'w') initWireMode();
@@ -573,7 +610,7 @@
 		}
 	}
 
-	function quitWireMode(): Promise<void>{
+	function quitWireMode(): Promise<void> {
 		const mode = defaultEditorMode();
 		return setEditorMode(mode);
 	}
@@ -611,6 +648,7 @@
 	on:resize={resizeCanvas}
 	on:keydown|preventDefault|trusted|stopPropagation={handleKeydown}
 />
+
 <canvas bind:this={canvasElement} />
 
 <style>

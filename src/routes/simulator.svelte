@@ -45,6 +45,7 @@
 		defaultPausedMode,
 		defaultRunningMode,
 		defaultWireMode,
+		type EditorMode,
 		type EditorModeType,
 		type WireData
 	} from '$lib/models/editor_mode';
@@ -166,12 +167,12 @@
 						.setCircuit(circuit)
 						.then(() => simulator.start())
 						.then(() => updateCircuitTab(circuit))
-						.then(() => editorModeStore.set(defaultRunningMode()))
+						.then(() => setEditorMode(defaultRunningMode()))
 
 					break;
 				case 'paused': {
 					simulator.start().then(() => {
-						editorModeStore.set(defaultRunningMode());
+						setEditorMode(defaultRunningMode())
 					});
 					break;
 				}
@@ -185,8 +186,8 @@
 	function pauseSimulation() {
 		switch ($editorModeStore.type) {
 			case 'running': {
-				simulator.pause();
-				editorModeStore.set(defaultPausedMode());
+				simulator.pause()
+					.then(() => setEditorMode(defaultPausedMode()))
 				break;
 			}
 			case 'paused': {
@@ -200,32 +201,65 @@
 	}
 
 	function deleteWire(e) {
-		const circuit = $circuitStore;
+		const preCommandCircuit = $circuitStore;
 		const wireId = e.detail.wireId;
-		circuitBuilder.deleteWire(circuit, wireId).then((circuit) => updateCircuitTab(circuit));
+
+		const deleteWireCommand: Command = {
+			name: 'DeleteWireCommand',
+			do: () => {
+				const circuit: Circuit = get(circuitStore);
+				circuitBuilder
+					.deleteWire(circuit, wireId)
+					.then((circuit) => updateCircuitTab(circuit));
+;
+			},
+			undo: () => {
+				updateCircuitTab(preCommandCircuit);
+			},
+			redoable: false
+		};
+		deleteWireCommand.do();
+		addComandToUndoStack(deleteWireCommand);
 	}
 
 	function deleteComponent(e) {
 		const componentId = e.detail.componentId;
-		const circuit = $circuitStore;
-		circuitBuilder
-			.deleteComponent(circuit, componentId)
-			.then((circuit) => updateCircuitTab(circuit));
+		const preCommandCircuit = $circuitStore;
+		const deleteComponentCommmand: Command = {
+			name: 'DeleteComponentCommand',
+			do: () => {
+				const circuit: Circuit = get(circuitStore);
+				circuitBuilder
+					.deleteComponent(circuit, componentId)
+					.then((circuit) => updateCircuitTab(circuit));
+			},
+			undo: () => {
+				updateCircuitTab(preCommandCircuit);
+			},
+			redoable: false
+		};
+		deleteComponentCommmand.do();
+		addComandToUndoStack(deleteComponentCommmand);
 	}
 
 	function stopSimulation() {
 		switch ($editorModeStore.type) {
 			case 'paused':
 			case 'running': {
-				simulator.stop();
-				editorModeStore.set(defaultEditorMode());
-				circuitStateStore.set(null); // Remove simulation visuals
+				simulator.stop()
+					.then(() => setEditorMode(defaultEditorMode()))
+					.then(() => setCircuitStateStore(null))
 				break;
 			}
 			default: {
 				notifier.info('Simulation not running!');
 			}
 		}
+	}
+
+	function setCircuitStateStore(state:Map<number,any>): Promise<void>{
+		circuitStateStore.set(state);
+		return tick();
 	}
 
 	function stepSimulation() {
@@ -240,10 +274,10 @@
 			}
 			default: {
 				deductConnections().then((circuit) => {
-					updateCircuitTab(circuit);
-					simulator.setCircuit(circuit);
-					simulator.step();
-					editorModeStore.set(defaultPausedMode());
+					updateCircuitTab(circuit)
+						.then(() => simulator.setCircuit(circuit))
+						.then(() => simulator.step())
+						.then(() => setEditorMode(defaultPausedMode()));
 				});
 			}
 		}
@@ -332,8 +366,8 @@
 						(mode.data as WireData).lastX = wire.endX;
 						(mode.data as WireData).lastY = wire.endY;
 					}
-					editorModeStore.set(mode);
-					updateCircuitTab(circ);
+					setEditorMode(mode)
+						.then(() => updateCircuitTab(circ))
 				});
 			},
 			undo: () => {
@@ -342,8 +376,8 @@
 					(mode.data as WireData).lastX = wire.startX;
 					(mode.data as WireData).lastY = wire.startY;
 				}
-				editorModeStore.set(mode);
-				updateCircuitTab(preCommandCircuit);
+				setEditorMode(mode)
+					.then(() => updateCircuitTab(preCommandCircuit))
 			},
 			redoable: false
 		};
@@ -368,6 +402,11 @@
 				$editorModeStore = defaultEditorMode();
 				break;
 		}
+	}
+
+	function setEditorMode(mode: EditorMode): Promise<void>{
+		editorModeStore.set(mode);
+		return tick();
 	}
 
 	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
@@ -412,7 +451,7 @@
 		createNewCircuit();
 		serviceSubscriptions.push(
 			simulator.getCircuitStateBehaviourSubject().subscribe((val) => {
-				circuitStateStore.set(val);
+				setCircuitStateStore(val);
 			})
 		);
 	});
