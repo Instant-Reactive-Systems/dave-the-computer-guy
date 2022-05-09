@@ -39,7 +39,7 @@
         <input on:keydown|stopPropagation placeholder="Filter circuit name" bind:value={query}/>
     </div>
 
-    <ul class="circuit-list">
+    <ul class="circuit-list scroll-shadows-y">
         {#each circuits.filter(x => x.name.match(new RegExp(`.*${query}.*`, 'i'))) as circuit, i}
             <li><button on:click={() => onClick(i)}>
                 <span>{circuit.name}</span>
