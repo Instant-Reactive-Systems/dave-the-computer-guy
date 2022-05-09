@@ -1,6 +1,5 @@
 <script lang="ts">
     import type { Param } from '$lib/models/param';
-    import { onMount } from 'svelte';
 
     export let param: Param;
     let value: string;

@@ -11,7 +11,7 @@
 	} from 'threlte';
 	import RoomPanel from '$lib/components/room_panel.svelte';
 	import { goto } from '$app/navigation';
-	import { getContext } from 'svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
 
 	const { open } = getContext('simple-modal');
 
@@ -27,6 +27,13 @@
 	function navigateToSimulator() {
 		goto('simulator', { replaceState: true });
 	}
+	onMount(()=> {
+		console.log("Monted hom")
+	})
+
+	onDestroy(()=> {
+		console.log("Destroyed home")
+	})
 </script>
 
 {#if roomPanelVisible}

@@ -4,7 +4,7 @@
 	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { DirectLink, Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
-	import { createEventDispatcher, getContext } from 'svelte';
+	import { createEventDispatcher, getContext, tick } from 'svelte';
 	import { circuitStore } from '$lib/stores/circuit';
 	import { eventStore } from '$lib/stores/event_store';
 	import { fabric } from 'fabric';
@@ -16,15 +16,16 @@
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { Canvas } from './canvas/canvas';
-	import {
-		DEFAULT_DELETE_MODE,
-		DEFAULT_WIRE_MODE,
-		DEFAULT_EDIT_MODE,
-		type WireData,
-		type EditorMode
-	} from '$lib/models/editor_mode';
 	import type { WireRenderable } from '$lib/fabric/wire_renderable';
 	import { copy } from '$lib/util/common';
+	import {
+		defaultDeleteMode,
+		defaultEditorMode,
+		defaultWireMode,
+		type EditorMode,
+		type WireData
+	} from '$lib/models/editor_mode';
+import { firstValueFrom } from 'rxjs';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -32,18 +33,6 @@
 		COMPONENT_DEFINITION_LOADER_SERVICE
 	);
 	const dispatch = createEventDispatcher();
-
-	$: {
-		console.log('Called', $circuitStore);
-		rerenderCircuit($circuitStore);
-	}
-
-	// Renders the editor mode changes and custom objects
-	$: {
-		if (canvas != undefined) {
-			canvas.renderEditorMode($editorModeStore);
-		}
-	}
 
 	// Locking/unlocking components based on state
 	$: {
@@ -61,18 +50,24 @@
 		}
 	}
 
+	$: {
+		rerenderCircuit($circuitStore);
+	}
+
+	// Renders the editor mode changes and custom objects
+	$: {
+		if (canvas != undefined) {
+			canvas.renderEditorMode($editorModeStore);
+		}
+	}
+
 	// Handle state rendering
 	$: {
 		const state = $circuitStateStore;
-		console.log('Updated state', state);
 		if (state != null) {
 			for (const stateEntry of state.entries()) {
 				// If the component is the Wiring component (u32::MAX)
 				if (stateEntry[0] == 4294967295) {
-					console.log(
-						'Wiring rendering metadata',
-						$circuitStore.metadata.rendering.wiringRendering
-					);
 					renderWiringState(stateEntry);
 				} else {
 					updateComponentState(stateEntry);
@@ -81,12 +76,8 @@
 
 			refreshCanvas();
 		} else {
-			rerenderCircuit($circuitStore);
+			clearAllState();
 		}
-	}
-
-	$: {
-		console.log('mode is', $editorModeStore);
 	}
 
 	function refreshCanvas() {
@@ -124,7 +115,6 @@
 
 	function attachListeners() {
 		canvas.on('mouse:down', (event: fabric.IEvent<MouseEvent>) => {
-			console.log('mouse down', event);
 			// Drag has precedence over all other mouse down events
 			if (handleDrag(event)) return;
 			// Handle mouse down event depending on editor mode
@@ -132,14 +122,13 @@
 		});
 
 		canvas.on('mouse:up', (event: fabric.IEvent<MouseEvent>) => {
-			console.log('mouse up', event);
 			canvas.setViewportTransform(canvas.viewportTransform);
 			canvas.isDragging = false;
 			switch ($editorModeStore.type) {
 				case 'delete':
-					const mode = _.cloneDeep($editorModeStore);
+					const mode = copy($editorModeStore);
 					mode.data = 'released';
-					editorModeStore.set(mode);
+					setEditorMode(mode);
 					break;
 				default:
 					break;
@@ -166,12 +155,28 @@
 			if ($editorModeStore.type == 'wire') {
 				showTemporaryWire(event);
 			} else if ($editorModeStore.type == 'delete') {
-				console.log('Editor mode', $editorModeStore);
 				if ($editorModeStore.data == 'pressed') {
 					deleteObject(event);
 				}
+			} else if($editorModeStore.type == 'edit'){
+				showObjectInfo(event);
 			}
 		});
+	}
+
+	function showObjectInfo(event: fabric.IEvent<MouseEvent>){
+		const target = event.target;
+		const subTargets = event.subTargets;
+		if(target?.data?.type == "component"){
+			for(const subTarget of subTargets){
+				if(subTarget.data?.type == 'pinGroup' ){
+					const component = (target.data.ref as RenderableComponent).component;
+					const pinData = subTarget.data.pin.data;
+					//TODO add rendering ROKO
+
+				}
+			}
+		}
 	}
 
 	function handleDrag(event: fabric.IEvent<MouseEvent>): boolean {
@@ -226,6 +231,12 @@
 		renderCircuit(circuit, definitions);
 	}
 
+	function clearAllState() {
+		//We clear the state by rerendering the circuit freshly
+		const circuit = $circuitStore;
+		rerenderCircuit(circuit);
+	}
+
 	function handleMousedown(event: fabric.IEvent<MouseEvent>) {
 		switch ($editorModeStore.type) {
 			case 'paused':
@@ -247,9 +258,9 @@
 				break;
 			}
 			case 'delete': {
-				const mode = _.cloneDeep($editorModeStore);
+				const mode = copy($editorModeStore);
 				mode.data = 'pressed';
-				editorModeStore.set(mode);
+				setEditorMode(mode);
 				break;
 			}
 		}
@@ -258,7 +269,6 @@
 	function handleMousedownInWiredMode(mouseEvent) {
 		const target = getWiredModeTarget(mouseEvent);
 		if (target == null) {
-			console.log('Adding new wire');
 			addNewWire(mouseEvent);
 		} else if (target.data.type == 'wire') {
 			processWirePressedInWireMode(target, mouseEvent);
@@ -268,7 +278,6 @@
 	}
 
 	function generateUserEvent(component: RenderableComponent) {
-		console.log('Generating user event');
 		const event = component.onClick();
 		if (event != null) {
 			dispatch('userEventGenerated', {
@@ -279,16 +288,34 @@
 
 	function handleMouseDownInEditMode(mouseEvent) {
 		const target = getMouseDownTarget(mouseEvent);
+		if(target != null){
+			processMouseDownInEditMode(mouseEvent);
+		}
 		if (target == null) {
 			processNoTargetMouseDown(mouseEvent);
 		}
 	}
 
+
+	function processMouseDownInEditMode(event: fabric.IEvent<MouseEvent>){
+		const target = event.target;
+		const subTargets = event.subTargets;
+		if(target?.data?.type == "component"){
+			for(const subTarget of subTargets){
+				if(subTarget.data?.type == 'pinGroup' ){
+					const component = (target.data.ref as RenderableComponent).component;
+					const pinData = subTarget.data.pin.data;
+					//TODO HANDLE EXPORT HERE
+
+				}
+			}
+		}
+	}
+
 	function getWiredModeTarget(mouseEvent) {
-		const mode = _.cloneDeep($editorModeStore);
+		const mode = copy($editorModeStore);
 
 		if ((mode.data as WireData).currentWire == null) {
-			console.log('Current wire is null');
 			return getMouseDownTarget(mouseEvent);
 		}
 
@@ -306,7 +333,7 @@
 							let pinX = matrix[4]; // translation in X
 							let pinY = matrix[5];
 							if (Math.abs(pinX - x) < pin.width && Math.abs(pinY - y) < pin.height) {
-								editorModeStore.set(mode);
+								setEditorMode(mode);
 								return pin;
 							}
 						}
@@ -335,35 +362,36 @@
 			const link: DirectLink = {
 				type: 'wire',
 				value: wire.data.ref.wire.id
-			}
+			};
 			mode.data.source = link;
 			const junction: Junction = {
 				x: pt.x,
 				y: pt.y,
 				sourceWire: canvas.wires.size
-			}
+			};
 			mode.data.currentJunction = junction;
-			editorModeStore.set(mode);
+			setEditorMode(mode);
 		} else {
 			const link: DirectLink = {
 				type: 'wire',
 				value: wire.data.ref.wire.id
-			}
+			};
 
 			const currentWire = mode.data.currentWire as Wire;
 			currentWire.links.push(link);
 
 			const junction: Junction = {
-				x:currentWire.endX, 
-				y:currentWire.endY, 
+				x: currentWire.endX,
+				y: currentWire.endY,
 				sourceWire: currentWire.id
-			}
-			dispatch('addNewWire', {
-				wire: currentWire,
-				junction: [junction, mode.data.currentJunction]
-			});
+			};
 
-			quitWireMode();
+			quitWireMode().then(() => {
+				dispatch('addNewWire', {
+					wire: currentWire,
+					junction: [junction, mode.data.currentJunction]
+				});
+			});
 		}
 	}
 
@@ -372,17 +400,17 @@
 		if ((mode.data as WireData).currentWire == null) return;
 
 		const pinType = pin.data.pinType;
-		const sourceConnector:Connector = {
+		const sourceConnector: Connector = {
 			componentId: pin.data.component.id,
 			pin: pin.data.value.pin
-		}
+		};
 		const link: DirectLink = {
 			type: 'pin',
 			value: {
 				conn: sourceConnector,
 				type: pinType
 			}
-		}
+		};
 
 		const currentWire = (mode.data as WireData).currentWire as Wire;
 		currentWire.links.push(link);
@@ -402,8 +430,8 @@
 		(mode.data as WireData).lastX = currentWire.endX;
 		(mode.data as WireData).lastY = currentWire.endY;
 		(mode.data as WireData).source = {
-				type: 'wire',
-				value: canvas.wires.size
+			type: 'wire',
+			value: canvas.wires.size
 		};
 		dispatch('addNewWire', {
 			wire: currentWire,
@@ -411,7 +439,7 @@
 		});
 
 		mode.data.currentJunction = null;
-		editorModeStore.set(mode);
+		setEditorMode(mode);
 	}
 
 	function showTemporaryWire(evt) {
@@ -427,7 +455,6 @@
 			x = canvas.getPointer(evt.e).x;
 		}
 
-	
 		const wire: Wire = {
 			id: canvas.wires.size,
 			startX: (mode.data as WireData).lastX,
@@ -439,7 +466,7 @@
 
 		(mode.data as WireData).currentWire = wire;
 
-		editorModeStore.set(mode);
+		setEditorMode(mode);
 	}
 
 	function processPinPressedInWireMode(pin: fabric.Object) {
@@ -464,15 +491,15 @@
 				}
 			};
 
-			editorModeStore.set(mode);
+			setEditorMode(mode);
 		} else {
 			addEndWire(pin);
 		}
 	}
 
-	function initWireMode() {
-		const mode = copy(DEFAULT_WIRE_MODE);
-		editorModeStore.set(mode);
+	function initWireMode(): Promise<void> {
+		const mode = defaultWireMode();
+		return setEditorMode(mode);
 	}
 
 	function getMouseDownTarget(event): fabric.Object {
@@ -482,7 +509,6 @@
 
 		if (event.subTargets.length >= 1) {
 			if (event.subTargets[0].data != undefined && event.subTargets[0].data.type == 'pin') {
-				console.log('Pressed pin', event, $editorModeStore);
 				return event.subTargets[0];
 			}
 		}
@@ -524,7 +550,6 @@
 				}
 			};
 			eventStore.set(newEvent);
-			console.log('evt is', evt);
 
 			addNewComponentToCircuit(evt.payload.componentDefinition, x, y);
 		}
@@ -538,10 +563,10 @@
 		});
 	}
 
-	function initDeleteMode() {
-		const mode = copy(DEFAULT_DELETE_MODE);
+	function initDeleteMode(): Promise<void> {
+		const mode = defaultDeleteMode();
 		mode.data = 'released';
-		editorModeStore.set(mode);
+		return setEditorMode(mode);
 	}
 
 	function deleteComponent(componentId: number) {
@@ -550,16 +575,16 @@
 		});
 	}
 
-	function quitDeleteMode() {
-		const mode = copy(DEFAULT_EDIT_MODE);
-		editorModeStore.set(mode);
+	function quitDeleteMode(): Promise<void> {
+		const mode = defaultEditorMode();
+		return setEditorMode(mode);
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
 		switch ($editorModeStore.type) {
 			case 'edit': {
 				// Reset component selection
-				if (event.key == 'Escape') editorModeStore.set(copy(DEFAULT_EDIT_MODE));
+				if (event.key == 'Escape') setEditorMode(defaultEditorMode());
 
 				// Switch to wire mode
 				if (event.key == 'w') initWireMode();
@@ -585,17 +610,22 @@
 		}
 	}
 
-	function quitWireMode() {
-		const mode = copy(DEFAULT_EDIT_MODE);
+	function quitWireMode(): Promise<void> {
+		const mode = defaultEditorMode();
+		return setEditorMode(mode);
+	}
+
+	function setEditorMode(mode: EditorMode): Promise<void> {
 		editorModeStore.set(mode);
+		return tick();
 	}
 
 	function resizeCanvas(_event) {
 		const parent = document.getElementById('canvas-wrapper');
-		if(parent == null){
+		if (parent == null) {
 			return;
 		}
-		
+
 		const width = parent.clientWidth;
 		const height = parent.clientHeight;
 
@@ -608,7 +638,7 @@
 		prepareCanvas();
 
 		return () => {
-			console.log("Destroying canvas");
+			console.log('Disposing canvas');
 			canvas.dispose();
 		};
 	});
@@ -618,6 +648,7 @@
 	on:resize={resizeCanvas}
 	on:keydown|preventDefault|trusted|stopPropagation={handleKeydown}
 />
+
 <canvas bind:this={canvasElement} />
 
 <style>

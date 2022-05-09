@@ -23,7 +23,6 @@
 		serviceSubscriptions.push(
 			questService.getAvailableQuestsBehaviourSubject().subscribe((quests) => {
 				availableQuests = quests;
-				console.log('Available quests', availableQuests);
 			})
 		);
 	});

@@ -7,7 +7,6 @@ import type { ComponentDefinition } from '$lib/models/component_definition';
 import type { Size } from '$lib/models/size';
 import type { Wire } from '$lib/models/wire';
 import type { WiringState } from '$lib/models/wiring_state';
-import { todo } from '$lib/util/common';
 import type { fabric } from 'fabric';
 import type { EditorMode, WireData } from '$lib/models/editor_mode';
 import type { RenderableComponent } from '$lib/fabric/renderable_component';
@@ -99,6 +98,7 @@ export class Canvas {
                 obj.lockMovementY = true;
             }
         });
+        this.canvas.renderAll();
     }
 
     public unlockComponents() {
@@ -109,6 +109,7 @@ export class Canvas {
                 obj.lockMovementY = false;
             }
         });
+        this.canvas.renderAll();
     }
 
     public updateComponent(id: number, state: any) {
@@ -225,10 +226,9 @@ export class Canvas {
     }
 
     public renderWiringState(state: WiringState, wiringRenderingEntries: Map<string, WiringRenderingEntry>) {
-        console.log("Rendering wire state");
         for (const stateEntry of state) {
-            const json = JSON.stringify(stateEntry.connector);
-            const wiringEntry = wiringRenderingEntries.get(json);
+            const key = `${stateEntry.connector.componentId}-${stateEntry.connector.pin}`
+            const wiringEntry = wiringRenderingEntries.get(key);
             if (wiringEntry == undefined) {
                 continue;
             }
@@ -240,7 +240,6 @@ export class Canvas {
                 renderableComponent.updatePin(connector.pin, stateEntry.value);
             }
             for (const junction of wiringEntry.junctions) {
-                console.log(junction, this.junctions);
                 const junctionRenderable: JunctionRenderable = this.junctions
                     .map(j => j.data.ref as JunctionRenderable)
                     .find(j => _.isEqual(j.junction, junction));

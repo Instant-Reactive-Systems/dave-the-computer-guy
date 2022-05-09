@@ -10,7 +10,7 @@
 		PerspectiveCamera
 	} from 'threlte';
 	import RoomPanel from '$lib/components/room_panel.svelte';
-    import { getContext } from 'svelte';
+    import { getContext, onDestroy, onMount } from 'svelte';
 	import ShopPanel from '$lib/components/overlays/shop_panel.svelte';
 
 	const { open } = getContext('simple-modal');
@@ -25,9 +25,15 @@
 	}
 
     function openShopPanel(){
-        console.log("Opening shop panel");
         open(ShopPanel,{})
     }
+	onMount(()=> {
+		console.log("Mounted shop")
+	})
+
+	onDestroy(()=> {
+		console.log("Destroyed shop")
+	})
 </script>
 
 {#if roomPanelVisible}

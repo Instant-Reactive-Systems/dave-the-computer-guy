@@ -19,7 +19,6 @@ export class SwitchRenderable implements RenderableComponent {
     }
 
     updatePin(pinId: number,val: boolean) {
-        console.log(pinId,this.component)
         if(val){
             const pin = this.pins.find(pin => pin.data.value.pin == pinId);
             pin.set("fill", "green");
@@ -35,7 +34,6 @@ export class SwitchRenderable implements RenderableComponent {
 
     onClick(): UserEvent {
         const currentFill = this.outline.get("fill");
-        console.log("current fill", currentFill);
         if(currentFill != "black"){
             this.outline.set("fill", "black");
         }else{

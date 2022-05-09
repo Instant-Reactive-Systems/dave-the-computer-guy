@@ -20,12 +20,11 @@ const config = {
 				minify: false,
 			},
 			optimizeDeps: {
-				include: ["@fortawesome/free-solid-svg-icons"],
 				exclude: ['digisim']
 
 			},
 			ssr: {
-				noExternal: ["@fortawesome/free-solid-svg-icons", "three"]
+				noExternal: ["three"]
 			},
 			plugins: [
 				wasmPack([], ['digisim'])

@@ -11,7 +11,7 @@
 		PerspectiveCamera,
 	} from 'threlte';
 	import RoomPanel from '$lib/components/room_panel.svelte';
-	import { getContext } from 'svelte';
+	import { getContext, onDestroy, onMount } from 'svelte';
 	import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
     import { goto } from '$app/navigation'
 
@@ -46,7 +46,13 @@
     function navigateToSimulator(){
         goto('simulator',{replaceState: true})
     }
-	
+	onMount(()=> {
+		console.log("Monted office")
+	})
+
+	onDestroy(()=> {
+		console.log("Destroyed office")
+	})
 </script>
 
 {#if roomPanelVisible}

@@ -3,12 +3,6 @@
 	import { circuitStore } from '$lib/stores/circuit';
 	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Circuit } from '$lib/models/circuit';
-	import {
-		type ComponentDefinition,
-		DEFAULT_COMPONENT_DEFINITION,
-		type NameAndPinPair,
-		type PinMapping
-	} from '$lib/models/component_definition';
 	import type { ComponentRef } from '$lib/models/component_ref';
 	import {
 		CIRCUIT_BUILDER_SERVICE,
@@ -18,10 +12,13 @@
 	import ValidationErrorViewer from '$lib/components/overlays/simulator/validation_error_viewer.svelte';
 	import type { TableEntry, Entry } from '$lib/models/entry';
 	import { ValidationError, ValidationErrorType } from '$lib/models/validation_error';
-	import { makeArray } from '$lib/util/common';
 	import type { Connector } from '$lib/models/connector';
-    import { copy } from '$lib/util/common';
+	import { copy } from '$lib/util/common';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
+	import {
+		defaultComponentDefinition,
+		type ComponentDefinition
+	} from '$lib/models/component_definition';
 
 	const dispatch = createEventDispatcher();
 	const defLoader: ComponentDefinitionLoaderService = getContext(
@@ -35,17 +32,19 @@
 	let outputEntries: TableEntry[] = [];
 	let inputEntries: TableEntry[] = [];
 
-	const DEFAULT_ENTRY: TableEntry = {
-		pinName: '',
-		pinPosition: 'left',
-		componentId: '0',
-		pinId: '0'
-	};
+	function defaultEntry(): TableEntry {
+		return {
+			pinName: '',
+			pinPosition: 'left',
+			componentId: '0',
+			pinId: '0'
+		};
+	}
 
 	function onExport() {
 		const circuit = $circuitStore;
 		circuitBuilder.deductConnections(circuit).then((circ) => {
-            const mapEntries = (entry: TableEntry) => {
+			const mapEntries = (entry: TableEntry) => {
 				return {
 					pinName: entry.pinName,
 					pinPosition: entry.pinPosition,
@@ -54,16 +53,16 @@
 				};
 			};
 
-            type InsertedPin = {
-                name: string,
-                index: number,
-            };
+			type InsertedPin = {
+				name: string;
+				index: number;
+			};
 
 			const outs = outputEntries.map(mapEntries);
 			const ins = inputEntries.map(mapEntries);
 			let errors: ValidationError[] = [];
-      let insertedPins: InsertedPin[] = [];
-			let def = copy(DEFAULT_COMPONENT_DEFINITION);
+			let insertedPins: InsertedPin[] = [];
+			let def = defaultComponentDefinition();
 			def.name = name;
 			def.description = description;
 			def.circuit = circ;
@@ -112,18 +111,17 @@
 					continue;
 				}
 
-                const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
-                const found = insertedPins.find((x) => entry.pinName == x.name);
-                console.log('Found: ', found);
-                if (found == null) {
-                    const index = def.pins.output.length;
-				    def.pins.output.push(entry.pinName);
-				    def.pinMapping.output.push([connector]);
-                    insertedPins.push({name: entry.pinName, index});
-                    addToPinLocationMapping(entry, def);
-                } else {
-				    def.pinMapping.output[found.index].push(connector);
-                }
+				const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
+				const found = insertedPins.find((x) => entry.pinName == x.name);
+				if (found == null) {
+					const index = def.pins.output.length;
+					def.pins.output.push(entry.pinName);
+					def.pinMapping.output.push([connector]);
+					insertedPins.push({ name: entry.pinName, index });
+					addToPinLocationMapping(entry, def);
+				} else {
+					def.pinMapping.output[found.index].push(connector);
+				}
 
 				i += 1;
 			}
@@ -171,18 +169,17 @@
 					continue;
 				}
 
-                const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
-                const found = insertedPins.find((x) => entry.pinName == x.name);
-                console.log('Found: ', found);
-                if (found == null) {
-                    const index = def.pins.input.length;
-				    def.pins.input.push(entry.pinName);
-				    def.pinMapping.input.push([connector]);
-                    insertedPins.push({name: entry.pinName, index});
-                    addToPinLocationMapping(entry, def);
-                } else {
-				    def.pinMapping.input[found.index].push(connector);
-                }
+				const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
+				const found = insertedPins.find((x) => entry.pinName == x.name);
+				if (found == null) {
+					const index = def.pins.input.length;
+					def.pins.input.push(entry.pinName);
+					def.pinMapping.input.push([connector]);
+					insertedPins.push({ name: entry.pinName, index });
+					addToPinLocationMapping(entry, def);
+				} else {
+					def.pinMapping.input[found.index].push(connector);
+				}
 
 				i += 1;
 			}
@@ -192,7 +189,6 @@
 				return;
 			}
 
-            console.log("Exporting def",def)
 			dispatch('export', {
 				definition: def
 			});
@@ -220,8 +216,8 @@
 		}
 	}
 
-    function addToPinLocationMapping(entry: Entry, def: ComponentDefinition) {
-        switch (entry.pinPosition) {
+	function addToPinLocationMapping(entry: Entry, def: ComponentDefinition) {
+		switch (entry.pinPosition) {
 			case 'left':
 				def.metadata.pinLocationMapping.left.push({ name: entry.pinName, pin: entry.pinId });
 				break;
@@ -235,7 +231,7 @@
 				def.metadata.pinLocationMapping.bottom.push({ name: entry.pinName, pin: entry.pinId });
 				break;
 		}
-    }
+	}
 </script>
 
 <div class="wrapper">
@@ -260,6 +256,66 @@
 					/>
 				</label>
 			</div>
+		</section>		
+		<section class="pins">
+			<h2>Input pins</h2>
+			<table>
+				<thead>
+					<tr>
+						<td>Pin name</td>
+						<td>Pin position</td>
+						<td>Component ID</td>
+						<td>Pin ID</td>
+					</tr>
+				</thead>
+				<tbody>
+					{#each inputEntries as entry (entry)}
+						<tr class="non-empty-table">
+							<td
+								on:keydown|stopPropagation
+								contenteditable="true"
+								bind:innerHTML={entry.pinName}
+							/>
+							<td>
+								<select bind:value={entry.pinPosition} class="pin-position">
+									<option value="left">left</option>
+									<option value="right">right</option>
+									<option value="top">top</option>
+									<option value="bottom">bottom</option>
+								</select>
+							</td>
+							<td
+								on:keydown|stopPropagation
+								contenteditable="true"
+								bind:innerHTML={entry.componentId}
+							/>
+							<td on:keydown|stopPropagation contenteditable="true" bind:innerHTML={entry.pinId} />
+						</tr>
+					{:else}
+						<tr class="empty-table">
+							<td colspan="4">No entries.</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+			<ul class="button-row">
+				<li>
+					<button
+						title="Add entry"
+						on:click={() => (inputEntries = [...inputEntries, defaultEntry()])}
+						>+</button
+					>
+				</li>
+				<li>
+					<button
+						title="Remove entry"
+						on:click={() => {
+							inputEntries.pop();
+							inputEntries = inputEntries;
+						}}>-</button
+					>
+				</li>
+			</ul>
 		</section>
 		<section class="pins">
 			<h2>Output pins</h2>
@@ -306,8 +362,7 @@
 				<li>
 					<button
 						title="Add entry"
-						on:click={() => (outputEntries = [...outputEntries, copy(DEFAULT_ENTRY)])}
-						>+</button
+						on:click={() => (outputEntries = [...outputEntries, defaultEntry()])}>+</button
 					>
 				</li>
 				<li>
@@ -316,66 +371,6 @@
 						on:click={() => {
 							outputEntries.pop();
 							outputEntries = outputEntries;
-						}}>-</button
-					>
-				</li>
-			</ul>
-		</section>
-		<section class="pins">
-			<h2>Input pins</h2>
-			<table>
-				<thead>
-					<tr>
-						<td>Pin name</td>
-						<td>Pin position</td>
-						<td>Component ID</td>
-						<td>Pin ID</td>
-					</tr>
-				</thead>
-				<tbody>
-					{#each inputEntries as entry (entry)}
-						<tr class="non-empty-table">
-							<td
-								on:keydown|stopPropagation
-								contenteditable="true"
-								bind:innerHTML={entry.pinName}
-							/>
-							<td>
-								<select bind:value={entry.pinPosition} class="pin-position">
-									<option value="left">left</option>
-									<option value="right">right</option>
-									<option value="top">top</option>
-									<option value="bottom">bottom</option>
-								</select>
-							</td>
-							<td
-								on:keydown|stopPropagation
-								contenteditable="true"
-								bind:innerHTML={entry.componentId}
-							/>
-							<td on:keydown|stopPropagation contenteditable="true" bind:innerHTML={entry.pinId} />
-						</tr>
-					{:else}
-						<tr class="empty-table">
-							<td colspan="4">No entries.</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-			<ul class="button-row">
-				<li>
-					<button
-						title="Add entry"
-						on:click={() => (inputEntries = [...inputEntries, _.cloneDeep(DEFAULT_ENTRY)])}
-						>+</button
-					>
-				</li>
-				<li>
-					<button
-						title="Remove entry"
-						on:click={() => {
-							inputEntries.pop();
-							inputEntries = inputEntries;
 						}}>-</button
 					>
 				</li>

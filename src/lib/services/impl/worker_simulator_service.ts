@@ -60,7 +60,6 @@ export class WorkerSimulatorService implements SimulatorService {
     private handleMessage(msg: WorkerResponse) {
         switch (msg.action) {
             case "circuitStateUpdate":
-                console.log("Updating state");
                 this.circuitStateBehaviourSubject.next(msg.payload as Map<number, any>);
                 break;
             default:
@@ -74,7 +73,7 @@ export class WorkerSimulatorService implements SimulatorService {
             //If there is no id then the response has no handler (is not promise based)
             this.handleMessage(msg);
         }
-        if (action && payload) {
+        if (action) {   
             const resolve = this.resolves[id];
             if (resolve) {
                 resolve(payload);
