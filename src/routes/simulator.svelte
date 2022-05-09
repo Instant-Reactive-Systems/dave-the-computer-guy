@@ -437,6 +437,9 @@
 	}
 
     function removeCircuitTab(index: number): Promise<void> {
+        // Do not remove circuit tabs while in simulation
+        if (isInSimulation) return tick();
+
         const deleted = circuitTabs.splice(index, 1)[0];
         if (circuitTabs.length == 0) {
             createNewCircuit(); // Updates circuitTabs inside, so return early
