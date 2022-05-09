@@ -467,7 +467,7 @@
 	}
 
 	function cancelExport() {
-		notifier.info('Cancelled exporting: ');
+		notifier.info('Cancelled exporting.');
 		isExporting = false;
 	}
 
@@ -480,7 +480,10 @@
 
     function removeCircuitTab(index: number): Promise<void> {
         // Do not remove circuit tabs while in simulation
-        if (isInSimulation) return tick();
+        if (isInSimulation) {
+            notifier.warning('Cannot remove circuit tab while running the simulation.');
+            return tick();
+        }
 
         const deleted = circuitTabs.splice(index, 1)[0];
         if (circuitTabs.length == 0) {
