@@ -618,16 +618,22 @@
 <div id="main-content-wrapper" class="grid grid-cols-12">
 	<div class="col-span-9">
 		<div class="h-full flex flex-col">
-			<main id="canvas-wrapper">
-				<Canvas
-					on:componentMove={moveComponent}
-					on:addNewComponent={addNewComponent}
-					on:addNewWire={addNewWire}
-					on:userEventGenerated={processUserEvent}
-					on:deleteWire={deleteWire}
-					on:deleteComponent={deleteComponent}
-				/>
-			</main>
+			<div class="canvas-view">
+                <div id="canvas-wrapper">
+                    <Canvas
+					    on:componentMove={moveComponent}
+					    on:addNewComponent={addNewComponent}
+					    on:addNewWire={addNewWire}
+					    on:userEventGenerated={processUserEvent}
+					    on:deleteWire={deleteWire}
+					    on:deleteComponent={deleteComponent}
+				    />
+                </div>
+                <div class="status-bar">
+                    <span>Status</span>
+                    <span class="status scroll-shadows-x">Moved component to (x: 314, y: 986).</span>
+                </div>
+			</div>
 			<div class="bottom-bar">
 				<div
 					class="editor-mode"
@@ -709,7 +715,7 @@
 	}
 
 	.editor-tools {
-		@apply pl-4 ml-4 border-l border-slate-300;
+		@apply pl-4 mx-4 border-l border-slate-300;
 	}
 
 	.editor-tools > li > button {
@@ -717,7 +723,7 @@
 	}
 
 	.game-tools {
-		@apply mr-4 w-full justify-end;
+		@apply w-full mr-4 justify-end;
 	}
 
 	.game-tools > li > button {
@@ -781,7 +787,9 @@
 		@apply bg-green-400;
 	}
 
-	/*Bottom bar*/
+	/*
+    Bottom bar
+    */
 	.bottom-bar {
 		@apply inline-flex;
 	}
@@ -814,7 +822,9 @@
         @apply invisible rounded-md hover:bg-slate-300 hover:opacity-50;
     }
 
-	/*Aside*/
+	/*
+    Aside
+    */
 	.aside {
 		--hgt: calc(theme(height.full));
 		height: var(--hgt);
@@ -823,7 +833,9 @@
 		@apply border-l-2 border-gray-200;
 	}
 
-	/*Main content styles*/
+	/*
+    Main content styles
+    */
 	#main-content-wrapper {
 		--hgt: calc(theme(height.screen) - theme(height.10));
 		height: var(--hgt);
@@ -831,7 +843,30 @@
 		min-height: var(--hgt);
 	}
 
-	#canvas-wrapper {
-		@apply grow;
+    /*
+    Canvas view
+    */
+	.canvas-view {
+		@apply grow grid-cols-1 relative;
 	}
+
+    #canvas-wrapper {
+        @apply w-full h-full col-start-1 row-start-1;
+    }
+
+    .status-bar {
+        @apply absolute right-0 bottom-0 col-start-1 row-start-1 inline-flex;
+    }
+
+    .status-bar > * {
+        @apply bg-white;
+    }
+
+    .status-bar > span:first-child {
+        @apply py-1 pl-3 pr-2 rounded-l-full border-l border-t border-slate-300 font-bold uppercase;
+    }
+
+    .status-bar > .status {
+        @apply overflow-x-auto whitespace-nowrap max-w-[24rem] py-1 px-2 border-l border-t border-slate-300 cursor-text;
+    }
 </style>
