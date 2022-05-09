@@ -614,7 +614,7 @@
 	}
 
 	.app-tab-menu > li {
-		@apply h-full relative box-border;
+		@apply h-full relative box-border select-none;
 	}
 
 	.app-tab-menu > li > .tab-name {
@@ -649,7 +649,7 @@
     Dropdown menu styles
     */
 	.dropdown-menu {
-		@apply invisible box-border absolute z-50 bg-white text-black border-blue-400 border-l-2 shadow-md;
+		@apply invisible box-border absolute z-50 bg-white text-black border-blue-400 border-l-2 shadow-md select-none;
 	}
 
 	li:hover > .dropdown-menu {
@@ -675,7 +675,7 @@
     Editor mode styles
     */
 	.editor-mode {
-		@apply px-4 py-2 uppercase text-lg font-bold;
+		@apply px-4 py-2 uppercase text-lg font-bold select-none;
 	}
 
 	.editmode {
