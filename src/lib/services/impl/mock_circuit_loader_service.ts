@@ -56,7 +56,7 @@ export class MockCircuitLoaderService implements CircuitLoaderService {
         let removed: Circuit = null;
         if (index != -1) {
             removed = circuits[index];
-            circuits.splice(index);
+            circuits.splice(index, 1);
         }
 
         localStorage.setItem('circuits', JSON.stringify(circuits));
