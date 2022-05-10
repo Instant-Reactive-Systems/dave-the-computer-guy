@@ -1,10 +1,19 @@
 import type { Circuit } from "./models/circuit";
 import type { ComponentDefinition } from "./models/component_definition";
 import type { UserEvent } from "./models/user_event";
-import init, { set_panic_hook, Simulation, Config } from "digisim";
+import init, { set_panic_hook, Simulation, Config, test_combinational, update_registry } from "digisim";
+import type { VerificationData } from "./models/quest";
+import type { ValidationReport } from "./models/component_validation";
 
-export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinitions';
-export type WorkerPayload = ComponentDefinition[] | Circuit | UserEvent;
+export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinitions' | 'verifyComponent';
+
+
+export type VerifyComponentPayload = {
+    definition: ComponentDefinition,
+    verificationData: VerificationData
+}
+
+export type WorkerPayload = ComponentDefinition[] | Circuit | UserEvent | VerifyComponentPayload;
 
 export type WorkerMessage = {
     id: number,
@@ -16,7 +25,7 @@ export type WorkerResponse = {
     id: number,
     err: string,
     action: 'circuitStateUpdate' | WorkerAction,
-    payload: Map<number, any>,
+    payload: Map<number, any> | ValidationReport,
 };
 
 enum SimulationState {
@@ -50,7 +59,7 @@ export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
         }
         return
     }
-    console.log("Received message in worker",msg);
+    console.log("Received message in worker", msg);
     processMessage(msg.data);
 }
 
@@ -78,12 +87,33 @@ function processMessage(msg: WorkerMessage) {
         case 'setCircuit':
             setCircuit(msg);
             break;
+        case 'verifyComponent':
+            verifyComponent(msg)
         default: break;
     }
 }
 
+
+function verifyComponent(msg: WorkerMessage) {
+    const definition = (msg.payload as VerifyComponentPayload).definition;
+    const verificationData = (msg.payload as VerifyComponentPayload).verificationData;
+    if (verificationData.type == "Combinational") {
+        const validationReport: ValidationReport = test_combinational(definition, verificationData.restrictions);
+        console.log("Got validation report",validationReport.errors);
+        const response: WorkerResponse = {
+            id: msg.id,
+            action: msg.action,
+            payload: validationReport,
+            err: undefined
+        }
+        postMessage(response)
+    } else {
+        console.log("Sequential verification not implemented yet");
+    }
+}
+
 function setCircuit(msg: WorkerMessage) {
-    const circuit = msg.payload;
+    const circuit = msg.payload as Circuit;
     console.log("Setting circuit", circuit);
 
     simulation.set_circuit(circuit);
@@ -102,7 +132,7 @@ function insertDefinitions(msg: WorkerMessage) {
     console.log("Inserting definitions into registry: ", defs);
 
     for (const def of defs) {
-        simulation.update_registry(def);
+        update_registry(def);
     }
 
     const response: WorkerResponse = {
@@ -172,7 +202,7 @@ function stepSimulation(msg: WorkerMessage) {
     simulation.tick();
 
     const circuitState = getCircuitState();
-    console.log("Circuit state",circuitState);
+    console.log("Circuit state", circuitState);
     const stateMsg: WorkerResponse = {
         action: "circuitStateUpdate",
         payload: circuitState,

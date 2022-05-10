@@ -10,11 +10,15 @@ export type QuestService = {
 
     getCompletedQuests(user: User): Promise<Quest[]>;
 
-    completeQuest(user: User, questId: number,verificationHash: string): Promise<Quest>;
+    completeQuest(user: User, quest: Quest,verificationHash: string): Promise<Quest>;
 
-    addQuestToActiveQuests(user: User,questId: number): Promise<Quest>;
+    addQuestToActiveQuests(user: User,quest: Quest): Promise<Quest>;
 
     getAvailableQuestsBehaviourSubject(): BehaviorSubject<Quest[]>;
+
+    getActiveQuestsBehaviourSubject(): BehaviorSubject<Quest[]>;
+
+    getCompletedQuestsBehaviourSubject(): BehaviorSubject<Quest[]>;
     
     dispose();
 

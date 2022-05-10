@@ -1,16 +1,12 @@
-export type QuestRequirement = {
-    name: string;
-    description: string;
-    value: any;
-}
+
 
 export type TruthTable = {
-    input: boolean[][];
-    output: boolean[][];
+    inputs: boolean[][];
+    outputs: boolean[][];
 }
 
 export type CombinationalVerificationRestrictions = {
-    maxDelay: number;
+    maxRuntime: number;
     truthTable: TruthTable;
     maxComponents: number;
 }
@@ -46,11 +42,12 @@ export type SequentialVerificationData = {
     restrictions: SequentialVerificationRestrictions;
 }
 
+export type VerificationData = CombinationalVerificationData | SequentialVerificationData
+
 export type Quest = {
     id: number;
     name: string;
     description: string;
-    requirements: QuestRequirement[];
-    verificationData: CombinationalVerificationData | SequentialVerificationData;
+    verificationData: VerificationData;
     reward: number;
 }

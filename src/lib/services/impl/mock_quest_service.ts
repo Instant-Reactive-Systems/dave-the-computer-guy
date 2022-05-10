@@ -1,41 +1,36 @@
-import questSvelte from "$lib/icons/quest.svelte";
-import type { Quest, QuestRequirement } from "$lib/models/quest";
+import type { Quest } from "$lib/models/quest";
 import type { User } from "$lib/models/user";
 import { copy } from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
 import type { QuestService } from "../quest_service";
 
-
-
-const EXAMPLE_QUEST_REQUIREMENT: QuestRequirement = {
-    description: "Time to reach steady state, circuit is stable",
-    name: "Time To Steady State",
-    value: 10
-}
-
-const QUEST_TEMPLATE: Quest = {
+const AND_GATE_QUEST: Quest = {
     id: 1,
-    name: "First quest",
+    name: "And gate quest",
     reward: 100,
-    description: "This is the first quest",
-    requirements: [EXAMPLE_QUEST_REQUIREMENT],
-    verificationData: null,
+    description: "This is the first quest, make an AND GATe",
+    verificationData: {
+        type: 'Combinational',
+        restrictions: {
+            maxComponents: 3,
+            maxRuntime: 10,
+            truthTable: {
+                inputs: [[false, false], [false, true], [true, false], [true, true]],
+                outputs: [[false], [false], [false], [true]]
+            }
+        }
+    },
 }
 
 const ALL_QUESTS: Map<number, Quest> = new Map();
-
-for (let i = 0; i < 20; i++) {
-    const quest: Quest = copy(QUEST_TEMPLATE)
-    quest.id = i;
-    ALL_QUESTS.set(quest.id, quest);
-}
+ALL_QUESTS.set(AND_GATE_QUEST.id, copy(AND_GATE_QUEST));
 
 
 
 
 export class MockQuestsService implements QuestService {
-    private activeQuestIds: number[] = [];
-    private completedQuestsIds: number[] = [];
+    private activeQuestsBehaviourSubject: BehaviorSubject<Quest[]> = new BehaviorSubject<Quest[]>([]);
+    private completedQuestsBehaviourSubject: BehaviorSubject<Quest[]> = new BehaviorSubject<Quest[]>([]);
     private availableQuestsBehaviourSubject: BehaviorSubject<Quest[]> = new BehaviorSubject<Quest[]>(Array.from(ALL_QUESTS.values()));
 
     init() {
@@ -45,11 +40,7 @@ export class MockQuestsService implements QuestService {
     }
 
     async getActiveQuests(user: User): Promise<Quest[]> {
-        let activeQuest = [];
-        for (const id of this.activeQuestIds) {
-            activeQuest.push(ALL_QUESTS.get(id))
-        }
-        return activeQuest;
+        return this.activeQuestsBehaviourSubject.getValue();
     }
 
     async getAvailableQuests(user: User): Promise<Quest[]> {
@@ -57,26 +48,34 @@ export class MockQuestsService implements QuestService {
     }
 
     async getCompletedQuests(user: User): Promise<Quest[]> {
-        let completedQuests = [];
-        for (const id of this.completedQuestsIds) {
-            completedQuests.push(ALL_QUESTS.get(id))
-        }
-        return completedQuests;
+        return this.completedQuestsBehaviourSubject.getValue();
     }
 
-    async completeQuest(user: User, questId: number, verificationHash: string): Promise<Quest> {
-        this.completedQuestsIds.push(questId)
-        return ALL_QUESTS.get(questId);
+    async completeQuest(user: User, quest: Quest, verificationHash: string): Promise<Quest> {
+        const completedQuests = this.completedQuestsBehaviourSubject.getValue()
+        completedQuests.push(quest);
+        this.completedQuestsBehaviourSubject.next(completedQuests);
+        return quest;
     }
 
-    async addQuestToActiveQuests(user: User, questId: number): Promise<Quest> {
-        this.activeQuestIds.push(questId);
-        const availableQuests = this.availableQuestsBehaviourSubject.getValue().filter((q) => q.id != questId);
+    async addQuestToActiveQuests(user: User, quest: Quest): Promise<Quest> {
+        const activeQuests = this.activeQuestsBehaviourSubject.getValue();
+        activeQuests.push(quest);
+        const availableQuests = this.availableQuestsBehaviourSubject.getValue().filter((q) => q.id != quest.id);
         this.availableQuestsBehaviourSubject.next(availableQuests);
-        return ALL_QUESTS.get(questId);
+        this.activeQuestsBehaviourSubject.next(activeQuests);
+        return quest;
     }
 
     getAvailableQuestsBehaviourSubject(): BehaviorSubject<Quest[]> {
         return this.availableQuestsBehaviourSubject;
+    }
+
+    getActiveQuestsBehaviourSubject(): BehaviorSubject<Quest[]> {
+        return this.activeQuestsBehaviourSubject;
+    }
+
+    getCompletedQuestsBehaviourSubject(): BehaviorSubject<Quest[]> {
+        return this.completedQuestsBehaviourSubject;
     }
 }
