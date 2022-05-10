@@ -1,6 +1,8 @@
 import type { Circuit } from "$lib/models/circuit";
+import type { Component } from "$lib/models/component";
 import type { ComponentDefinition } from "$lib/models/component_definition";
 import type { ComponentRef } from "$lib/models/component_ref";
+import type { CombinationalVerificationData, SequentialVerificationData, SequentialVerificationRestrictions } from "$lib/models/quest";
 import type { UserEvent } from "$lib/models/user_event";
 import type { VerificationResult } from "$lib/models/verification_result";
 import type { WorkerMessage, WorkerResponse } from "$lib/simulator_worker";
@@ -202,8 +204,9 @@ export class WorkerSimulatorService implements SimulatorService {
         })
     }
 
-    verifyComponent(component: ComponentRef, verificationData: any): Promise<VerificationResult> {
-        throw new Error("Method not implemented.");
+    async verifyComponent(definition: ComponentDefinition, 
+        verificationData: CombinationalVerificationData | SequentialVerificationData): Promise<VerificationResult> {
+        return null;
     }
 }
 
