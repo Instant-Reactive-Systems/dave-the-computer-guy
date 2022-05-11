@@ -28,7 +28,6 @@
 
 	function openQuestsPanel() {
 		open(QuestsPanel, {}, {
-			closeButton: false,
 			styleWindow: {
 				width: "auto",
 				overflow: "hidden"

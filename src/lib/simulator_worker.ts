@@ -99,10 +99,10 @@ function verifyComponent(msg: WorkerMessage) {
     const verificationData = (msg.payload as VerifyComponentPayload).verificationData;
     if (verificationData.type == "Combinational") {
         const result = test_combinational(definition, verificationData.restrictions);
-        console.log("Got validation report",result.errors);
+        console.log("Got validation report", result);
         const validationReport: ValidationReport = {
-            errors: (result.errors as any).errors,
-            passed: (result.errors as any).errors.length == 0
+            errors: result.errors,
+            passed: result.errors.length == 0
         }
         const response: WorkerResponse = {
             id: msg.id,
@@ -264,4 +264,5 @@ function simulate() {
 
 function getCircuitState(): Map<number, any> {
     return new Map(Object.entries(simulation.circuit_state()).map(val => [parseInt(val[0]), val[1]]));
-}   
+}
+
