@@ -2,7 +2,7 @@
 	import type { RenderableComponent } from '$lib/fabric/renderable_component';
 	import _ from 'lodash';
 	import type { ComponentDefinition } from '$lib/models/component_definition';
-	import type { DirectLink, Wire } from '$lib/models/wire';
+	import type { ConnectorLink, DirectLink, Wire } from '$lib/models/wire';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 	import { createEventDispatcher, getContext, tick } from 'svelte';
 	import { circuitStore } from '$lib/stores/circuit';
@@ -25,13 +25,16 @@
 		type EditorMode,
 		type WireData
 	} from '$lib/models/editor_mode';
-import { firstValueFrom } from 'rxjs';
+import Notifier from '$lib/util/notifier';
+import { getNotificationsContext } from 'svelte-notifications';
 
 	let canvas: Canvas;
 	let canvasElement;
 	let definitionLoaderService: ComponentDefinitionLoaderService = getContext(
 		COMPONENT_DEFINITION_LOADER_SERVICE
 	);
+
+	const notifier: Notifier = new Notifier(getNotificationsContext());
 	const dispatch = createEventDispatcher();
 
 	// Locking/unlocking components based on state
@@ -158,22 +161,21 @@ import { firstValueFrom } from 'rxjs';
 				if ($editorModeStore.data == 'pressed') {
 					deleteObject(event);
 				}
-			} else if($editorModeStore.type == 'edit'){
+			} else if ($editorModeStore.type == 'edit') {
 				showObjectInfo(event);
 			}
 		});
 	}
 
-	function showObjectInfo(event: fabric.IEvent<MouseEvent>){
+	function showObjectInfo(event: fabric.IEvent<MouseEvent>) {
 		const target = event.target;
 		const subTargets = event.subTargets;
-		if(target?.data?.type == "component"){
-			for(const subTarget of subTargets){
-				if(subTarget.data?.type == 'pinGroup' ){
+		if (target?.data?.type == 'component') {
+			for (const subTarget of subTargets) {
+				if (subTarget.data?.type == 'pinGroup') {
 					const component = (target.data.ref as RenderableComponent).component;
 					const pinData = subTarget.data.pin.data;
 					//TODO add rendering ROKO
-
 				}
 			}
 		}
@@ -288,7 +290,7 @@ import { firstValueFrom } from 'rxjs';
 
 	function handleMouseDownInEditMode(mouseEvent) {
 		const target = getMouseDownTarget(mouseEvent);
-		if(target != null){
+		if (target != null) {
 			processMouseDownInEditMode(mouseEvent);
 		}
 		if (target == null) {
@@ -296,17 +298,15 @@ import { firstValueFrom } from 'rxjs';
 		}
 	}
 
-
-	function processMouseDownInEditMode(event: fabric.IEvent<MouseEvent>){
+	function processMouseDownInEditMode(event: fabric.IEvent<MouseEvent>) {
 		const target = event.target;
 		const subTargets = event.subTargets;
-		if(target?.data?.type == "component"){
-			for(const subTarget of subTargets){
-				if(subTarget.data?.type == 'pinGroup' ){
+		if (target?.data?.type == 'component') {
+			for (const subTarget of subTargets) {
+				if (subTarget.data?.type == 'pinGroup') {
 					const component = (target.data.ref as RenderableComponent).component;
 					const pinData = subTarget.data.pin.data;
 					//TODO HANDLE EXPORT HERE
-
 				}
 			}
 		}
@@ -472,12 +472,24 @@ import { firstValueFrom } from 'rxjs';
 	function processPinPressedInWireMode(pin: fabric.Object) {
 		const mode: EditorMode = copy($editorModeStore);
 
+		const connector = {
+			componentId: pin.data.component.id,
+			pin: pin.data.value.pin
+		};
+
+		const link = $circuitStore.metadata.rendering.wires
+			.flatMap((wire) => wire.links)
+			.find((link) => {
+				return link.type == 'pin' && _.isEqual((link.value as ConnectorLink).conn,connector);
+			});
+		if (link != undefined) {
+			notifier.warning('Can not drag wire from or to pin that is already connected');
+			return;
+		}
+
 		if ((mode.data as WireData).source == null) {
 			const pinType = pin.data.pinType;
-			const sourceConnector: Connector = {
-				componentId: pin.data.component.id,
-				pin: pin.data.value.pin
-			};
+
 			const matrix = pin.calcTransformMatrix();
 			const x = matrix[4]; // translation in X
 			const y = matrix[5];
@@ -486,7 +498,7 @@ import { firstValueFrom } from 'rxjs';
 			(mode.data as WireData).source = {
 				type: 'pin',
 				value: {
-					conn: sourceConnector,
+					conn: connector,
 					type: pinType
 				}
 			};
