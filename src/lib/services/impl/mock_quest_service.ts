@@ -14,7 +14,7 @@ const AND_GATE_QUEST: Quest = {
         type: 'Combinational',
         restrictions: {
             maxComponents: 2,
-            maxRuntime: 5,
+            maxRuntime: 10,
             truthTable: {
                 inputs: [[false, false], [false, true], [true, false], [true, true]],
                 outputs: [[false], [false], [false], [true]]
@@ -141,7 +141,9 @@ export class MockQuestsService implements QuestService {
         completedQuests.push(quest);
         this.completedQuestsBehaviourSubject.next(completedQuests);
         this.activeQuestsBehaviourSubject.next(activeQuests);
-        this.userService.giveReward(quest.reward);
+        const user = copy(this.userService.getUserBehaviourSubject().getValue());
+        user.balance += quest.reward;
+        this.userService.getUserBehaviourSubject().next(user);
         return quest;
     }
 

@@ -50,4 +50,6 @@ export type Quest = {
     description: string;
     verificationData: VerificationData;
     reward: number;
+    tags?: string[];
+    prerequisiteQuests?: number[];
 }

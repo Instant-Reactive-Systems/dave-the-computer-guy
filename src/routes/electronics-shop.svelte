@@ -25,7 +25,15 @@
 	}
 
     function openShopPanel(){
-        open(ShopPanel,{})
+		open(ShopPanel, {}, {
+			styleWindow: {
+				width: "auto",
+				overflow: "hidden"
+			},
+			styleContent: {
+				overflow: "hidden"
+			}
+		});
     }
 	onMount(()=> {
 		console.log("Mounted shop")

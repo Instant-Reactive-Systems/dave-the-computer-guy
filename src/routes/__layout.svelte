@@ -6,6 +6,7 @@
 		CIRCUIT_LOADER_SERVICE,
 		COMPONENT_DEFINITION_LOADER_SERVICE,
 		QUEST_SERVICE,
+		SHOP_SERVICE,
 		SIMULATOR_SERVICE,
 		USER_SERVICE
 	} from '$lib/services/service';
@@ -23,6 +24,8 @@
 	import { MockQuestsService } from '$lib/services/impl/mock_quest_service';
 	import type { UserService } from '$lib/services/auth_service';
 	import { MockUserService } from '$lib/services/impl/mock_user_service';
+import type { ElectronicsShopService } from '$lib/services/electronics_shop_service';
+import { MockElectronicsShopService } from '$lib/services/impl/mock_electronics_shop_service';
 
 	let userService: UserService = new MockUserService();
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
@@ -31,12 +34,14 @@
 	let simulatorService: SimulatorService = new WorkerSimulatorService(componentDefinitionLoaderService);
 	let circuitBuilderService: CircuitBuilderService = new WorkerCircuitBuilderService();
 	let questsService: QuestService = new MockQuestsService(userService);
+	let shopService: ElectronicsShopService = new MockElectronicsShopService(userService,componentDefinitionLoaderService);
 	setContext(USER_SERVICE, userService);
 	setContext(CIRCUIT_LOADER_SERVICE, circuitLoaderService);
 	setContext(COMPONENT_DEFINITION_LOADER_SERVICE, componentDefinitionLoaderService);
 	setContext(SIMULATOR_SERVICE, simulatorService);
 	setContext(CIRCUIT_BUILDER_SERVICE, circuitBuilderService);
 	setContext(QUEST_SERVICE, questsService);
+	setContext(SHOP_SERVICE, shopService);
 
 	const services = [
 		userService,
@@ -44,7 +49,8 @@
 		componentDefinitionLoaderService,
 		simulatorService,
 		circuitBuilderService,
-		questsService
+		questsService,
+		shopService
 	];
 	onMount(() => {
 		console.log('App root initted');

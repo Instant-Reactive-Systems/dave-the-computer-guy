@@ -6,8 +6,7 @@ export class MockUserService implements UserService {
     private userBehaviorSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
     init() {
-        this.getUserData("spazzay");
-
+        this.getUserData();
     }
     
     dispose() {}
@@ -17,7 +16,8 @@ export class MockUserService implements UserService {
         return `${username}-${password}`
     }
 
-    async getUserData(username): Promise<User> {
+    async getUserData(): Promise<User> {
+        const username = "spazzay";
         const user:User = {
             username: username,
             email: `${username}}@gmail.com`,
@@ -33,11 +33,6 @@ export class MockUserService implements UserService {
         return this.userBehaviorSubject;
     }
 
-    async giveReward(amount: number): Promise<User>{
-        const user = this.getUserBehaviourSubject().getValue();
-        user.balance += amount;
-        this.getUserBehaviourSubject().next(user);
-        return user;
-    }
+   
 
 }

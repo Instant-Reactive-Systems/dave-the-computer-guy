@@ -1,4 +1,6 @@
+import type { ComponentDefinition } from "./component_definition";
+
 export type Item = {
-    componentDefinitionId: number;
-    amount: number;
+    componentDefinition: ComponentDefinition;
+    cost: number;
 }
