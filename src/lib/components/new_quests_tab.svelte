@@ -1,21 +1,21 @@
 <script lang="ts">
     import type { Quest } from '$lib/models/quest';
-	import type { AuthService } from '$lib/services/auth_service';
+import type { User } from '$lib/models/user';
+	import type { UserService } from '$lib/services/auth_service';
 
 	import type { QuestService } from '$lib/services/quest_service';
-	import { AUTH_SERVICE, QUEST_SERVICE } from '$lib/services/service';
+	import { USER_SERVICE, QUEST_SERVICE } from '$lib/services/service';
 
 	import type { Subscription } from 'rxjs';
 	import { getContext, onDestroy, onMount } from 'svelte';
 
 	const serviceSubscriptions: Subscription[] = [];
 	const questService: QuestService = getContext(QUEST_SERVICE) as QuestService;
-	const userService: AuthService = getContext(AUTH_SERVICE);
 	let selectedQuest: Quest;
 	let availableQuests: Quest[] = [];
 
 	function takeQuest(quest: Quest) {
-		questService.addQuestToActiveQuests(userService.getUserBehaviourSubject().getValue(), quest);
+		questService.addQuestToActiveQuests(quest);
 		selectedQuest = null;
 	}
 

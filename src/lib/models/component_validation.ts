@@ -7,5 +7,6 @@ export type ComponentValidationError = {
 }
 
 export type ValidationReport = {
-    errors: ComponentValidationError[]
+    errors: ComponentValidationError[],
+    passed: boolean
 }

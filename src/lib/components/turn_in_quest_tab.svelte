@@ -1,13 +1,15 @@
 <script lang="ts">
 
 	import type { ComponentDefinition } from '$lib/models/component_definition';
+import type { ValidationReport } from '$lib/models/component_validation';
 	import type { Quest } from '$lib/models/quest';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 	import type { QuestService } from '$lib/services/quest_service';
 	import { COMPONENT_DEFINITION_LOADER_SERVICE, QUEST_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
     import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { Subscription } from 'rxjs';
-	import { getContext, onDestroy, onMount } from 'svelte';
+	import { getContext, onDestroy, onMount, tick } from 'svelte';
+import ValidationErrorViewer from './overlays/simulator/validation_error_viewer.svelte';
 
 	const serviceSubscriptions: Subscription[] = [];
 	const questService: QuestService = getContext(QUEST_SERVICE) as QuestService;
@@ -19,6 +21,7 @@
 	let activeQuests: Quest[] = [];
 	let userComponentDefs: ComponentDefinition[] = [];
 	let selectedComponentDefinition: ComponentDefinition;
+	let validationReport: ValidationReport;	
 
 	onMount(() => {
 		serviceSubscriptions.push(
@@ -41,11 +44,16 @@
 		} else if (selectedComponentDefinition == null) {
 			console.error('No defintiion selected');
 		}
-		console.log('Verifying quest', selectedQuest, selectedComponentDefinition);
+
         simulator.verifyComponent(selectedComponentDefinition,selectedQuest.verificationData)
             .then(report => {
-                console.log("report",report);
+                updateValidationReport(report)
             })
+	}
+
+	function updateValidationReport(report: ValidationReport): Promise<void>{
+		validationReport = report 
+		return tick();
 	}
 </script>
 
@@ -96,6 +104,19 @@
 			
 			<button on:click={() => verifyQuest()}>Take quest</button>
 		{/if}
+
+		{#if validationReport != null}
+			<h1> Validation Result </h1>
+			<p>Passed: {validationReport.passed}</p>
+			{#if !validationReport.passed }
+				{#each validationReport.errors as error}
+					<p>Kind: {error.kind}</p>
+					<p>Data: {error.data}</p>
+				{/each}
+			{/if}
+
+		{/if}
+
 	</div>
 </div>
 

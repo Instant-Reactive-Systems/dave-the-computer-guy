@@ -6,6 +6,4 @@ export type User = {
     inventory: Item[];
     balance: number;
     preferences: Map<string,any>;
-    completedQuests: number[]; 
-    activeQuests: number[];
 }

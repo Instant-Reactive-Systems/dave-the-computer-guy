@@ -1,4 +1,4 @@
-export const AUTH_SERVICE = "AuthService";
+export const USER_SERVICE = "UserService";
 
 export const CIRCUIT_LOADER_SERVICE = "CircuitLoaderService";
 

@@ -98,8 +98,12 @@ function verifyComponent(msg: WorkerMessage) {
     const definition = (msg.payload as VerifyComponentPayload).definition;
     const verificationData = (msg.payload as VerifyComponentPayload).verificationData;
     if (verificationData.type == "Combinational") {
-        const validationReport: ValidationReport = test_combinational(definition, verificationData.restrictions);
-        console.log("Got validation report",validationReport.errors);
+        const result = test_combinational(definition, verificationData.restrictions);
+        console.log("Got validation report",result.errors);
+        const validationReport: ValidationReport = {
+            errors: (result.errors as any).errors,
+            passed: (result.errors as any).errors.length == 0
+        }
         const response: WorkerResponse = {
             id: msg.id,
             action: msg.action,
