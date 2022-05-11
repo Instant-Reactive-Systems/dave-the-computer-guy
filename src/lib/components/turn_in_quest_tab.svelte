@@ -1,27 +1,29 @@
 <script lang="ts">
-
 	import type { ComponentDefinition } from '$lib/models/component_definition';
-import type { ValidationReport } from '$lib/models/component_validation';
+	import type { ValidationReport } from '$lib/models/component_validation';
 	import type { Quest } from '$lib/models/quest';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 	import type { QuestService } from '$lib/services/quest_service';
-	import { COMPONENT_DEFINITION_LOADER_SERVICE, QUEST_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
-    import type { SimulatorService } from '$lib/services/simulator_service';
+	import {
+		COMPONENT_DEFINITION_LOADER_SERVICE,
+		QUEST_SERVICE,
+		SIMULATOR_SERVICE
+	} from '$lib/services/service';
+	import type { SimulatorService } from '$lib/services/simulator_service';
 	import type { Subscription } from 'rxjs';
 	import { getContext, onDestroy, onMount, tick } from 'svelte';
-import ValidationErrorViewer from './overlays/simulator/validation_error_viewer.svelte';
 
 	const serviceSubscriptions: Subscription[] = [];
 	const questService: QuestService = getContext(QUEST_SERVICE) as QuestService;
 	const definitionLoaderService: ComponentDefinitionLoaderService = getContext(
 		COMPONENT_DEFINITION_LOADER_SERVICE
 	) as ComponentDefinitionLoaderService;
-    const simulator: SimulatorService = getContext(SIMULATOR_SERVICE) as SimulatorService;
+	const simulator: SimulatorService = getContext(SIMULATOR_SERVICE) as SimulatorService;
 	let selectedQuest: Quest;
 	let activeQuests: Quest[] = [];
 	let userComponentDefs: ComponentDefinition[] = [];
 	let selectedComponentDefinition: ComponentDefinition;
-	let validationReport: ValidationReport;	
+	let validationReport: ValidationReport;
 
 	onMount(() => {
 		serviceSubscriptions.push(
@@ -30,7 +32,7 @@ import ValidationErrorViewer from './overlays/simulator/validation_error_viewer.
 			}),
 			definitionLoaderService.getDefinitionsBehaviourSubject().subscribe((defs) => {
 				userComponentDefs = Array.from(defs.values()).filter((def) => def.type != 'Builtin');
-			}),
+			})
 		);
 	});
 
@@ -38,21 +40,25 @@ import ValidationErrorViewer from './overlays/simulator/validation_error_viewer.
 		serviceSubscriptions.forEach((sub) => sub.unsubscribe());
 	});
 
-	function verifyQuest() {
+	async function verifyQuest() {
 		if (selectedQuest == null) {
 			console.error('No quest selected');
 		} else if (selectedComponentDefinition == null) {
 			console.error('No defintiion selected');
 		}
-
-        simulator.verifyComponent(selectedComponentDefinition,selectedQuest.verificationData)
-            .then(report => {
-                updateValidationReport(report)
-            })
+		let quest = selectedQuest;
+		const report = await simulator.verifyComponent(
+			selectedComponentDefinition,
+			quest.verificationData
+		);
+		if(report.passed){
+			questService.completeQuest(quest, '');
+		}
+		updateValidationReport(report);
 	}
 
-	function updateValidationReport(report: ValidationReport): Promise<void>{
-		validationReport = report 
+	function updateValidationReport(report: ValidationReport): Promise<void> {
+		validationReport = report;
 		return tick();
 	}
 </script>
@@ -88,35 +94,31 @@ import ValidationErrorViewer from './overlays/simulator/validation_error_viewer.
 		</div>
 	</div>
 	<div class="text-center">
-        {#if selectedQuest != null }
-            <h2>
+		{#if selectedQuest != null}
+			<h2>
 				NAME:{selectedQuest.name}
 			</h2>
 			<p>DESCRIPTION:{selectedQuest.description}</p>
 			<p>REWARD:{selectedQuest.reward}</p>
-        {/if}
-        {#if selectedComponentDefinition != null }
-            <h2>
+		{/if}
+		{#if selectedComponentDefinition != null}
+			<h2>
 				COMPONENT_NAME:{selectedComponentDefinition.name}
 			</h2>
-        {/if}
-		{#if (selectedQuest != null && selectedComponentDefinition != null)}
-			
+		{/if}
+		{#if selectedQuest != null && selectedComponentDefinition != null}
 			<button on:click={() => verifyQuest()}>Take quest</button>
 		{/if}
 
 		{#if validationReport != null}
-			<h1> Validation Result </h1>
+			<h1>Validation Result</h1>
 			<p>Passed: {validationReport.passed}</p>
-			{#if !validationReport.passed }
+			{#if !validationReport.passed}
 				{#each validationReport.errors as error}
-					<p>Kind: {error.kind}</p>
-					<p>Data: {error.data}</p>
+					<p>error</p>
 				{/each}
 			{/if}
-
 		{/if}
-
 	</div>
 </div>
 

@@ -5,7 +5,10 @@ import type { UserService } from "../auth_service";
 export class MockUserService implements UserService {
     private userBehaviorSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
-    init() {}
+    init() {
+        this.getUserData("spazzay");
+
+    }
     
     dispose() {}
 

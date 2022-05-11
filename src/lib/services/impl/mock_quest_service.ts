@@ -137,8 +137,10 @@ export class MockQuestsService implements QuestService {
 
     async completeQuest(quest: Quest, verificationHash: string): Promise<Quest> {
         const completedQuests = this.completedQuestsBehaviourSubject.getValue()
+        const activeQuests = this.activeQuestsBehaviourSubject.getValue().filter((q) => q.id != quest.id);
         completedQuests.push(quest);
         this.completedQuestsBehaviourSubject.next(completedQuests);
+        this.activeQuestsBehaviourSubject.next(activeQuests);
         this.userService.giveReward(quest.reward);
         return quest;
     }
