@@ -1,4 +1,4 @@
-export type VerificationType = "IncorrectOutputs" | "MaxComponentsExceeded" | "InvalidComponentInterface" | "EmptyTruthTable"
+export type VerificationType = "incorrectOutputs" | "maxComponentsExceeded" | "invalidComponentInterface";
 
 
 export type ComponentValidationError = {

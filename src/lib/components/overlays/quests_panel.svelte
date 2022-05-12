@@ -244,7 +244,7 @@
                                 <ul class="panel-list">
                                     {#each validationReport.errors as error}
                                     <li>
-                                        {#if error.type == 'IncorrectOutputs'}
+                                        {#if error.type == 'incorrectOutputs'}
                                             <div class="err-incorrect-outputs">
                                                 <header>
                                                     <h2>Your outputs don't match the expected outputs!</h2>
@@ -275,7 +275,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                        {:else if error.type == 'MaxComponentsExceeded'}
+                                        {:else if error.type == 'maxComponentsExceeded'}
                                             <div class="err-max-components">
                                                 <header>
                                                     <h2>You used more components than the quest requires!</h2>
@@ -286,7 +286,7 @@
                                                     components.
                                                 </p>
                                             </div>
-                                        {:else if error.type == 'InvalidComponentInterface'}
+                                        {:else if error.type == 'invalidComponentInterface'}
                                             <div class="err-component-interface">
                                                 <header>
                                                     <h2>You did not expose the correct component interface!</h2>
