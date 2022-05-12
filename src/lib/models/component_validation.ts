@@ -1,12 +1,13 @@
-export type VerificationKind = "incorrect-outputs" | "max-components-execeeded" | "invalid-component-inputs" | "empty-truth-table"
+export type VerificationType = "IncorrectOutputs" | "MaxComponentsExceeded" | "InvalidComponentInterface" | "EmptyTruthTable"
 
 
 export type ComponentValidationError = {
-    kind: VerificationKind,
-    data: any
+    type: VerificationType,
+    data: any,
 }
 
 export type ValidationReport = {
     errors: ComponentValidationError[],
-    passed: boolean
+    passed: boolean,
 }
+

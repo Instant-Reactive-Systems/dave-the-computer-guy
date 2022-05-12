@@ -153,6 +153,19 @@ export class MockQuestsService implements QuestService {
         this.activeQuestsBehaviourSubject.next(activeQuests);
         return quest;
     }
+    
+    async disbandQuest(quest: Quest): Promise<void> {
+        const index = this.activeQuestsBehaviourSubject.getValue().findIndex((x) => x.id == quest.id);
+        if (index == -1) return;
+
+        const activeQuests = this.activeQuestsBehaviourSubject.getValue();
+        const availableQuests = this.availableQuestsBehaviourSubject.getValue();
+        activeQuests.splice(index, 1);
+        availableQuests.push(quest);
+
+        this.availableQuestsBehaviourSubject.next(availableQuests);
+        this.activeQuestsBehaviourSubject.next(activeQuests);
+    }
 
     getAvailableQuestsBehaviourSubject(): BehaviorSubject<Quest[]> {
         return this.availableQuestsBehaviourSubject;

@@ -13,6 +13,8 @@ export type QuestService = {
 
     addQuestToActiveQuests(quest: Quest): Promise<Quest>;
 
+    disbandQuest(quest: Quest): Promise<void>;
+
     getAvailableQuestsBehaviourSubject(): BehaviorSubject<Quest[]>;
 
     getActiveQuestsBehaviourSubject(): BehaviorSubject<Quest[]>;

@@ -25,8 +25,12 @@ export function makeArray<T>(len: number, factory: () => T): Array<T> {
     }
     return array;
 }
+
 export function copy(obj: any){
     return _.cloneDeep(obj);
 }
 
+export function toBinaryArray(arr: boolean[]): number[] {
+    return arr.map((v) => v ? 1 : 0);
+}
 
