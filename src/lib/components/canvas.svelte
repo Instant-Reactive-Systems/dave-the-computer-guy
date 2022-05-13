@@ -25,8 +25,9 @@
 		type EditorMode,
 		type WireData
 	} from '$lib/models/editor_mode';
-import Notifier from '$lib/util/notifier';
-import { getNotificationsContext } from 'svelte-notifications';
+    import Notifier from '$lib/util/notifier';
+    import { getNotificationsContext } from 'svelte-notifications';
+    import { on_keydown } from '$lib/util/key_handling';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -648,15 +649,26 @@ import { getNotificationsContext } from 'svelte-notifications';
 	onMount(() => {
 		console.log('Mounted canvas');
 		prepareCanvas();
+
+        // Ugly hack because fabric is braindead
+        const fabricCanvas = document.getElementsByClassName('canvas-container')[0] as HTMLElement;
+        const scopedKeydown = on_keydown(fabricCanvas, handleKeydown);
+
+        return () => {
+            scopedKeydown.destroy();
+        };
 	});
 </script>
 
-<svelte:window
-	on:resize={resizeCanvas}
-	on:keydown|preventDefault|trusted|stopPropagation={handleKeydown}
+<canvas bind:this={canvasElement}/>
+
+<svelte:window 
+    on:resize={resizeCanvas}
 />
 
-<canvas bind:this={canvasElement} />
-
 <style>
+    main {
+        @apply contents;
+    }
 </style>
+
