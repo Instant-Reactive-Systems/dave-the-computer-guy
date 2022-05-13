@@ -1,16 +1,14 @@
 <script lang="ts">
-	import { onDestroy, onMount, setContext, getContext, SvelteComponent } from 'svelte';
+	import { onDestroy, onMount, setContext } from 'svelte';
 	import '../app.css';
 	import {
-		AUTH_SERVICE,
 		CIRCUIT_BUILDER_SERVICE,
 		CIRCUIT_LOADER_SERVICE,
 		COMPONENT_DEFINITION_LOADER_SERVICE,
 		QUEST_SERVICE,
-		SIMULATOR_SERVICE
+		SIMULATOR_SERVICE,
+		USER_SERVICE
 	} from '$lib/services/service';
-	import { MockAuthService } from '$lib/services/impl/mock_auth_service';
-	import type { AuthService } from '$lib/services/auth_service';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
 	import { MockCircuitLoaderService } from '$lib/services/impl/mock_circuit_loader_service';
@@ -20,20 +18,20 @@
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import { WorkerCircuitBuilderService } from '$lib/services/impl/worker_circuit_builder_service';
     import Modal from 'svelte-simple-modal';
-	import PageTransition from '$lib/components/page_transition.svelte'; 
 	import Notifications from 'svelte-notifications'; 
-	import { page } from '$app/stores';
 	import type { QuestService } from '$lib/services/quest_service';
 	import { MockQuestsService } from '$lib/services/impl/mock_quest_service';
+	import type { UserService } from '$lib/services/auth_service';
+	import { MockUserService } from '$lib/services/impl/mock_user_service';
 
-	let authService: AuthService = new MockAuthService();
+	let userService: UserService = new MockUserService();
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
 	let componentDefinitionLoaderService: ComponentDefinitionLoaderService =
 		new MockComponentDefinitonLoaderService();
 	let simulatorService: SimulatorService = new WorkerSimulatorService(componentDefinitionLoaderService);
 	let circuitBuilderService: CircuitBuilderService = new WorkerCircuitBuilderService();
-	let questsService: QuestService = new MockQuestsService();
-	setContext(AUTH_SERVICE, authService);
+	let questsService: QuestService = new MockQuestsService(userService);
+	setContext(USER_SERVICE, userService);
 	setContext(CIRCUIT_LOADER_SERVICE, circuitLoaderService);
 	setContext(COMPONENT_DEFINITION_LOADER_SERVICE, componentDefinitionLoaderService);
 	setContext(SIMULATOR_SERVICE, simulatorService);
@@ -41,7 +39,7 @@
 	setContext(QUEST_SERVICE, questsService);
 
 	const services = [
-		authService,
+		userService,
 		circuitLoaderService,
 		componentDefinitionLoaderService,
 		simulatorService,

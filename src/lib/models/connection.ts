@@ -1,6 +1,6 @@
 import type { Connector } from "./connector"
 
-export type Connection =  {
+export type Connection = {
     from: Connector;
     to: Connector[];
 }

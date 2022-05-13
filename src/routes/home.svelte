@@ -149,7 +149,7 @@
 		<Mesh
 			interactive
 			on:click={navigateToSimulator}
-			visible={true}
+			visible={false}
 			position={{ y: 1, x: 4, z: -1.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
 			geometry={new BoxBufferGeometry(1.4, 1.5, 0.8)}

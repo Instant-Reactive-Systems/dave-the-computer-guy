@@ -1,8 +1,8 @@
 import type { Circuit } from "$lib/models/circuit";
 import type { ComponentDefinition } from "$lib/models/component_definition";
-import type { ComponentRef } from "$lib/models/component_ref";
+import type { ValidationReport } from "$lib/models/component_validation";
+import type { VerificationData } from "$lib/models/quest";
 import type { UserEvent } from "$lib/models/user_event";
-import type { VerificationResult } from "$lib/models/verification_result";
 import type { WorkerMessage, WorkerResponse } from "$lib/simulator_worker";
 import Worker from "$lib/simulator_worker?worker";
 import { BehaviorSubject, Subscription } from "rxjs";
@@ -73,7 +73,7 @@ export class WorkerSimulatorService implements SimulatorService {
             //If there is no id then the response has no handler (is not promise based)
             this.handleMessage(msg);
         }
-        if (action) {   
+        if (action) {
             const resolve = this.resolves[id];
             if (resolve) {
                 resolve(payload);
@@ -202,8 +202,21 @@ export class WorkerSimulatorService implements SimulatorService {
         })
     }
 
-    verifyComponent(component: ComponentRef, verificationData: any): Promise<VerificationResult> {
-        throw new Error("Method not implemented.");
+    verifyComponent(definition: ComponentDefinition, verificationData: VerificationData): Promise<ValidationReport> {
+        const msgId = this.idCounter++;
+        let msg: WorkerMessage = {
+            id:  msgId,
+            action: 'verifyComponent',
+            payload: {
+                verificationData,
+                definition
+            }
+        }
+        return new Promise((resolve, reject) => {
+            this.resolves[msgId] = resolve;
+            this.rejects[msgId] = reject;
+            this.worker.postMessage(msg);
+        })
     }
 }
 

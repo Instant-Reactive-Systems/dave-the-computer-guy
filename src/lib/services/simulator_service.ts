@@ -1,14 +1,14 @@
 import type { Circuit } from "$lib/models/circuit";
 import type { ComponentDefinition } from "$lib/models/component_definition";
-import type { ComponentRef } from "$lib/models/component_ref";
+import type { ValidationReport } from "$lib/models/component_validation";
+import type { CombinationalVerificationData, SequentialVerificationData, SequentialVerificationRestrictions, VerificationData } from "$lib/models/quest";
 import type { UserEvent } from "$lib/models/user_event";
-import type { VerificationResult } from "$lib/models/verification_result";
 import type { BehaviorSubject } from "rxjs";
 
 export type SimulatorService = {
     init(): void;
     dispose(): void;
-    getCircuitStateBehaviourSubject(): BehaviorSubject<Map<number,any>>;
+    getCircuitStateBehaviourSubject(): BehaviorSubject<Map<number, any>>;
     getCircuit(): Circuit;
 
     // API for digisim
@@ -19,6 +19,6 @@ export type SimulatorService = {
     insertUserEvent(userEvent: UserEvent): Promise<void>;
     insertDefinitions(defs: ComponentDefinition[]): Promise<void>;
     setCircuit(circuit: Circuit): Promise<void>;
-    verifyComponent(component: ComponentRef,verificationData: any): Promise<VerificationResult>;
+    verifyComponent(definition: ComponentDefinition, verificationData: VerificationData): Promise<ValidationReport>;
 };
 

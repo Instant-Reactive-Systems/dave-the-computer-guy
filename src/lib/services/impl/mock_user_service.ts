@@ -1,11 +1,14 @@
 import type { User } from "$lib/models/user";
 import { BehaviorSubject } from "rxjs";
-import type { AuthService } from "../auth_service";
+import type { UserService } from "../auth_service";
 
-export class MockAuthService implements AuthService {
+export class MockUserService implements UserService {
     private userBehaviorSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
-    init() {}
+    init() {
+        this.getUserData("spazzay");
+
+    }
     
     dispose() {}
 
@@ -19,10 +22,8 @@ export class MockAuthService implements AuthService {
             username: username,
             email: `${username}}@gmail.com`,
             inventory: [],
-            balance: 1000,
+            balance: 0,
             preferences: new Map<string, any>(),
-            completedQuests: [],
-            activeQuests: []
         };
         this.userBehaviorSubject.next(user);
         return user;
@@ -30,6 +31,13 @@ export class MockAuthService implements AuthService {
 
     getUserBehaviourSubject(): BehaviorSubject<User> {
         return this.userBehaviorSubject;
+    }
+
+    async giveReward(amount: number): Promise<User>{
+        const user = this.getUserBehaviourSubject().getValue();
+        user.balance += amount;
+        this.getUserBehaviourSubject().next(user);
+        return user;
     }
 
 }

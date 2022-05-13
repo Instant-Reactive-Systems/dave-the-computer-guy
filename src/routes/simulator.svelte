@@ -14,7 +14,7 @@
 		SIMULATOR_SERVICE
 	} from '$lib/services/service';
 	import type { SimulatorService } from '$lib/services/simulator_service';
-	import { defaultComponentDefinition, type ComponentDefinition } from '$lib/models/component_definition';
+	import type { ComponentDefinition } from '$lib/models/component_definition';
 	import type { Command } from '$lib/models/command';
 	import { get } from 'svelte/store';
 	import _, { clone, update } from 'lodash';

@@ -13,7 +13,6 @@
 	import type { TableEntry, Entry } from '$lib/models/entry';
 	import { ValidationError, ValidationErrorType } from '$lib/models/validation_error';
 	import type { Connector } from '$lib/models/connector';
-	import { copy } from '$lib/util/common';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import {
 		defaultComponentDefinition,
