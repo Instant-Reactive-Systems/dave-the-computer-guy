@@ -37,6 +37,7 @@
 	import QuestIcon from '$lib/icons/quest.svelte';
 	import TutorialIcon from '$lib/icons/tutorial.svelte';
 	import CloseIcon from '$lib/icons/close.svelte';
+	import NavigationIcon from '$lib/icons/navigation.svelte';
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
@@ -51,6 +52,7 @@
 		type WireData
 	} from '$lib/models/editor_mode';
 	import Notifier from '$lib/util/notifier';
+    import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
 
 	const { open, close } = getContext('simple-modal');
 	const notifier: Notifier = new Notifier(getNotificationsContext());
@@ -125,6 +127,16 @@
 				close();
 			}
 		});
+	}
+
+    function openNavigationModal() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot navigate through rooms while running the simulation.');
+            return;
+        }
+
+		open(NavigationPanel);
 	}
 
 	function startExportCircuit() {
@@ -531,6 +543,7 @@
 
 	onDestroy(() => {
 		serviceSubscriptions.forEach((sub) => sub.unsubscribe());
+        close();
 	});
 </script>
 
@@ -602,6 +615,11 @@
 		</li>
 	</ul>
 	<ul class="game-tools">
+        <li>
+			<button on:click={() => openNavigationModal()} title="Navigate rooms">
+				<NavigationIcon />
+			</button>
+		</li>
 		<li>
 			<button on:click={() => {}} title="Quests">
 				<QuestIcon />
@@ -803,7 +821,7 @@
 	}
 
 	.circuit-tabs > ul > li > button {
-		@apply py-2 pl-10 pr-2 inline-flex space-x-2;
+		@apply py-2 pl-10 pr-2 inline-flex space-x-2 select-none;
 	}
     
 	.circuit-tabs > ul > li > button:hover > button {

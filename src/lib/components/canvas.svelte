@@ -648,11 +648,6 @@ import { getNotificationsContext } from 'svelte-notifications';
 	onMount(() => {
 		console.log('Mounted canvas');
 		prepareCanvas();
-
-		return () => {
-			console.log('Disposing canvas');
-			canvas.dispose();
-		};
 	});
 </script>
 
