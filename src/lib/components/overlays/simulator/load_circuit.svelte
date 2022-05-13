@@ -50,13 +50,13 @@
         {#each circuits.filter(x => x.name.match(new RegExp(`.*${query}.*`, 'i'))) as circuit}
         <li>
             <button on:click={() => onCircuitSelect(circuit)}>
-                <span class="circuit-name">{circuit.name}</span>
-                <span class="circuit-desc">{circuit.description != '' ? circuit.description : 'No description.'}</span>
-                <div class="close-btn-wrapper">
-                    <button on:click|stopPropagation={() => deleteCircuit(circuit)}>
-                        <CloseIcon/>
-                    </button>
+                <div class="circuit-info">
+                    <span class="circuit-name">{circuit.name}</span>
+                    <span class="circuit-desc">{circuit.description != '' ? circuit.description : 'No description.'}</span>
                 </div>
+                <button on:click|stopPropagation={() => deleteCircuit(circuit)} class="close-btn">
+                    <CloseIcon/>
+                </button>
             </button>
         </li>
         {:else}
@@ -103,24 +103,28 @@
     }
 
     .circuit-list > li > button {
-        @apply py-2 px-4 space-x-2 w-full flex items-center select-none truncate transition-all duration-100 hover:border-l-4 hover:border-l-blue-400;
+        @apply py-2 px-4 w-full flex items-center select-none transition-all duration-100 hover:border-l-4 hover:border-l-blue-400;
     }
 
     .circuit-list > li:last-child > button {
         @apply rounded-bl-lg;
     }
 
-    .close-btn-wrapper {
-        @apply w-full flex justify-end;
+    .circuit-info {
+        @apply text-left space-x-2 truncate;
     }
 
-    .close-btn-wrapper > button {
-        @apply invisible rounded-md hover:bg-slate-300 hover:opacity-50;
+    .close-btn {
+        @apply shrink invisible rounded-md hover:bg-slate-300 hover:opacity-50;
     }
 
-	.circuit-list > li > button:hover > .close-btn-wrapper > button {
+	.circuit-list > li > button:hover > .close-btn {
 		@apply visible;
 	}
+
+    .circuit-info {
+        @apply flex-1;
+    }
 
     .circuit-name {
         @apply font-semibold;
