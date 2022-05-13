@@ -48,8 +48,15 @@ export class MockComponentDefinitonLoaderService implements ComponentDefinitionL
         return defs;
     }
 
-    deleteDefinition(id: number): Promise<ComponentDefinition> {
-        throw new Error("Method not implemented.");
+    async deleteDefinition(id: number): Promise<ComponentDefinition> {
+        let defs = this.loadUserDefinitions();
+        const map = this.definitionsBehaviourSubject.getValue();
+        const item = defs.get(id);
+        defs.delete(id);
+        map.delete(id);
+        localStorage.setItem('userDefinitions', JSON.stringify(Array.from(defs.values())));
+        this.definitionsBehaviourSubject.next(map);
+        return item;
     }
 
     async insertDefinition(definition: ComponentDefinition, force: boolean): Promise<void> {
