@@ -53,6 +53,8 @@
 	} from '$lib/models/editor_mode';
 	import Notifier from '$lib/util/notifier';
     import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
+    import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
+    import TutorialPanel from '$lib/components/overlays/tutorial_panel.svelte';
 
 	const { open, close } = getContext('simple-modal');
 	const notifier: Notifier = new Notifier(getNotificationsContext());
@@ -137,6 +139,36 @@
         }
 
 		open(NavigationPanel);
+	}
+    
+    function openQuestsModal() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot open quests while running the simulation.');
+            return;
+        }
+
+		open(QuestsPanel, {}, {
+			styleWindow: {
+				width: "auto",
+				overflow: "hidden"
+			},
+		});
+	}
+
+    function openTutorialModal() {
+        // Prevent any actions while in simulation
+        if (isInSimulation) {
+            notifier.warning('Cannot open tutorial while running the simulation.');
+            return;
+        }
+
+		open(TutorialPanel, {}, {
+			styleWindow: {
+				width: "auto",
+				overflow: "hidden"
+			},
+		});
 	}
 
 	function startExportCircuit() {
@@ -621,12 +653,12 @@
 			</button>
 		</li>
 		<li>
-			<button on:click={() => {}} title="Quests">
+			<button on:click={() => openQuestsModal()} title="Quests">
 				<QuestIcon />
 			</button>
 		</li>
 		<li>
-			<button on:click={() => {}} title="Tutorial">
+			<button on:click={() => openTutorialModal()} title="Tutorial">
 				<TutorialIcon />
 			</button>
 		</li>
