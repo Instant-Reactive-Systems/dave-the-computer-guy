@@ -97,6 +97,7 @@
 		if (report.passed) {
             selectedQuest = null;
 			await questService.completeQuest(quest, '');
+            closeSidePanel();
 		} else {
             console.log('Report failed, should open report');
             validationReport = report;
@@ -338,7 +339,7 @@
     }
 
     .quest-list h2 {
-        @apply sticky top-0 bg-white shadow-lg;
+        @apply px-2 sticky top-0 bg-white shadow-lg;
     }
 
     .quest-id {
