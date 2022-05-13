@@ -3,6 +3,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.remove-focus-outline:focus {
+    @apply outline-0;
+}
+
 .scroll-shadows-y {
     scrollbar-width: none;
     -ms-overflow-style: none;

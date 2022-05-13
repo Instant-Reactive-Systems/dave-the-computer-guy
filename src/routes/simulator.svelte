@@ -688,7 +688,7 @@
 		{/if}
 	</aside>
 </div>
-<svelte:window on:keydown|trusted={handleKeyPress} />
+<svelte:window on:keydown|trusted|stopPropagation={handleKeyPress} />
 
 <style>
 	/*
