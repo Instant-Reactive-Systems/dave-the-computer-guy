@@ -1,4 +1,15 @@
+export type ItemType = 'outfit' | 'deskSetup' | 'TV-setup' | 'bed' | 'wardrobeCloset' | 'poster'
+
 export type Item = {
-    componentDefinitionId: number;
-    amount: number;
+    id: number;
+    name: string;
+    type: ItemType;
+    url: string;
+    owned: boolean;
+    cost: number;
+    boundingBox: {
+        x: number,
+        y: number,
+        z: number   
+    }
 }
