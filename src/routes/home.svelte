@@ -16,8 +16,16 @@
 
 	const { open, close } = getContext('simple-modal');
 
-	function navigateToSimulator() {
-		goto(Router.SIMULATOR_ROUTE, { replaceState: true });
+	function openWardrobe() {
+		open(WardrobePanel, {}, {
+			styleWindow: {
+				width: "auto",
+				overflow: "hidden"
+			},
+			styleContent: {
+				overflow: "hidden"
+			}
+		});
 	}
 
     function openNavigationModal() {
@@ -142,8 +150,8 @@
 
 		<Mesh
 			interactive
-			on:click={navigateToSimulator}
-			visible={false}
+			on:click={openWardrobe}
+			visible={true}
 			position={{ y: 1, x: 4, z: -1.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
 			geometry={new BoxBufferGeometry(1.4, 1.5, 0.8)}
