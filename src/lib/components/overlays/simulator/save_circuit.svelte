@@ -13,7 +13,7 @@
     <div>
         <label>
             <span>Name:</span>
-            <input on:keydown|stopPropagation placeholder="e.g. 'cool 8-bit counter'" bind:value={name}/>
+            <input on:keydown|stopPropagation autofocus placeholder="e.g. 'cool 8-bit counter'" bind:value={name}/>
         </label>
     </div>
 
