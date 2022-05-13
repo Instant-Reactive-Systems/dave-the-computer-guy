@@ -319,7 +319,7 @@
 
 <style>
     .quests-main {
-        @apply h-[32rem];
+        @apply h-[40rem];
     }
 
     .quests-main > header {
@@ -331,7 +331,7 @@
     }
 
     main {
-        @apply h-[28.5rem] grid grid-cols-12 border border-t-0 rounded-b-lg border-slate-300;
+        @apply h-[36.5rem] grid grid-cols-12 border border-t-0 rounded-b-lg border-slate-300;
     }
 
     .quest-list {
@@ -391,7 +391,7 @@
     }
 
     .quest-info-main > p {
-        @apply text-lg text-slate-500 mb-4 h-3/5;
+        @apply text-lg text-slate-500 mb-4 h-[24rem];
     }
 
     .reward {
@@ -427,11 +427,11 @@
     }
 
     .no-selected-quest {
-        @apply h-[28.5rem] flex justify-center items-center text-3xl;
+        @apply h-[36.5rem] flex justify-center items-center text-3xl;
     }
 
     .quest-side-panel {
-        @apply h-[28.5rem] col-start-1 row-start-1 flex justify-end z-50 relative;
+        @apply h-[36.5rem] col-start-1 row-start-1 flex justify-end z-50 relative;
     }
 
     .quest-side-panel > button {
@@ -447,7 +447,7 @@
     }
 
     .panel-list {
-        @apply h-[20.5rem] mb-2 border border-t-0 rounded-b-lg border-slate-300 overflow-y-auto;
+        @apply h-[31rem] mb-2 border border-t-0 rounded-b-lg border-slate-300 overflow-y-auto;
     }
     
     .panel-list > li {
@@ -455,7 +455,7 @@
     }
 
     .component-def-list {
-        @apply h-[20.5rem] mb-2 border border-t-0 rounded-b-lg border-slate-300 overflow-y-auto;
+        @apply h-[28rem] mb-2 border border-t-0 rounded-b-lg border-slate-300 overflow-y-auto;
     }
 
     .component-def-list > li {
@@ -463,7 +463,7 @@
     }
     
     .component-def-list > li > button {
-        @apply w-full py-1 px-2 text-left;
+        @apply w-full py-1 px-2 text-left truncate;
     }
 
     .turn-in-panel > button {
