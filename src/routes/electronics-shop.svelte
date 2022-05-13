@@ -9,37 +9,31 @@
 		OrbitControls,
 		PerspectiveCamera
 	} from 'threlte';
-	import RoomPanel from '$lib/components/room_panel.svelte';
     import { getContext, onDestroy, onMount } from 'svelte';
 	import ShopPanel from '$lib/components/overlays/shop_panel.svelte';
+    import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
 
-	const { open } = getContext('simple-modal');
-
-	let roomPanelVisible = false;
-	function showRoomPanel() {
-		roomPanelVisible = true;
-	}
-
-	function hideRoomPanel() {
-		roomPanelVisible = false;
-	}
+	const { open, close } = getContext('simple-modal');
 
     function openShopPanel(){
-        open(ShopPanel,{})
+        open(ShopPanel)
     }
+
+    function openNavigationModal() {
+		open(NavigationPanel);
+	}
+
 	onMount(()=> {
 		console.log("Mounted shop")
 	})
 
 	onDestroy(()=> {
 		console.log("Destroyed shop")
+        close();
 	})
 </script>
 
-{#if roomPanelVisible}
-	<RoomPanel on:close={hideRoomPanel} />
-{/if}
-<div>
+<main>
 	<Canvas>
 		<PerspectiveCamera position={{ x: -10, y: 10, z: -10 }}>
 			<OrbitControls />
@@ -50,7 +44,7 @@
 
 		<Mesh
 			interactive
-			on:click={showRoomPanel}
+			on:click={openNavigationModal}
 			visible={false}
 			position={{ y: 2, x: 6.2, z: -2.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
@@ -441,14 +435,11 @@
 			scale={{ x: 0.2, y: 0.2, z: 0.2 }}
 		/>
 	</Canvas>
-</div>
+</main>
 
 <style>
-	div {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
+	main {
+        @apply fixed top-0 left-0 w-full h-full;
 	}
 </style>
+

@@ -9,38 +9,32 @@
 		OrbitControls,
 		PerspectiveCamera
 	} from 'threlte';
-	import RoomPanel from '$lib/components/room_panel.svelte';
 	import { goto } from '$app/navigation';
 	import { getContext, onDestroy, onMount } from 'svelte';
+    import { Router } from "$lib/router";
+    import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
 
-	const { open } = getContext('simple-modal');
-
-	let roomPanelVisible = false;
-	function showRoomPanel() {
-		roomPanelVisible = true;
-	}
-
-	function hideRoomPanel() {
-		roomPanelVisible = false;
-	}
+	const { open, close } = getContext('simple-modal');
 
 	function navigateToSimulator() {
-		goto('simulator', { replaceState: true });
+		goto(Router.SIMULATOR_ROUTE, { replaceState: true });
 	}
+
+    function openNavigationModal() {
+		open(NavigationPanel);
+	}
+
 	onMount(()=> {
-		console.log("Monted hom")
+		console.log("Mounted home");
 	})
 
 	onDestroy(()=> {
-		console.log("Destroyed home")
+		console.log("Destroyed home");
+        close();
 	})
 </script>
 
-{#if roomPanelVisible}
-	<RoomPanel on:close={hideRoomPanel} />
-{/if}
-
-<div>
+<main>
 	<Canvas>
 		<PerspectiveCamera position={{ x: -10, y: 10, z: -10 }}>
 			<OrbitControls />
@@ -85,7 +79,7 @@
 
 		<Mesh
 			interactive
-			on:click={showRoomPanel}
+			on:click={openNavigationModal}
 			visible={false}
 			position={{ y: 1, x: 3, z: 4.8 }}
 			rotation={{ y: 0 * (Math.PI / 180) }}
@@ -167,14 +161,11 @@
 			scale={{ x: 0.2, y: 0.2, z: 0.2 }}
 		/>
 	</Canvas>
-</div>
+</main>
 
 <style>
-	div {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
+	main {
+        @apply fixed top-0 left-0 w-full h-full;
 	}
 </style>
+

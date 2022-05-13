@@ -10,20 +10,16 @@
 		OrbitControls,
 		PerspectiveCamera,
 	} from 'threlte';
-	import RoomPanel from '$lib/components/room_panel.svelte';
 	import { getContext, onDestroy, onMount } from 'svelte';
-	import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
     import { goto } from '$app/navigation'
+    import { Router } from "$lib/router";
+	import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
+    import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
 
-	const { open } = getContext('simple-modal');
- 
-	let roomPanelVisible = false;
-	function showRoomPanel() {
-		roomPanelVisible = true;
-	}
+	const { open, close } = getContext('simple-modal');
 
 	function openTutorialPanel() {
-		open(TutorialPanel,);
+		open(TutorialPanel);
 	}
 
 	function openQuestsPanel() {
@@ -38,27 +34,25 @@
 		});
 	}
 
-	function hideRoomPanel() {
-		roomPanelVisible = false;
+    function openNavigationPanel() {
+		open(NavigationPanel);
 	}
 
-    function navigateToSimulator(){
-        goto('simulator',{replaceState: true})
+    function navigateToSimulator() {
+        goto(Router.SIMULATOR_ROUTE, {replaceState: true})
     }
+
 	onMount(()=> {
-		console.log("Monted office")
+		console.log("Mounted office")
 	})
 
 	onDestroy(()=> {
 		console.log("Destroyed office")
+        close();
 	})
 </script>
 
-{#if roomPanelVisible}
-	<RoomPanel on:close={hideRoomPanel} />
-{/if}
-
-<div>
+<main>
 	<Canvas>
 		<PerspectiveCamera position={{ x: -10, y: 10, z: -10 }}>
 			<OrbitControls />
@@ -158,7 +152,7 @@
 		/>
 		<Mesh
 			interactive
-			on:click={showRoomPanel}
+			on:click={openNavigationPanel}
 			visible={false}
 			position={{ y: 2, x: 4.85, z: -3.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
@@ -301,14 +295,11 @@
 			scale={{ x: 0.2, y: 0.2, z: 0.2 }}
 		/>
 	</Canvas>
-</div>
+</main>
 
 <style>
-	div {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
+	main {
+        @apply fixed top-0 left-0 w-full h-full;
 	}
 </style>
+
