@@ -4,16 +4,31 @@
     import { CIRCUIT_LOADER_SERVICE } from "$lib/services/service";
     import type { Subscription } from "rxjs";
     import { getContext, onDestroy, onMount } from "svelte";
+    import CloseIcon from '$lib/icons/close.svelte';
 
+    // Props
     export let onLoad: (circuit: Circuit) => void;
 
-    let query: string = "";
-    let circuits: Circuit[] = [];
-    let subscriptions: Subscription[] = [];
+    // Services
     const circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
 
+    // Variables
+    let query: string = '';
+    let circuits: Circuit[] = [];
+    let subs: Subscription[] = [];
+
+    // Logic
+    function onCircuitSelect(circuit: Circuit) {
+        onLoad(circuit);
+    }
+
+    function deleteCircuit(circuit: Circuit) {
+        circuitLoader.deleteCircuit(circuit.id);
+    }
+
+    // Component lifetime
 	onMount(() => {
-		subscriptions.push(
+		subs.push(
 			circuitLoader.getCircuitsBehaviourSubject().subscribe((loadedCircuits) => {
                 circuits = Array.from(loadedCircuits.values());
 			})
@@ -21,16 +36,8 @@
 	});
 
 	onDestroy(() => {
-		for (const subscription of subscriptions) {
-			subscription.unsubscribe();
-		}
-
-        subscriptions = [];
+        subs.forEach((sub) => sub.unsubscribe());
 	});
-
-    function onClick(index: number) {
-        onLoad(circuits[index]);
-    }
 </script>
 
 <form on:submit|preventDefault>
@@ -40,11 +47,18 @@
     </div>
 
     <ul class="circuit-list scroll-shadows-y">
-        {#each circuits.filter(x => x.name.match(new RegExp(`.*${query}.*`, 'i'))) as circuit, i}
-            <li><button on:click={() => onClick(i)}>
-                <span>{circuit.name}</span>
-                <span>{circuit.description}</span>
-            </button></li>
+        {#each circuits.filter(x => x.name.match(new RegExp(`.*${query}.*`, 'i'))) as circuit}
+        <li>
+            <button on:click={() => onCircuitSelect(circuit)}>
+                <span class="circuit-name">{circuit.name}</span>
+                <span class="circuit-desc">{circuit.description != '' ? circuit.description : 'No description.'}</span>
+                <div class="close-btn-wrapper">
+                    <button on:click|stopPropagation={() => deleteCircuit(circuit)}>
+                        <CloseIcon/>
+                    </button>
+                </div>
+            </button>
+        </li>
         {:else}
             <span>No circuits found.</span>
         {/each}
@@ -89,11 +103,31 @@
     }
 
     .circuit-list > li > button {
-        @apply py-2 px-4 w-full text-left transition-all duration-100 hover:border-l-4 hover:border-l-blue-400;
+        @apply py-2 px-4 space-x-2 w-full flex items-center select-none truncate transition-all duration-100 hover:border-l-4 hover:border-l-blue-400;
     }
 
     .circuit-list > li:last-child > button {
         @apply rounded-bl-lg;
+    }
+
+    .close-btn-wrapper {
+        @apply w-full flex justify-end;
+    }
+
+    .close-btn-wrapper > button {
+        @apply invisible rounded-md hover:bg-slate-300 hover:opacity-50;
+    }
+
+	.circuit-list > li > button:hover > .close-btn-wrapper > button {
+		@apply visible;
+	}
+
+    .circuit-name {
+        @apply font-semibold;
+    }
+
+    .circuit-desc {
+        @apply text-slate-400;
     }
 </style>
 
