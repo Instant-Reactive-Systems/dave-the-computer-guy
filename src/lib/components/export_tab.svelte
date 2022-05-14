@@ -66,66 +66,8 @@
 			def.description = description;
 			def.circuit = circ;
 			def.pinMapping = { input: [], output: [] };
-
 			let i = 0;
-			for (const entry of outs) {
-				const componentRef = getComponent(circ, entry.componentId);
-				if (componentRef == null) {
-					const err = new ValidationError(
-						ValidationErrorType.ComponentNotFound,
-						`Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
-						i,
-						'output'
-					);
 
-					errors.push(err);
-					i += 1;
-					continue;
-				}
-
-				const componentDef = defLoader.getDefinition(componentRef.definitionId);
-				if (!pinExists(componentDef, entry.pinId)) {
-					const err = new ValidationError(
-						ValidationErrorType.PinNotFound,
-						`Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
-						i,
-						'output'
-					);
-
-					errors.push(err);
-					i += 1;
-					continue;
-				}
-
-				if (!pinTypeMatches(componentDef, entry.pinId, false)) {
-					const err = new ValidationError(
-						ValidationErrorType.PinTypeMismatch,
-						`Pin with id '${entry.pinId}' is not an output pin. You cannot connect an input pin to an output pin of a transparent component.`,
-						i,
-						'output'
-					);
-
-					errors.push(err);
-					i += 1;
-					continue;
-				}
-
-				const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
-				const found = insertedPins.find((x) => entry.pinName == x.name);
-				if (found == null) {
-					const index = def.pins.output.length;
-					def.pins.output.push(entry.pinName);
-					def.pinMapping.output.push([connector]);
-					insertedPins.push({ name: entry.pinName, index });
-					addToPinLocationMapping(entry, def);
-				} else {
-					def.pinMapping.output[found.index].push(connector);
-				}
-
-				i += 1;
-			}
-
-			i = 0;
 			for (const entry of ins) {
 				const componentRef = getComponent(circ, entry.componentId);
 				if (componentRef == null) {
@@ -175,9 +117,68 @@
 					def.pins.input.push(entry.pinName);
 					def.pinMapping.input.push([connector]);
 					insertedPins.push({ name: entry.pinName, index });
-					addToPinLocationMapping(entry, def);
+					addToPinLocationMapping(entry.pinName, index, entry.pinPosition, def);
 				} else {
+					console.log('Found pin');
 					def.pinMapping.input[found.index].push(connector);
+				}
+
+				i += 1;
+			}
+
+			i = 0;
+			for (const entry of outs) {
+				const componentRef = getComponent(circ, entry.componentId);
+				if (componentRef == null) {
+					const err = new ValidationError(
+						ValidationErrorType.ComponentNotFound,
+						`Component with id '${entry.componentId}' does not exist in the circuit. Recheck your ID.`,
+						i,
+						'output'
+					);
+
+					errors.push(err);
+					i += 1;
+					continue;
+				}
+
+				const componentDef = defLoader.getDefinition(componentRef.definitionId);
+				if (!pinExists(componentDef, entry.pinId)) {
+					const err = new ValidationError(
+						ValidationErrorType.PinNotFound,
+						`Pin with id '${entry.pinId}' does not exist in the component definition. Recheck your ID.`,
+						i,
+						'output'
+					);
+
+					errors.push(err);
+					i += 1;
+					continue;
+				}
+
+				if (!pinTypeMatches(componentDef, entry.pinId, false)) {
+					const err = new ValidationError(
+						ValidationErrorType.PinTypeMismatch,
+						`Pin with id '${entry.pinId}' is not an output pin. You cannot connect an input pin to an output pin of a transparent component.`,
+						i,
+						'output'
+					);
+
+					errors.push(err);
+					i += 1;
+					continue;
+				}
+
+				const connector: Connector = { componentId: entry.componentId, pin: entry.pinId };
+				const found = insertedPins.find((x) => entry.pinName == x.name);
+				if (found == null) {
+					const index = def.pins.output.length;
+					def.pins.output.push(entry.pinName);
+					def.pinMapping.output.push([connector]);
+					insertedPins.push({ name: entry.pinName, index });
+					addToPinLocationMapping(entry.pinName, def.pins.input.length+index, entry.pinPosition, def);
+				} else {
+					def.pinMapping.output[found.index].push(connector);
 				}
 
 				i += 1;
@@ -187,7 +188,6 @@
 				open(ValidationErrorViewer, { errors: errors });
 				return;
 			}
-
 			dispatch('export', {
 				definition: def
 			});
@@ -215,19 +215,24 @@
 		}
 	}
 
-	function addToPinLocationMapping(entry: Entry, def: ComponentDefinition) {
-		switch (entry.pinPosition) {
+	function addToPinLocationMapping(
+		name: string,
+		index: number,
+		position: string,
+		def: ComponentDefinition
+	) {
+		switch (position) {
 			case 'left':
-				def.metadata.pinLocationMapping.left.push({ name: entry.pinName, pin: entry.pinId });
+				def.metadata.pinLocationMapping.left.push({ name: name, pin: index });
 				break;
 			case 'right':
-				def.metadata.pinLocationMapping.right.push({ name: entry.pinName, pin: entry.pinId });
+				def.metadata.pinLocationMapping.right.push({ name: name, pin: index });
 				break;
 			case 'top':
-				def.metadata.pinLocationMapping.top.push({ name: entry.pinName, pin: entry.pinId });
+				def.metadata.pinLocationMapping.top.push({ name: name, pin: index });
 				break;
 			case 'bottom':
-				def.metadata.pinLocationMapping.bottom.push({ name: entry.pinName, pin: entry.pinId });
+				def.metadata.pinLocationMapping.bottom.push({ name: name, pin: index });
 				break;
 		}
 	}
@@ -255,7 +260,7 @@
 					/>
 				</label>
 			</div>
-		</section>		
+		</section>
 		<section class="pins">
 			<h2>Input pins</h2>
 			<table>
@@ -301,8 +306,7 @@
 				<li>
 					<button
 						title="Add entry"
-						on:click={() => (inputEntries = [...inputEntries, defaultEntry()])}
-						>+</button
+						on:click={() => (inputEntries = [...inputEntries, defaultEntry()])}>+</button
 					>
 				</li>
 				<li>
