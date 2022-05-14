@@ -41,7 +41,7 @@
     // Logic
     function openQuest(quest: Quest) {
         selectedQuest = quest;
-        turningIn = false;
+        closeSidePanel();
     }
 
     function acceptQuest() {
