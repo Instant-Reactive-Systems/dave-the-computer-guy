@@ -391,6 +391,14 @@
             removeCircuitTab(currentIndex);
             e.preventDefault();
         }
+        if (e.ctrlKey == true && e.key.toLowerCase() == 's') {
+            openSaveCircuitModal();
+			e.preventDefault();
+		}
+        if (e.ctrlKey == true && e.key.toLowerCase() == 'o') {
+            openLoadCircuitModal();
+			e.preventDefault();
+		}
 	}
 
 	function addNewComponent(event) {
