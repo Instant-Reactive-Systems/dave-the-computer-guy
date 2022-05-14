@@ -24,4 +24,5 @@ export type House = {
     houseLayout: HouseLayout;
     cost: number;
     owned: boolean;
+    imageUrl: string;
 }
