@@ -5,6 +5,7 @@ export type Item = {
     name: string;
     type: ItemType;
     url: string;
+    imageUrl: string;
     owned: boolean;
     cost: number;
     boundingBox: {

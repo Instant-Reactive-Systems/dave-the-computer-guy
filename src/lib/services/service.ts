@@ -8,4 +8,8 @@ export const SIMULATOR_SERVICE = "SimulatorService";
 
 export const CIRCUIT_BUILDER_SERVICE = "CircuitBuilderService";
 
-export const QUEST_SERVICE = "QuestService"
+export const QUEST_SERVICE = "QuestService";
+
+export const ITEM_SERVICE = "ItemService";
+
+export const HOUSE_SERVICE = "HouseService";
