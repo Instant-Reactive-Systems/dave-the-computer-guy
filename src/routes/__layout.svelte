@@ -23,12 +23,10 @@
 	import Notifications from 'svelte-notifications';
 	import type { QuestService } from '$lib/services/quest_service';
 	import { MockQuestsService } from '$lib/services/impl/mock_quest_service';
-	import type { UserService } from '$lib/services/auth_service';
 	import { MockUserService } from '$lib/services/impl/mock_user_service';
 	import type { HouseService } from '$lib/services/house_service';
 	import { MockHouseService } from '$lib/services/impl/mock_house_service';
-	import type { ItemService } from '$lib/services/item_service';
-	import { MockItemService } from '$lib/services/impl/mock_item_service';
+	import type { UserService } from '$lib/services/user_service';
 
 	let userService: UserService = new MockUserService();
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
@@ -40,7 +38,6 @@
 	let circuitBuilderService: CircuitBuilderService = new WorkerCircuitBuilderService();
 	let questsService: QuestService = new MockQuestsService(userService);
 	let houseService: HouseService = new MockHouseService(userService);
-	let itemService: ItemService = new MockItemService(userService);
 
 	setContext(USER_SERVICE, userService);
 	setContext(CIRCUIT_LOADER_SERVICE, circuitLoaderService);
@@ -49,7 +46,6 @@
 	setContext(CIRCUIT_BUILDER_SERVICE, circuitBuilderService);
 	setContext(QUEST_SERVICE, questsService);
 	setContext(HOUSE_SERVICE, houseService);
-	setContext(ITEM_SERVICE, itemService);
 
 	const services = [
 		userService,
@@ -59,7 +55,6 @@
 		circuitBuilderService,
 		questsService,
 		houseService,
-		itemService
 	];
 
 	onMount(() => {

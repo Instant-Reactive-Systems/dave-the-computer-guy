@@ -8,9 +8,4 @@ export type Item = {
     imageUrl: string;
     owned: boolean;
     cost: number;
-    boundingBox: {
-        x: number,
-        y: number,
-        z: number   
-    }
 }

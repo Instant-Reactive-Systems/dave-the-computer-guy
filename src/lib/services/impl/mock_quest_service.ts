@@ -2,7 +2,7 @@ import type { Quest } from "$lib/models/quest";
 import type { User } from "$lib/models/user";
 import { copy } from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
-import type {UserService } from "../auth_service";
+import type {UserService } from "../user_service";
 import type { QuestService } from "../quest_service";
 
 const AND_GATE_QUEST: Quest = {

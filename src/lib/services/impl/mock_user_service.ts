@@ -1,8 +1,9 @@
 import type { User } from "$lib/models/user";
 import { BehaviorSubject } from "rxjs";
-import type { UserService } from "../auth_service";
+import type { UserService } from "../user_service";
 
 export class MockUserService implements UserService {
+   
     private userBehaviorSubject: BehaviorSubject<User> = new BehaviorSubject<User>(null);
 
     init() {
@@ -21,9 +22,7 @@ export class MockUserService implements UserService {
         const user:User = {
             username: username,
             email: `${username}}@gmail.com`,
-            inventory: [],
             balance: 0,
-            preferences: new Map<string, any>(),
         };
         this.userBehaviorSubject.next(user);
         return user;
@@ -38,6 +37,18 @@ export class MockUserService implements UserService {
         user.balance += amount;
         this.getUserBehaviourSubject().next(user);
         return user;
+    }
+
+    async takeMoney(amount: number): Promise<User> {
+        const user = this.getUserBehaviourSubject().getValue();
+        if(user.balance - amount >= 0){
+            user.balance -= amount;
+            this.getUserBehaviourSubject().next(user);
+            return user;
+        }else{
+            throw new Error("Not enough funds");
+        }
+
     }
 
 }
