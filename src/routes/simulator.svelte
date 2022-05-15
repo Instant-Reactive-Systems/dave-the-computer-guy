@@ -22,8 +22,10 @@
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import type { UserEvent } from '$lib/models/user_event';
+	import { type Action, actionToString } from '$lib/models/action';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
+	import { actionStore } from '$lib/stores/action_store';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
 	import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
@@ -90,6 +92,12 @@
 					circuitTabs = circuitTabs;
 					currentCircuitTab = currentCircuitTab;
 				});
+                actionStore.set({
+                    type: 'circuit-save',
+                    data: {
+                        name,
+                    },
+                });
 				close();
 			}
 		});
@@ -122,6 +130,12 @@
 				};
 				circuitTabs = [...circuitTabs, newCircuitTab];
 				currentCircuitTab = newCircuitTab;
+                actionStore.set({
+                    type: 'circuit-load',
+                    data: {
+                        name: circuit.name,
+                    },
+                });
 				close();
 			}
 		});
@@ -152,6 +166,10 @@
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
+        actionStore.set({
+            type: 'circuit-new',
+            data: null,
+        });
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
@@ -162,6 +180,12 @@
         }
 
 		currentCircuitTab = tab;
+        actionStore.set({
+            type: 'circuit-switch',
+            data: {
+                name: tab.name,
+            },
+        });
 	}
 
 	function undo() {
@@ -174,6 +198,10 @@
 		const commandToUndo: Command = currentCircuitTab.undoStack.pop();
 		if (commandToUndo != undefined) {
 			commandToUndo.undo();
+            actionStore.set({
+                type: 'undo',
+                data: null,
+            });
 		} else {
 			notifier.info('Undo stack empty');
 			return;
@@ -193,6 +221,10 @@
 		const commandToRedo: Command = currentCircuitTab.redoStack.pop();
 		if (commandToRedo != undefined) {
 			commandToRedo.do();
+            actionStore.set({
+                type: 'redo',
+                data: null,
+            });
 		} else {
 			notifier.info('Redo stack empty');
 			return;
@@ -212,11 +244,21 @@
 						.then(() => updateCircuitTab(circuit))
 						.then(() => setEditorMode(defaultRunningMode()))
 
+                    actionStore.set({
+                        type: 'sim-start',
+                        data: null,
+                    });
+
 					break;
 				case 'paused': {
 					simulator.start().then(() => {
 						setEditorMode(defaultRunningMode())
 					});
+                    
+                    actionStore.set({
+                        type: 'sim-resume',
+                        data: null,
+                    });
 					break;
 				}
 				default: {
@@ -231,6 +273,11 @@
 			case 'running': {
 				simulator.pause()
 					.then(() => setEditorMode(defaultPausedMode()))
+                    
+                actionStore.set({
+                    type: 'sim-pause',
+                    data: null,
+                });
 				break;
 			}
 			case 'paused': {
@@ -263,6 +310,11 @@
 		};
 		deleteWireCommand.do();
 		addComandToUndoStack(deleteWireCommand);
+        
+        actionStore.set({
+            type: 'wire-delete',
+            data: null,
+        });
 	}
 
 	function deleteComponent(e) {
@@ -283,6 +335,13 @@
 		};
 		deleteComponentCommmand.do();
 		addComandToUndoStack(deleteComponentCommmand);
+        
+        actionStore.set({
+            type: 'component-delete',
+            data: {
+                id: componentId,
+            },
+        });
 	}
 
 	function stopSimulation() {
@@ -292,6 +351,12 @@
 				simulator.stop()
 					.then(() => setEditorMode(defaultEditorMode()))
 					.then(() => setCircuitStateStore(null))
+
+                actionStore.set({
+                    type: 'sim-stop',
+                    data: null,
+                });
+
 				break;
 			}
 			default: {
@@ -309,6 +374,11 @@
 		switch ($editorModeStore.type) {
 			case 'paused': {
 				simulator.step();
+
+                actionStore.set({
+                    type: 'sim-step',
+                    data: null,
+                });
 				break;
 			}
 			case 'running': {
@@ -322,6 +392,11 @@
 						.then(() => simulator.step())
 						.then(() => setEditorMode(defaultPausedMode()));
 				});
+
+                actionStore.set({
+                    type: 'sim-start-step',
+                    data: null,
+                });
 			}
 		}
 	}
@@ -370,6 +445,11 @@
 		};
 		addNewComponentCommand.do();
 		addComandToUndoStack(addNewComponentCommand);
+        
+        actionStore.set({
+            type: 'component-new',
+            data: null,
+        });
 	}
 
 	function moveComponent(event): void {
@@ -394,6 +474,11 @@
 
 		moveCommand.do();
 		addComandToUndoStack(moveCommand);
+
+        actionStore.set({
+            type: 'component-move',
+            data: { x, y },
+        });
 	}
 
 	function addComandToUndoStack(command: Command) {
@@ -433,6 +518,11 @@
 		};
 		addNewWireCommand.do();
 		addComandToUndoStack(addNewWireCommand);
+        
+        actionStore.set({
+            type: 'wire-new',
+            data: null,
+        });
 	}
 
 	function processUserEvent(e) {
@@ -464,11 +554,23 @@
 		notifier.info(`Exported component named "${event.detail.definition.name}"`)
 		isExporting = false;
 		defLoader.insertDefinition(event.detail.definition, true);
+        
+        actionStore.set({
+            type: 'circuit-export',
+            data: {
+                name: event.detail.definition.name,
+            },
+        });
 	}
 
 	function cancelExport() {
 		notifier.info('Cancelled exporting.');
 		isExporting = false;
+        
+        actionStore.set({
+            type: 'circuit-export-cancel',
+            data: null,
+        });
 	}
 
 	function updateCircuitTab(circuit: Circuit): Promise<void> {
@@ -497,6 +599,13 @@
             else currentCircuitTab = circuitTabs[index];
         }
         circuitTabs = circuitTabs;
+        
+        actionStore.set({
+            type: 'circuit-tab-remove',
+            data: {
+                name: deleted.name,
+            },
+        });
 
         return tick();
     }
@@ -631,7 +740,7 @@
                 </div>
                 <div class="status-bar">
                     <span>Status</span>
-                    <span class="status scroll-shadows-x">Moved component to (x: 314, y: 986).</span>
+                    <span class="status scroll-shadows-x">{actionToString($actionStore)}</span>
                 </div>
 			</div>
 			<div class="bottom-bar">
