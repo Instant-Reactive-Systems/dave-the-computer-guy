@@ -268,7 +268,7 @@
 					break;
 				}
 				default: {
-					notifier.info('Simulation already running!');
+					notifier.danger('Simulation already running!');
 				}
 			}
 		});
@@ -287,11 +287,11 @@
 				break;
 			}
 			case 'paused': {
-				notifier.info('Simulation already paused!');
+				notifier.danger('Simulation already paused!');
 				break;
 			}
 			default: {
-				notifier.info('Simulation not running!');
+				notifier.danger('Simulation not running!');
 			}
 		}
 	}
@@ -366,7 +366,7 @@
 				break;
 			}
 			default: {
-				notifier.info('Simulation not running!');
+				notifier.danger('Simulation not running!');
 			}
 		}
 	}
@@ -388,7 +388,7 @@
 				break;
 			}
 			case 'running': {
-				notifier.info('Can not step while simulator is rurnning');
+				notifier.danger('Cannot step while simulator is running!');
 				break;
 			}
 			default: {
@@ -431,7 +431,6 @@
 	}
 
 	function addNewComponent(event) {
-		notifier.info('Added new component');
 		const definition: ComponentDefinition = event.detail.componentDefinition;
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
@@ -470,7 +469,6 @@
 				circuitBuilder
 					.moveComponent(circuit, id, x, y)
 					.then((circ) => updateCircuitTab(circ));
-				notifier.info(`Moved component ${id}`)
 			},
 			undo: () => {
 				updateCircuitTab(preCommandCircuit);
@@ -557,7 +555,6 @@
 
 	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
 		console.log('Exported: ', event.detail.definition);
-		notifier.info(`Exported component named "${event.detail.definition.name}"`)
 		isExporting = false;
 		defLoader.insertDefinition(event.detail.definition, true);
         
@@ -570,7 +567,6 @@
 	}
 
 	function cancelExport() {
-		notifier.info('Cancelled exporting.');
 		isExporting = false;
         
         actionStore.set({
