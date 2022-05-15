@@ -203,7 +203,10 @@
                 data: null,
             });
 		} else {
-			notifier.info('Undo stack empty');
+            actionStore.set({
+                type: 'undo-empty',
+                data: null,
+            });
 			return;
 		}
 		if (commandToUndo.redoable) {
@@ -226,7 +229,10 @@
                 data: null,
             });
 		} else {
-			notifier.info('Redo stack empty');
+            actionStore.set({
+                type: 'redo-empty',
+                data: null,
+            });
 			return;
 		}
 		currentCircuitTab.undoStack.push(commandToRedo);
