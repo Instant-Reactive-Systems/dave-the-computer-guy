@@ -12,7 +12,7 @@
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
 	import BuyItemsPanel from '../overlays/buy_items_panel.svelte';
-	import type { ItemType } from '$lib/models/item';
+	import type { Item, ItemType } from '$lib/models/item';
 	import type { HouseService } from '$lib/services/house_service';
 	import { HOUSE_SERVICE } from '$lib/services/service';
 	import type { Subscription } from 'rxjs';
@@ -20,6 +20,10 @@
 	const { open, close } = getContext('simple-modal');
 
 	const houseService: HouseService = getContext(HOUSE_SERVICE);
+
+	const subscriptions: Subscription[] = [];
+
+	let deskItem: Item;
 
 	async function openItemPanel(itemType: ItemType) {
 		const house = await houseService.getHouseBehaviourSubject().getValue();
@@ -45,7 +49,16 @@
 	}
 
 	onMount(() => {
-		console.log('Mounted home');
+		subscriptions.push(houseService.getHouseBehaviourSubject().subscribe(house => {
+			if(house.id != 1){
+				return;
+			}else{
+				const items = [...house.houseData.deskSetup.all,
+				 			   ...house.houseData.bed.all]
+				const deskItemId = house.houseData.deskSetup.prefferedItemId;
+				deskItem = items.find(item => item.id == deskItemId);
+			}
+		}))
 	});
 
 	onDestroy(() => {
@@ -123,7 +136,7 @@
 		/>
 
 		<GLTF
-			url="models/office/Office_Table_White_3x1_02.gltf"
+			url={deskItem.url}
 			position={{ y: -0.5, x: 4, z: -1.5 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
 		/>
@@ -163,7 +176,7 @@
 		<Mesh
 			interactive
 			on:click={() => openItemPanel('deskSetup')}
-			visible={true}
+			visible={false}
 			position={{ y: 1, x: 4, z: -1.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
 			geometry={new BoxBufferGeometry(1.4, 1.5, 0.8)}

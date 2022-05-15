@@ -22,7 +22,7 @@ export class MockUserService implements UserService {
         const user:User = {
             username: username,
             email: `${username}}@gmail.com`,
-            balance: 0,
+            balance: 1000,
         };
         this.userBehaviorSubject.next(user);
         return user;
