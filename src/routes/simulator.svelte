@@ -22,8 +22,10 @@
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import type { UserEvent } from '$lib/models/user_event';
+	import { type Action, actionToString } from '$lib/models/action';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
+	import { actionStore } from '$lib/stores/action_store';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
 	import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
@@ -94,6 +96,12 @@
 					circuitTabs = circuitTabs;
 					currentCircuitTab = currentCircuitTab;
 				});
+                actionStore.set({
+                    type: 'circuit-save',
+                    data: {
+                        name,
+                    },
+                });
 				close();
 			}
 		});
@@ -126,6 +134,12 @@
 				};
 				circuitTabs = [...circuitTabs, newCircuitTab];
 				currentCircuitTab = newCircuitTab;
+                actionStore.set({
+                    type: 'circuit-load',
+                    data: {
+                        name: circuit.name,
+                    },
+                });
 				close();
 			}
 		});
@@ -196,6 +210,10 @@
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
+        actionStore.set({
+            type: 'circuit-new',
+            data: null,
+        });
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
@@ -206,6 +224,12 @@
         }
 
 		currentCircuitTab = tab;
+        actionStore.set({
+            type: 'circuit-switch',
+            data: {
+                name: tab.name,
+            },
+        });
 	}
 
 	function undo() {
@@ -218,8 +242,15 @@
 		const commandToUndo: Command = currentCircuitTab.undoStack.pop();
 		if (commandToUndo != undefined) {
 			commandToUndo.undo();
+            actionStore.set({
+                type: 'undo',
+                data: null,
+            });
 		} else {
-			notifier.info('Undo stack empty');
+            actionStore.set({
+                type: 'undo-empty',
+                data: null,
+            });
 			return;
 		}
 		if (commandToUndo.redoable) {
@@ -237,8 +268,15 @@
 		const commandToRedo: Command = currentCircuitTab.redoStack.pop();
 		if (commandToRedo != undefined) {
 			commandToRedo.do();
+            actionStore.set({
+                type: 'redo',
+                data: null,
+            });
 		} else {
-			notifier.info('Redo stack empty');
+            actionStore.set({
+                type: 'redo-empty',
+                data: null,
+            });
 			return;
 		}
 		currentCircuitTab.undoStack.push(commandToRedo);
@@ -256,15 +294,25 @@
 						.then(() => updateCircuitTab(circuit))
 						.then(() => setEditorMode(defaultRunningMode()))
 
+                    actionStore.set({
+                        type: 'sim-start',
+                        data: null,
+                    });
+
 					break;
 				case 'paused': {
 					simulator.start().then(() => {
 						setEditorMode(defaultRunningMode())
 					});
+                    
+                    actionStore.set({
+                        type: 'sim-resume',
+                        data: null,
+                    });
 					break;
 				}
 				default: {
-					notifier.info('Simulation already running!');
+					notifier.danger('Simulation already running!');
 				}
 			}
 		});
@@ -275,14 +323,19 @@
 			case 'running': {
 				simulator.pause()
 					.then(() => setEditorMode(defaultPausedMode()))
+                    
+                actionStore.set({
+                    type: 'sim-pause',
+                    data: null,
+                });
 				break;
 			}
 			case 'paused': {
-				notifier.info('Simulation already paused!');
+				notifier.danger('Simulation already paused!');
 				break;
 			}
 			default: {
-				notifier.info('Simulation not running!');
+				notifier.danger('Simulation not running!');
 			}
 		}
 	}
@@ -307,6 +360,11 @@
 		};
 		deleteWireCommand.do();
 		addComandToUndoStack(deleteWireCommand);
+        
+        actionStore.set({
+            type: 'wire-delete',
+            data: null,
+        });
 	}
 
 	function deleteComponent(e) {
@@ -327,6 +385,13 @@
 		};
 		deleteComponentCommmand.do();
 		addComandToUndoStack(deleteComponentCommmand);
+        
+        actionStore.set({
+            type: 'component-delete',
+            data: {
+                id: componentId,
+            },
+        });
 	}
 
 	function stopSimulation() {
@@ -336,10 +401,16 @@
 				simulator.stop()
 					.then(() => setEditorMode(defaultEditorMode()))
 					.then(() => setCircuitStateStore(null))
+
+                actionStore.set({
+                    type: 'sim-stop',
+                    data: null,
+                });
+
 				break;
 			}
 			default: {
-				notifier.info('Simulation not running!');
+				notifier.danger('Simulation not running!');
 			}
 		}
 	}
@@ -353,10 +424,15 @@
 		switch ($editorModeStore.type) {
 			case 'paused': {
 				simulator.step();
+
+                actionStore.set({
+                    type: 'sim-step',
+                    data: null,
+                });
 				break;
 			}
 			case 'running': {
-				notifier.info('Can not step while simulator is rurnning');
+				notifier.danger('Cannot step while simulator is running!');
 				break;
 			}
 			default: {
@@ -366,6 +442,11 @@
 						.then(() => simulator.step())
 						.then(() => setEditorMode(defaultPausedMode()));
 				});
+
+                actionStore.set({
+                    type: 'sim-start-step',
+                    data: null,
+                });
 			}
 		}
 	}
@@ -402,7 +483,6 @@
 	}
 
 	function addNewComponent(event) {
-		notifier.info('Added new component');
 		const definition: ComponentDefinition = event.detail.componentDefinition;
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
@@ -422,6 +502,11 @@
 		};
 		addNewComponentCommand.do();
 		addComandToUndoStack(addNewComponentCommand);
+        
+        actionStore.set({
+            type: 'component-new',
+            data: null,
+        });
 	}
 
 	function moveComponent(event): void {
@@ -436,7 +521,6 @@
 				circuitBuilder
 					.moveComponent(circuit, id, x, y)
 					.then((circ) => updateCircuitTab(circ));
-				notifier.info(`Moved component ${id}`)
 			},
 			undo: () => {
 				updateCircuitTab(preCommandCircuit);
@@ -446,6 +530,11 @@
 
 		moveCommand.do();
 		addComandToUndoStack(moveCommand);
+
+        actionStore.set({
+            type: 'component-move',
+            data: { x, y },
+        });
 	}
 
 	function addComandToUndoStack(command: Command) {
@@ -485,6 +574,11 @@
 		};
 		addNewWireCommand.do();
 		addComandToUndoStack(addNewWireCommand);
+        
+        actionStore.set({
+            type: 'wire-new',
+            data: null,
+        });
 	}
 
 	function processUserEvent(e) {
@@ -513,14 +607,24 @@
 
 	function exportCircuit(event: CustomEvent<{ definition: ComponentDefinition }>) {
 		console.log('Exported: ', event.detail.definition);
-		notifier.info(`Exported component named "${event.detail.definition.name}"`)
 		isExporting = false;
 		defLoader.insertDefinition(event.detail.definition, true);
+        
+        actionStore.set({
+            type: 'circuit-export',
+            data: {
+                name: event.detail.definition.name,
+            },
+        });
 	}
 
 	function cancelExport() {
-		notifier.info('Cancelled exporting.');
 		isExporting = false;
+        
+        actionStore.set({
+            type: 'circuit-export-cancel',
+            data: null,
+        });
 	}
 
 	function updateCircuitTab(circuit: Circuit): Promise<void> {
@@ -549,6 +653,13 @@
             else currentCircuitTab = circuitTabs[index];
         }
         circuitTabs = circuitTabs;
+        
+        actionStore.set({
+            type: 'circuit-tab-remove',
+            data: {
+                name: deleted.name,
+            },
+        });
 
         return tick();
     }
@@ -676,16 +787,22 @@
 <div id="main-content-wrapper" class="grid grid-cols-12">
 	<div class="col-span-9">
 		<div class="h-full flex flex-col">
-			<main id="canvas-wrapper">
-				<Canvas
-					on:componentMove={moveComponent}
-					on:addNewComponent={addNewComponent}
-					on:addNewWire={addNewWire}
-					on:userEventGenerated={processUserEvent}
-					on:deleteWire={deleteWire}
-					on:deleteComponent={deleteComponent}
-				/>
-			</main>
+			<div class="canvas-view">
+                <div id="canvas-wrapper">
+                    <Canvas
+					    on:componentMove={moveComponent}
+					    on:addNewComponent={addNewComponent}
+					    on:addNewWire={addNewWire}
+					    on:userEventGenerated={processUserEvent}
+					    on:deleteWire={deleteWire}
+					    on:deleteComponent={deleteComponent}
+				    />
+                </div>
+                <div class="status-bar">
+                    <span>Status</span>
+                    <span class="status scroll-shadows-x">{actionToString($actionStore)}</span>
+                </div>
+			</div>
 			<div class="bottom-bar">
 				<div
 					class="editor-mode"
@@ -767,7 +884,7 @@
 	}
 
 	.editor-tools {
-		@apply pl-4 ml-4 border-l border-slate-300;
+		@apply pl-4 mx-4 border-l border-slate-300;
 	}
 
 	.editor-tools > li > button {
@@ -775,7 +892,7 @@
 	}
 
 	.game-tools {
-		@apply mr-4 w-full justify-end;
+		@apply w-full mr-4 justify-end;
 	}
 
 	.game-tools > li > button {
@@ -839,7 +956,9 @@
 		@apply bg-green-400;
 	}
 
-	/*Bottom bar*/
+	/*
+    Bottom bar
+    */
 	.bottom-bar {
 		@apply inline-flex;
 	}
@@ -872,7 +991,9 @@
         @apply invisible rounded-md hover:bg-slate-300 hover:opacity-50;
     }
 
-	/*Aside*/
+	/*
+    Aside
+    */
 	.aside {
 		--hgt: calc(theme(height.full));
 		height: var(--hgt);
@@ -881,7 +1002,9 @@
 		@apply border-l-2 border-gray-200;
 	}
 
-	/*Main content styles*/
+	/*
+    Main content styles
+    */
 	#main-content-wrapper {
 		--hgt: calc(theme(height.screen) - theme(height.10));
 		height: var(--hgt);
@@ -889,7 +1012,30 @@
 		min-height: var(--hgt);
 	}
 
-	#canvas-wrapper {
-		@apply grow;
+    /*
+    Canvas view
+    */
+	.canvas-view {
+		@apply grow grid-cols-1 relative;
 	}
+
+    #canvas-wrapper {
+        @apply w-full h-full col-start-1 row-start-1;
+    }
+
+    .status-bar {
+        @apply absolute right-0 bottom-0 col-start-1 row-start-1 inline-flex;
+    }
+
+    .status-bar > * {
+        @apply bg-white;
+    }
+
+    .status-bar > span:first-child {
+        @apply py-1 pl-3 pr-2 rounded-l-full border-l border-t border-slate-300 font-bold uppercase;
+    }
+
+    .status-bar > .status {
+        @apply overflow-x-auto whitespace-nowrap max-w-[24rem] py-1 px-2 border-l border-t border-slate-300 cursor-text;
+    }
 </style>
