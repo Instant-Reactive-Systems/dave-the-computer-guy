@@ -7,7 +7,7 @@ export type HouseService = {
     buyHouse(house: House): Promise<House>;
     getHouseBehaviourSubject(): BehaviorSubject<House>;
     setItem(itemType: ItemType, item: Item): Promise<House>;
-    buyItem(item: Item): Promise<Item>;
+    buyItem(item: Item): Promise<boolean>;
     getItemList(itemType: ItemType): Promise<Item[]>
     getHouseList(): Promise<House[]>;
     init();

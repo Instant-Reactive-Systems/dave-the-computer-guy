@@ -6,58 +6,174 @@ import type { HouseService } from "../house_service";
 
 
 
-const deskSetup01: Item = {
+const desk01: Item = {
     id: 1,
     name: "Desk setup 1",
-    type: "deskSetup",
-    url: "/models/home/deskSetup/deskSetup01.gltf",
+    type: "desk",
+    url: "/models/home/desk/desk_01.gltf",
     cost: 0,
     imageUrl: null,
     owned: true,
 }
 
-const deskSetup02: Item = {
+const desk02: Item = {
     id: 2,
     name: "Desk setup 2",
-    type: "deskSetup",
-    url: "/models/home/deskSetup/deskSetup02.gltf",
+    type: "desk",
+    url: "/models/home/desk/desk_02.gltf",
     cost: 200,
     imageUrl: null,
     owned: false,
 }
 
-const deskSetup03: Item = {
-    id: 3,
-    name: "Desk setup 3",
-    type: "deskSetup",
-    url: "/models/home/deskSetup/deskSetup03.gltf",
-    cost: 400,
-    imageUrl: null,
-    owned: false,
-}
-
-
 const bed01: Item = {
-    id: 4,
+    id: 3,
     name: "Bed 1",
     type: "bed",
-    url: "/models/home/bed/bed01.gltf",
+    url: "/models/home/bed/bed_01.gltf",
     cost: 0,
     imageUrl: null,
     owned: true,
 }
 
+
+const chair01: Item = {
+    id: 5,
+    name: "Chair 1",
+    type: "chair",
+    url: "/models/home/chair/chair_01.gltf",
+    cost: 0,
+    imageUrl: null,
+    owned: true
+};
+
+
+const chair02: Item = {
+    id: 6,
+    name: "Chair 2",
+    type: "chair",
+    url: "/models/home/chair/chair_02.gltf",
+    cost: 100,
+    imageUrl: null,
+    owned: false
+}
+
+const chair03: Item = {
+    id: 7,
+    name: "Chair 3",
+    type: "chair",
+    url: "/models/home/chair/chair_03.gltf",
+    cost: 125,
+    imageUrl: null,
+    owned: false
+}
+
+const chair04: Item = {
+    id: 8,
+    name: "Chair 4",
+    type: "chair",
+    url: "/models/home/chair/chair_04.gltf",
+    cost: 130,
+    imageUrl: null,
+    owned: false
+};
+
+
+const chair05: Item = {
+    id: 9,
+    name: "Chair 5",
+    type: "chair",
+    url: "/models/home/chair/chair_05.gltf",
+    cost: 145,
+    imageUrl: null,
+    owned: false
+};
+
+const chair06: Item = {
+    id: 10,
+    name: "Chair 6",
+    type: "chair",
+    url: "/models/home/chair/chair_06.gltf",
+    cost: 150,
+    imageUrl: null,
+    owned: false
+};
+
+const chair07: Item = {
+    id: 11,
+    name: "Chair 7",
+    type: "chair",
+    url: "/models/home/chair/chair_07.gltf",
+    cost: 160,
+    imageUrl: null,
+    owned: false
+};
+
+
+const tv01: Item = {
+    id: 12,
+    name: "Tv 1",
+    type: "tv",
+    url: "/models/home/tv/tv_01.gltf",
+    cost: 0,
+    imageUrl: null,
+    owned: true
+}
+
+const tv02: Item = {
+    id: 13,
+    name: "Tv 2",
+    type: "tv",
+    url: "/models/home/tv/tv_02.gltf",
+    cost: 500,
+    imageUrl: null,
+    owned: false
+}
+
+const pc01: Item = {
+    id: 14,
+    name: "Pc 1",
+    type: "pc",
+    url: "/models/home/pc/pc_01.gltf",
+    cost: 0,
+    imageUrl: null,
+    owned: true
+}
+
+const pc02: Item = {
+    id: 15,
+    name: "Pc 2",
+    type: "pc",
+    url: "/models/home/pc/pc_02.gltf",
+    cost: 700,
+    imageUrl: null,
+    owned: false
+}
+
+
 const HOUSE_01: House = {
     name: "simple flat",
     id: 1,
     houseData: {
-        deskSetup: {
-            all: [deskSetup01, deskSetup02, deskSetup03],
+        desk: {
+            all: [desk01, desk02],
             prefferedItemId: 1
         },
         bed: {
             all: [bed01],
             prefferedItemId: 4
+        },
+        chair: {
+            all: [chair01, chair02, chair03, chair04, chair05, chair06, chair07],
+            prefferedItemId: 5
+        },
+        tv: {
+            all: [tv01, tv02],
+            prefferedItemId: 12
+        },
+        pc: {
+            all: [pc01, pc02],
+            prefferedItemId: 14
         }
     },
     cost: 0,
@@ -94,12 +210,15 @@ export class MockHouseService implements HouseService {
         return house;
     }
 
-    async buyItem(item: Item): Promise<Item> {
-        await this.userService.takeMoney(item.cost);
+    async buyItem(item: Item): Promise<boolean> {
+        const enoughFunds = await this.userService.takeMoney(item.cost);
+        if(!enoughFunds){
+            return false;
+        }
         const house = this.houseBehaviourSubject.getValue();
         house.houseData[item.type].all.find(i => i.id == item.id).owned = true;
         this.houseBehaviourSubject.next(house);
-        return item;
+        return true;
     }
 
     async getItemList(itemType: ItemType): Promise<Item[]> {

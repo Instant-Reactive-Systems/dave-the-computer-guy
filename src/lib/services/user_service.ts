@@ -6,7 +6,7 @@ export type UserService = {
     getUserData(username: string): Promise<User>;
     getUserBehaviourSubject():BehaviorSubject<User>;
     giveReward(amount: number): Promise<User>;
-    takeMoney(amount: number): Promise<User>;
+    takeMoney(amount: number): Promise<boolean>;
     init();
     dispose();
 }

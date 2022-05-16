@@ -22,7 +22,7 @@ export class MockUserService implements UserService {
         const user:User = {
             username: username,
             email: `${username}}@gmail.com`,
-            balance: 1000,
+            balance: 500,
         };
         this.userBehaviorSubject.next(user);
         return user;
@@ -39,15 +39,15 @@ export class MockUserService implements UserService {
         return user;
     }
 
-    async takeMoney(amount: number): Promise<User> {
+    async takeMoney(amount: number): Promise<boolean> {
         const user = this.getUserBehaviourSubject().getValue();
         if(user.balance - amount >= 0){
             user.balance -= amount;
             this.getUserBehaviourSubject().next(user);
-            return user;
-        }else{
-            throw new Error("Not enough funds");
+            return true;
         }
+
+        return false;
 
     }
 
