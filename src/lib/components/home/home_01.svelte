@@ -53,9 +53,9 @@
 			if(house.id != 1){
 				return;
 			}else{
-				const items = [...house.houseData.deskSetup.all,
+				const items = [...house.houseData.desk.all,
 				 			   ...house.houseData.bed.all]
-				const deskItemId = house.houseData.deskSetup.prefferedItemId;
+				const deskItemId = house.houseData.desk.prefferedItemId;
 				deskItem = items.find(item => item.id == deskItemId);
 			}
 		}))

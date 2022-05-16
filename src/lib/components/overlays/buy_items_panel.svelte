@@ -12,13 +12,7 @@
 	const houseService: HouseService = getContext(HOUSE_SERVICE);
 
 	async function buyItem(item: Item) {
-		let boughtItem;
-		try {
-			boughtItem = await houseService.buyItem(item);
-		} catch (e) {
-			console.log(e);
-			return;
-		}
+		let boughtItem = await houseService.buyItem(item);
 		let index = items.findIndex((i) => i.id == item.id);
 		items[index] = item;
 		items = items;

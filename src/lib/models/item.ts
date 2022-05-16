@@ -1,4 +1,5 @@
-export type ItemType = 'outfit' | 'deskSetup' | 'TV-setup' | 'bed' | 'wardrobeCloset' | 'poster'
+export type ItemType = 'bed' | 'cabinet' | 'chair' | 'couch' | 'desk' |
+ 'extra-large-desk' | 'large-desk' | 'pc' | 'trashcan' | 'tv' | 'wall-decoration';
 
 export type Item = {
     id: number;

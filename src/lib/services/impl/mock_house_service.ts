@@ -12,7 +12,7 @@ const desk01: Item = {
     type: "desk",
     url: "/models/home/desk/desk_01.gltf",
     cost: 0,
-    imageUrl: null,
+    imageUrl: "/models/home/desk/desk_01.png",
     owned: true,
 }
 
@@ -22,7 +22,7 @@ const desk02: Item = {
     type: "desk",
     url: "/models/home/desk/desk_02.gltf",
     cost: 200,
-    imageUrl: null,
+    imageUrl: "/models/home/desk/desk_02.png",
     owned: false,
 }
 
@@ -32,7 +32,7 @@ const bed01: Item = {
     type: "bed",
     url: "/models/home/bed/bed_01.gltf",
     cost: 0,
-    imageUrl: null,
+    imageUrl: "/models/home/bed/bed_01.png",
     owned: true,
 }
 
@@ -43,7 +43,7 @@ const chair01: Item = {
     type: "chair",
     url: "/models/home/chair/chair_01.gltf",
     cost: 0,
-    imageUrl: null,
+    imageUrl: "/models/home/chair/chair_01.png",
     owned: true
 };
 
@@ -54,7 +54,7 @@ const chair02: Item = {
     type: "chair",
     url: "/models/home/chair/chair_02.gltf",
     cost: 100,
-    imageUrl: null,
+    imageUrl: "/models/home/chair/chair_02.png",
     owned: false
 }
 
@@ -64,7 +64,7 @@ const chair03: Item = {
     type: "chair",
     url: "/models/home/chair/chair_03.gltf",
     cost: 125,
-    imageUrl: null,
+    imageUrl: "/models/home/chair/chair_03.png",
     owned: false
 }
 
@@ -74,7 +74,7 @@ const chair04: Item = {
     type: "chair",
     url: "/models/home/chair/chair_04.gltf",
     cost: 130,
-    imageUrl: null,
+    imageUrl: "/models/home/chair/chair_04.png",
     owned: false
 };
 
@@ -85,7 +85,7 @@ const chair05: Item = {
     type: "chair",
     url: "/models/home/chair/chair_05.gltf",
     cost: 145,
-    imageUrl: null,
+    imageUrl: "/models/home/chair/chair_05.png",
     owned: false
 };
 
@@ -95,7 +95,7 @@ const chair06: Item = {
     type: "chair",
     url: "/models/home/chair/chair_06.gltf",
     cost: 150,
-    imageUrl: null,
+    imageUrl: "/models/home/chair/chair_06.png",
     owned: false
 };
 
@@ -105,7 +105,7 @@ const chair07: Item = {
     type: "chair",
     url: "/models/home/chair/chair_07.gltf",
     cost: 160,
-    imageUrl: null,
+    imageUrl: "/models/home/chair/chair_07.png",
     owned: false
 };
 
@@ -116,7 +116,7 @@ const tv01: Item = {
     type: "tv",
     url: "/models/home/tv/tv_01.gltf",
     cost: 0,
-    imageUrl: null,
+    imageUrl: "/models/home/tv/tv_01.png",
     owned: true
 }
 
@@ -126,7 +126,7 @@ const tv02: Item = {
     type: "tv",
     url: "/models/home/tv/tv_02.gltf",
     cost: 500,
-    imageUrl: null,
+    imageUrl: "/models/home/tv/tv_02.png",
     owned: false
 }
 
@@ -136,7 +136,7 @@ const pc01: Item = {
     type: "pc",
     url: "/models/home/pc/pc_01.gltf",
     cost: 0,
-    imageUrl: null,
+    imageUrl: "/models/home/pc/pc_01.png",
     owned: true
 }
 
@@ -146,7 +146,7 @@ const pc02: Item = {
     type: "pc",
     url: "/models/home/pc/pc_02.gltf",
     cost: 700,
-    imageUrl: null,
+    imageUrl: "/models/home/pc/pc_02.png",
     owned: false
 }
 
