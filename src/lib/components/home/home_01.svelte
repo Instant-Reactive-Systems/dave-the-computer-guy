@@ -175,7 +175,7 @@
 
 		<Mesh
 			interactive
-			on:click={() => openItemPanel('deskSetup')}
+			on:click={() => openItemPanel('desk')}
 			visible={false}
 			position={{ y: 1, x: 4, z: -1.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
