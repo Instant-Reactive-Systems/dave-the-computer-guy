@@ -15,6 +15,7 @@
     import { Router } from "$lib/router";
 	import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
     import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
+    import RoomBar from '$lib/components/room_bar.svelte';
 
 	const { open, close } = getContext('simple-modal');
 
@@ -52,6 +53,7 @@
 	})
 </script>
 
+<RoomBar/>
 <main>
 	<Canvas>
 		<PerspectiveCamera position={{ x: -10, y: 10, z: -10 }}>
@@ -299,7 +301,11 @@
 
 <style>
 	main {
-        @apply fixed top-0 left-0 w-full h-full;
+		--hgt: calc(theme(height.screen) - theme(height.10));
+        height: var(--hgt);
+		max-height: var(--hgt);
+		min-height: var(--hgt);
+        @apply w-full;
 	}
 </style>
 
