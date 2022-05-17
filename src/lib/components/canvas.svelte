@@ -9,7 +9,7 @@
 	import { eventStore } from '$lib/stores/event_store';
 	import { fabric } from 'fabric';
 	import { onMount } from 'svelte';
-	import { COMPONENT_DEFINITION_LOADER_SERVICE, SIMULATOR_SERVICE } from '$lib/services/service';
+	import { COMPONENT_DEFINITION_LOADER_SERVICE } from '$lib/services/service';
 	import type { Event } from '$lib/models/event';
 	import type { Connector } from '$lib/models/connector';
 	import type { Circuit, Junction } from '$lib/models/circuit';
@@ -30,14 +30,16 @@
 	import { on_keydown } from '$lib/util/key_handling';
 	import { actionStore } from '$lib/stores/action_store';
 
+    // Services
+    let definitionLoaderService: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
+
+    // Variables
+    const notifier: Notifier = new Notifier(getNotificationsContext());
+	const dispatch = createEventDispatcher();
 	let canvas: Canvas;
 	let canvasElement;
-	let definitionLoaderService: ComponentDefinitionLoaderService = getContext(
-		COMPONENT_DEFINITION_LOADER_SERVICE
-	);
 
-	const notifier: Notifier = new Notifier(getNotificationsContext());
-	const dispatch = createEventDispatcher();
+    // Logic
 
 	// Locking/unlocking components based on state
 	$: {
@@ -157,15 +159,23 @@
 				return;
 			}
 
-			if ($editorModeStore.type == 'wire') {
-				showTemporaryWire(event);
-			} else if ($editorModeStore.type == 'delete') {
-				if ($editorModeStore.data == 'pressed') {
-					deleteObject(event);
-				}
-			} else if ($editorModeStore.type == 'edit') {
-				showObjectInfo(event);
-			}
+            switch ($editorModeStore.type) {
+                case 'wire': {
+                    showTemporaryWire(event);
+                    break;
+                }
+                case 'delete': {
+                    if ($editorModeStore.data == 'pressed') {
+					    deleteObject(event);
+				    }
+                    break;
+                }
+                case 'edit': {
+                    showObjectInfo(event);
+                    break;
+                }
+                default: break;
+            }
 		});
 	}
 
@@ -666,6 +676,7 @@
 		canvas.resize(size);
 	}
 
+    // Component lifetime
 	onMount(() => {
 		console.log('Mounted canvas');
 		prepareCanvas();
@@ -684,8 +695,3 @@
 
 <svelte:window on:resize={resizeCanvas} />
 
-<style>
-	main {
-		@apply contents;
-	}
-</style>

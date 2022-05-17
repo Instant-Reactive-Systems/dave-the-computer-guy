@@ -34,9 +34,9 @@ export function actionToString(action?: Action): string {
         case 'wire-delete': return `Deleted a wire segment.`;
         case 'component-new': return `Added component to circuit.`;
         case 'component-delete': return `Deleted component of ID #${action.data.id} from circuit.`;
-        case 'component-move': return `Moved component to (x: ${action.data.x}, y: ${action.data.y}).`;
-        case 'component-hovered': return `Component with ID #${action.data.componentId} hovered`;
-        case 'pin-hovered': return `${action.data.pinType} pin ${action.data.pinIndex} (${action.data.pinName}) on component with ID #${action.data.componentId} hovered`
+        case 'component-move': return `Moved component to (x: ${Math.round(action.data.x)}, y: ${Math.round(action.data.y)}).`;
+        case 'component-hovered': return `Hovered on component (#${action.data.componentId}).`;
+        case 'pin-hovered': return `Hovered on ${action.data.pinType} pin '${action.data.pinName}' (#${action.data.pinIndex}) of component (#${action.data.componentId}).`;
         default: {}
     }
 
