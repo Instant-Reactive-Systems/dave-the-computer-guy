@@ -11,7 +11,7 @@
 	} from 'threlte';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
-	import BuyItemsPanel from '../overlays/buy_items_panel.svelte';
+	import WardrobePanel from '../overlays/wardrobe_panel.svelte';
 	import type { Item, ItemType } from '$lib/models/item';
 	import type { HouseService } from '$lib/services/house_service';
 	import { HOUSE_SERVICE } from '$lib/services/service';
@@ -26,12 +26,16 @@
 	let deskItem: Item;
 
 	async function openItemPanel(itemType: ItemType) {
-		const house = await houseService.getHouseBehaviourSubject().getValue();
+		const house = houseService.getHouseBehaviourSubject().getValue();
         const items = house.houseData[itemType].all;
         const selectedItemId  = house.houseData[itemType].prefferedItemId;
         open(
-			BuyItemsPanel,
-			{ itemType: itemType, items: items, selectedItemId: selectedItemId},
+            WardrobePanel, 
+            { 
+                itemType: itemType, 
+                items: items, 
+                selectedItemId: selectedItemId
+            },
 			{
 				styleWindow: {
 					width: 'auto',

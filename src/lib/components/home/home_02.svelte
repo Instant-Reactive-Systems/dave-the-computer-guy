@@ -13,12 +13,12 @@
 	import { getContext, onDestroy, onMount } from 'svelte';
     import { Router } from "$lib/router";
     import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
-import BuyItemsPanel from '../overlays/buy_items_panel.svelte';
+    import WardrobePanel from '../overlays/wardrobe_panel.svelte';
 
 	const { open, close } = getContext('simple-modal');
 
 	function openItemPanel() {
-		open(BuyItemsPanel, {}, {
+		open(WardrobePanel, {}, {
 			styleWindow: {
 				width: "auto",
 				overflow: "hidden"
