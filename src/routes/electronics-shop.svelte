@@ -12,6 +12,7 @@
     import { getContext, onDestroy, onMount } from 'svelte';
 	import ShopPanel from '$lib/components/overlays/shop_panel.svelte';
     import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
+    import RoomBar from '$lib/components/room_bar.svelte';
 
 	const { open, close } = getContext('simple-modal');
 
@@ -33,6 +34,7 @@
 	})
 </script>
 
+<RoomBar/>
 <main>
 	<Canvas>
 		<PerspectiveCamera position={{ x: -10, y: 10, z: -10 }}>

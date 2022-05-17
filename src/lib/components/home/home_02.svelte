@@ -177,7 +177,11 @@
 
 <style>
 	main {
-        @apply fixed top-0 left-0 w-full h-full;
+		--hgt: calc(theme(height.screen) - theme(height.10));
+        height: var(--hgt);
+		max-height: var(--hgt);
+		min-height: var(--hgt);
+        @apply w-full;
 	}
 </style>
 
