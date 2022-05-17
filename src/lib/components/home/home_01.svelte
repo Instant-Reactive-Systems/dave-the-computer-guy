@@ -25,17 +25,19 @@
 
 	let deskItem: Item;
 
+	let chairItem: Item;
+
 	async function openItemPanel(itemType: ItemType) {
 		const house = houseService.getHouseBehaviourSubject().getValue();
-        const items = house.houseData[itemType].all;
-        const selectedItemId  = house.houseData[itemType].prefferedItemId;
-        open(
-            WardrobePanel, 
-            { 
-                itemType: itemType, 
-                items: items, 
-                selectedItemId: selectedItemId
-            },
+		const items = house.houseData[itemType].all;
+		const selectedItemId = house.houseData[itemType].prefferedItemId;
+		open(
+			WardrobePanel,
+			{
+				itemType: itemType,
+				items: items,
+				selectedItemId: selectedItemId
+			},
 			{
 				styleWindow: {
 					width: 'auto',
@@ -53,16 +55,23 @@
 	}
 
 	onMount(() => {
-		subscriptions.push(houseService.getHouseBehaviourSubject().subscribe(house => {
-			if(house.id != 1){
-				return;
-			}else{
-				const items = [...house.houseData.desk.all,
-				 			   ...house.houseData.bed.all]
-				const deskItemId = house.houseData.desk.prefferedItemId;
-				deskItem = items.find(item => item.id == deskItemId);
-			}
-		}))
+		subscriptions.push(
+			houseService.getHouseBehaviourSubject().subscribe((house) => {
+				if (house.id != 1) {
+					return;
+				} else {
+					const items = [
+						...house.houseData.chair.all,
+						...house.houseData.desk.all,
+						...house.houseData.bed.all
+					];
+					const deskItemId = house.houseData.desk.prefferedItemId;
+					const chairItemId = house.houseData.chair.prefferedItemId;
+					deskItem = items.find((item) => item.id == deskItemId);
+					chairItem = items.find((item) => item.id == chairItemId);
+				}
+			})
+		);
 	});
 
 	onDestroy(() => {
@@ -152,9 +161,22 @@
 		/>
 
 		<GLTF
-			url="models/office/Office_Chair_White_02.gltf"
+			url={chairItem.url}
 			position={{ y: -0.4, x: 3, z: -1.7 }}
 			rotation={{ y: 90 * (Math.PI / 180) }}
+		/>
+
+		<Mesh
+			interactive
+			on:click={() => openItemPanel('chair')}
+			visible={false}
+			position={{ y: 0, x: 3, z: -1.7  }}
+			rotation={{ y: -90 * (Math.PI / 180) }}
+			geometry={new BoxBufferGeometry(1.4, 1.5, 0.8)}
+			material={new MeshStandardMaterial({
+				side: DoubleSide,
+				color: 'white'
+			})}
 		/>
 
 		<GLTF url="models/office/Office_Misc_TV_Stand_02.gltf" position={{ y: 0.7, x: -3, z: -4 }} />
