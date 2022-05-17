@@ -1,15 +1,25 @@
 <script lang="ts">
+    import { getContext, onDestroy, onMount } from 'svelte';
     import CoinIcon from '$lib/icons/coin.svelte';
     import ProfileIcon from '$lib/icons/profile.svelte';
     import AvailableQuestsIcon from '$lib/icons/available_quests.svelte';
     import ActiveQuestsIcon from '$lib/icons/active_quests.svelte';
     import { assert, todo } from '$lib/util/common';
+    import type { QuestService } from "$lib/services/quest_service";
+    import type { UserService } from "$lib/services/user_service";
+	import { USER_SERVICE, QUEST_SERVICE } from '$lib/services/service';
+    import type { Subscription } from 'rxjs';
+    import type { User } from '$lib/models/user';
+
+    // Services
+    const userService: UserService = getContext(USER_SERVICE);
+    const questService: QuestService = getContext(QUEST_SERVICE);
 
     // Variables
-    let coins = 420;
-    let username = 'mscofield0';
-    let availableQuests = 11;
-    let activeQuests = 2;
+    let subs: Subscription[] = [];
+    let user: User = null;
+    let activeQuests: number = null;
+    let availableQuests: number = null;
 
     // Logic
     function openProfile() {
@@ -19,6 +29,25 @@
     function buyCoins() {
         todo();
     }
+
+    // Component lifetime
+    onMount(() => {
+        subs.push(
+            userService.getUserBehaviourSubject().subscribe((user_) => {
+                user = user_;
+            }),
+            questService.getActiveQuestsBehaviourSubject().subscribe((quests) => {
+                activeQuests = quests.length;
+            }),
+            questService.getAvailableQuestsBehaviourSubject().subscribe((quests) => {
+                availableQuests = quests.length;
+            }),
+        );
+    });
+
+    onDestroy(() => {
+        subs.forEach((sub) => sub.unsubscribe());
+    });
 </script>
 
 <nav class="room-bar">
@@ -34,13 +63,13 @@
         <li class="coin-info" title="Money">
             <button on:click={buyCoins}>
                 <span><CoinIcon color={'#FBBF24'}/></span>
-                <span>{coins}</span>
+                <span>{user?.balance}</span>
             </button>
         </li>
         <li class="profile" title="Profile">
             <button on:click={openProfile}>
                 <span><ProfileIcon color={'#CBD5E1'}/></span>
-                <span>{username}</span>
+                <span>{user?.username}</span>
             </button>
         </li>
     </ul>
