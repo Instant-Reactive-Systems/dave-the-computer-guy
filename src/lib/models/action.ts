@@ -1,8 +1,8 @@
 export type ActionType = 'circuit-save' | 'circuit-load' | 'circuit-new' | 'circuit-switch' |
     'undo' | 'redo' | 'sim-start' | 'sim-resume' | 'sim-pause' | 'wire-delete' |
     'component-delete' | 'sim-stop' | 'sim-step' | 'sim-start-step' | 'component-new' |
-    'component-move' | 'wire-new' | 'circuit-export' | 'circuit-export-cancel' |
-    'circuit-tab-remove' | 'undo-empty' | 'redo-empty';
+    'component-move' | 'wire-new' | 'circuit-export' | 'circuit-export-cancel' | 
+    'circuit-tab-remove' | 'undo-empty' | 'redo-empty' | 'component-hovered' | 'pin-hovered';
 
 export type Action = {
     type: ActionType,
@@ -35,6 +35,8 @@ export function actionToString(action?: Action): string {
         case 'component-new': return `Added component to circuit.`;
         case 'component-delete': return `Deleted component of ID #${action.data.id} from circuit.`;
         case 'component-move': return `Moved component to (x: ${action.data.x}, y: ${action.data.y}).`;
+        case 'component-hovered': return `Component with ID #${action.data.componentId} hovered`;
+        case 'pin-hovered': return `${action.data.pinType} pin ${action.data.pinIndex} (${action.data.pinName}) on component with ID #${action.data.componentId} hovered`
         default: {}
     }
 
