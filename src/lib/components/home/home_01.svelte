@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MeshStandardMaterial, BoxBufferGeometry, DoubleSide } from 'three';
+	import { MeshStandardMaterial, BoxBufferGeometry, DoubleSide, Color } from 'three';
 	import {
 		Canvas,
 		DirectionalLight,
@@ -7,7 +7,7 @@
 		HemisphereLight,
 		Mesh,
 		OrbitControls,
-		PerspectiveCamera
+		PerspectiveCamera,
 	} from 'threlte';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
@@ -26,6 +26,20 @@
 	let deskItem: Item;
 
 	let chairItem: Item;
+
+	let deskScale = {x:1, y:1, z:1};
+
+	let pcScale = {x: 1, y:1, z:1};
+
+	let chairScale = {x: 1, y:1, z:1};
+
+	let tvScale = {x: 1, y:1, z:1};
+
+	let doorScale = {x: 1, y:1, z:1};
+
+	let pcItem: Item;
+
+	let tvItem: Item;
 
 	async function openItemPanel(itemType: ItemType) {
 		const house = houseService.getHouseBehaviourSubject().getValue();
@@ -51,6 +65,7 @@
 	}
 
 	function openNavigationModal() {
+		document.body.style.cursor = "default";
 		open(NavigationPanel);
 	}
 
@@ -63,12 +78,18 @@
 					const items = [
 						...house.houseData.chair.all,
 						...house.houseData.desk.all,
-						...house.houseData.bed.all
+						...house.houseData.bed.all,
+						...house.houseData.pc.all,
+						...house.houseData.tv.all
 					];
 					const deskItemId = house.houseData.desk.prefferedItemId;
 					const chairItemId = house.houseData.chair.prefferedItemId;
+					const pcItemId = house.houseData.pc.prefferedItemId;
+					const tvItemId = house.houseData.tv.prefferedItemId;
 					deskItem = items.find((item) => item.id == deskItemId);
 					chairItem = items.find((item) => item.id == chairItemId);
+					pcItem = items.find((item) => item.id == pcItemId);
+					tvItem = items.find((item) => item.id == tvItemId);
 				}
 			})
 		);
@@ -126,6 +147,16 @@
 		<Mesh
 			interactive
 			on:click={openNavigationModal}
+			on:pointerenter={()=> {
+				doorScale = {x:1.01, y:1.01, z:1.01};
+				document.body.style.cursor = "pointer";
+			}}
+
+			on:pointerleave={() => {
+				doorScale = {x:1, y:1, z:1};
+				document.body.style.cursor = "default";
+
+			}}
 			visible={false}
 			position={{ y: 1, x: 3, z: 4.8 }}
 			rotation={{ y: 0 * (Math.PI / 180) }}
@@ -137,6 +168,7 @@
 		/>
 		<GLTF
 			url="models/office/Office_Misc_Door_01.gltf"
+			scale={doorScale}
 			position={{ y: -0.4, x: 3, z: 4.85 }}
 			rotation={{ y: 1 * (Math.PI / 180) }}
 		/>
@@ -147,21 +179,46 @@
 			position={{ y: -0.5, x: 7, z: 1.3 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
 		/>
+		<Mesh
+			interactive
+			on:click={() => openItemPanel('desk')}
+			on:pointerenter={()=> {
+				deskScale = {x:1.01, y:1.01, z:1.01};
+				document.body.style.cursor = "pointer";
+			}}
 
+			on:pointerleave={() => {
+				deskScale = {x:1, y:1, z:1};
+				document.body.style.cursor = "default";
+
+			}}
+			visible={false}
+			position={{ y: 0, x: 4, z: -1.6 }}
+			rotation={{ y: -90 * (Math.PI / 180) }}
+			geometry={new BoxBufferGeometry(3.3, 1.3, 1.4)}
+			material={new MeshStandardMaterial({
+				side: DoubleSide,
+				color: 'white'
+			})}
+		/>
 		<GLTF
 			url={deskItem.url}
-			position={{ y: -0.5, x: 4, z: -1.5 }}
+			scale={deskScale}
+			position={{ y: -0.5, x: 4, z: -1.01 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
 		/>
 
+
 		<GLTF
-			url="models/office/Office_Misc_PC_01.gltf"
-			position={{ y: 0.6, x: 4, z: -1.5 }}
+			url={pcItem.url}
+			scale={pcScale}
+			position={{ y: 0.6, x: 4, z: -1.01 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
 		/>
 
 		<GLTF
 			url={chairItem.url}
+			scale={chairScale}
 			position={{ y: -0.4, x: 3, z: -1.7 }}
 			rotation={{ y: 90 * (Math.PI / 180) }}
 		/>
@@ -169,17 +226,50 @@
 		<Mesh
 			interactive
 			on:click={() => openItemPanel('chair')}
+			on:pointerenter={()=> {
+				chairScale = {x:1.01, y:1.01, z:1.01};
+				document.body.style.cursor = "pointer";
+			}}
+
+			on:pointerleave={() => {
+				chairScale = {x:1, y:1, z:1};
+				document.body.style.cursor = "default";
+
+			}}
 			visible={false}
-			position={{ y: 0, x: 3, z: -1.7  }}
+			position={{ y: 0, x: 3, z: -1.7 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
-			geometry={new BoxBufferGeometry(1.4, 1.5, 0.8)}
+			geometry={new BoxBufferGeometry(1.4, 1.01, 0.8)}
 			material={new MeshStandardMaterial({
 				side: DoubleSide,
 				color: 'white'
 			})}
 		/>
 
-		<GLTF url="models/office/Office_Misc_TV_Stand_02.gltf" position={{ y: 0.7, x: -3, z: -4 }} />
+		<Mesh
+			interactive
+			on:click={() => openItemPanel('tv')}
+			visible={false}
+			on:pointerenter={()=> {
+				tvScale = {x:1.01, y:1.01, z:1.01};
+				document.body.style.cursor = "pointer";
+			}}
+
+			on:pointerleave={() => {
+				tvScale = {x:1, y:1, z:1};
+				document.body.style.cursor = "default";
+
+			}}
+			position={{ y: 1.01, x: -3, z: -4 }}
+			rotation={{ y: -90 * (Math.PI / 180) }}
+			geometry={new BoxBufferGeometry(0.5, 1.3, 2.4)}
+			material={new MeshStandardMaterial({
+				side: DoubleSide,
+				color: 'white'
+			})}
+		/>
+
+		<GLTF url={tvItem.url} scale={tvScale} position={{ y: 0.7, x: -3, z: -4 }} />
 		<GLTF
 			url="models/office/Office_Table_White_3x1_02.gltf"
 			position={{ y: -0.4, x: -2.5, z: -4 }}
@@ -201,11 +291,21 @@
 
 		<Mesh
 			interactive
-			on:click={() => openItemPanel('desk')}
+			on:click={() => openItemPanel('pc')}
+			on:pointerenter={()=> {
+				pcScale = {x:1.01, y:1.01, z:1.01};
+				document.body.style.cursor = "pointer";
+			}}
+
+			on:pointerleave={() => {
+				pcScale = {x:1, y:1, z:1};
+				document.body.style.cursor = "default";
+
+			}}
 			visible={false}
 			position={{ y: 1, x: 4, z: -1.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
-			geometry={new BoxBufferGeometry(1.4, 1.5, 0.8)}
+			geometry={new BoxBufferGeometry(1.4, 1.01, 0.8)}
 			material={new MeshStandardMaterial({
 				side: DoubleSide,
 				color: 'white'
