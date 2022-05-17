@@ -135,11 +135,11 @@
     }
 
     .wardrobe-panel > main {
-        @apply py-8 px-16;
+        @apply px-16;
     }
 
     .item-grid {
-        @apply mx-auto w-1/2 grid grid-cols-3 grid-rows-3 gap-4;
+        @apply mx-auto w-2/3 h-2/3 grid grid-cols-3 grid-rows-3 gap-4;
     }
 
     .item-grid > li {
@@ -147,7 +147,7 @@
     }
 
     .item-grid > li > button {
-        @apply relative;
+        @apply relative aspect-square;
     }
 
     .item-grid > li > button > img {

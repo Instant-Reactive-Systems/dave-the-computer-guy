@@ -40,7 +40,7 @@
 			},
 			{
 				styleWindow: {
-					width: 'auto',
+					width: '60%',
 					overflow: 'hidden'
 				},
 				styleContent: {
