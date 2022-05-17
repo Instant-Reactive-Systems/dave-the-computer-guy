@@ -5,7 +5,7 @@ import type { Circuit, Junction, WiringRenderingEntry } from '$lib/models/circui
 import type { Component } from '$lib/models/component';
 import type { ComponentDefinition } from '$lib/models/component_definition';
 import type { Size } from '$lib/models/size';
-import type { Wire } from '$lib/models/wire';
+import type { ConnectorLink, Wire } from '$lib/models/wire';
 import type { WiringState } from '$lib/models/wiring_state';
 import type { fabric } from 'fabric';
 import type { EditorMode, WireData } from '$lib/models/editor_mode';
@@ -51,10 +51,21 @@ export class Canvas {
         this.renderComponents(circuit, components);
         this.renderWires(wires);
         this.renderJunctions(junctions);
+        this.colorConnectedPins(wires);
     }
 
     public resize(size: Size) {
         this.canvas.setDimensions(size);
+    }
+
+    private colorConnectedPins(wires: Wire[]) {
+        wires.flatMap(wire => wire.links)
+            .filter(link => link.type == 'pin')
+            .forEach(link => {
+                const conn = ((link).value as ConnectorLink).conn;
+                const component: RenderableComponent = this.components.get(conn.componentId).data.ref;
+                component.setPinConnected(conn.pin, true);
+            })
     }
 
     public on(eventName: string, handler: EventHandlerType) {
@@ -201,8 +212,8 @@ export class Canvas {
                 renderingData.y,
                 component
             ).buildFabricObject();
-
             this.canvas.add(fabricComponent);
+            fabricComponent.bringToFront();    
             this.components.set(component.id, fabricComponent);
         }
     }
@@ -211,6 +222,7 @@ export class Canvas {
         for (const wire of wires.values()) {
             const fabricWire = new WireRenderable(wire).buildFabricObject();
             this.canvas.add(fabricWire);
+            fabricWire.sendToBack();    
             this.wires.set(wire.id, fabricWire);
         }
     }

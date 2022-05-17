@@ -23,6 +23,20 @@ export class LedRenderable implements RenderableComponent {
     }
 
 
+    setPinConnected(pinId: number, connected: boolean): void {
+        if (connected) {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId);
+            pin.set("fill", "#3B82F6");
+            pin.set("stroke", "#3B82F6")
+            pin.shadow = new fabric.Shadow({ color: "#3B82F6", blur: 2, })
+        } else {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId)
+            pin.set("fill", "black");
+            pin.set("stroke", "black")
+            pin.shadow = null;
+        }
+    }
+
     updatePin(pinId: number,val: boolean) {
         if(val){
             const pin = this.pins.find(pin => pin.data.value.pin == pinId);

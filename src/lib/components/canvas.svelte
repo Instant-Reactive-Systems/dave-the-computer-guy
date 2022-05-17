@@ -25,9 +25,9 @@
 		type EditorMode,
 		type WireData
 	} from '$lib/models/editor_mode';
-    import Notifier from '$lib/util/notifier';
-    import { getNotificationsContext } from 'svelte-notifications';
-    import { on_keydown } from '$lib/util/key_handling';
+	import Notifier from '$lib/util/notifier';
+	import { getNotificationsContext } from 'svelte-notifications';
+	import { on_keydown } from '$lib/util/key_handling';
 
 	let canvas: Canvas;
 	let canvasElement;
@@ -322,7 +322,7 @@
 
 		const x = (mode.data as WireData).currentWire.endX;
 		const y = (mode.data as WireData).currentWire.endY;
-		const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
+		const hitCircle = new fabric.Circle({ top: y, left: x, fill: null, radius: 0.4 });
 
 		for (const obj of canvas.getObjects()) {
 			if (obj.intersectsWithObject(hitCircle, true)) {
@@ -331,9 +331,15 @@
 						const component = obj.data.ref;
 						for (const pin of component.pins) {
 							let matrix = pin.calcTransformMatrix();
-							let pinX = matrix[4]; // translation in X
-							let pinY = matrix[5];
-							if (Math.abs(pinX - x) < pin.width && Math.abs(pinY - y) < pin.height) {
+							let pinX = matrix[4] - pin.radius; // translation in X
+							let pinY = matrix[5] - pin.radius;
+							const pinCircle = new fabric.Circle({
+								top: pinY,
+								left: pinX,
+								fill: null,
+								radius: pin.radius
+							});
+							if (pinCircle.intersectsWithObject(hitCircle)) {
 								setEditorMode(mode);
 								return pin;
 							}
@@ -481,7 +487,7 @@
 		const link = $circuitStore.metadata.rendering.wires
 			.flatMap((wire) => wire.links)
 			.find((link) => {
-				return link.type == 'pin' && _.isEqual((link.value as ConnectorLink).conn,connector);
+				return link.type == 'pin' && _.isEqual((link.value as ConnectorLink).conn, connector);
 			});
 		if (link != undefined) {
 			notifier.warning('Can not drag wire from or to pin that is already connected');
@@ -650,25 +656,22 @@
 		console.log('Mounted canvas');
 		prepareCanvas();
 
-        // Ugly hack because fabric is braindead
-        const fabricCanvas = document.getElementsByClassName('canvas-container')[0] as HTMLElement;
-        const scopedKeydown = on_keydown(fabricCanvas, handleKeydown);
+		// Ugly hack because fabric is braindead
+		const fabricCanvas = document.getElementsByClassName('canvas-container')[0] as HTMLElement;
+		const scopedKeydown = on_keydown(fabricCanvas, handleKeydown);
 
-        return () => {
-            scopedKeydown.destroy();
-        };
+		return () => {
+			scopedKeydown.destroy();
+		};
 	});
 </script>
 
-<canvas bind:this={canvasElement}/>
+<canvas bind:this={canvasElement} />
 
-<svelte:window 
-    on:resize={resizeCanvas}
-/>
+<svelte:window on:resize={resizeCanvas} />
 
 <style>
-    main {
-        @apply contents;
-    }
+	main {
+		@apply contents;
+	}
 </style>
-

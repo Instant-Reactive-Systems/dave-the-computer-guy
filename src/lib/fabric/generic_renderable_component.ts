@@ -21,6 +21,20 @@ export class GenericComponentRenderable implements RenderableComponent {
         this.pins = [];
     }
 
+    setPinConnected(pinId: number, connected: boolean): void {
+        if (connected) {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId);
+            pin.set("fill", "#3B82F6");
+            pin.set("stroke", "#3B82F6")
+            pin.shadow = new fabric.Shadow({ color: "#3B82F6", blur: 2, })
+        } else {
+            const pin = this.pins.find(pin => pin.data.value.pin == pinId)
+            pin.set("fill", "black");
+            pin.set("stroke", "black")
+            pin.shadow = null;
+        }
+    }
+
     onClick(): UserEvent {
         return null;
     }
@@ -125,6 +139,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "location": "right"
                 }
             });
+
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: componentWidth,
                 top: (pinOffset - lineText.height),
@@ -165,6 +180,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "location": "bottom"
                 }
             });
+
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
                 top: componentHeight,
@@ -203,6 +219,7 @@ export class GenericComponentRenderable implements RenderableComponent {
                     "location": "bottom"
                 }
             });
+
             let pinGroup = new fabric.Group([line, lineText, pinConnectionPoint], {
                 left: (pinOffset - lineText.height),
                 top: -(line.height),
