@@ -7,7 +7,7 @@
 
     // Types
     type ClickedItemState = {
-        type: 'bought' | 'selected' | 'already-selected',
+        type: 'bought' | 'selected' | 'already-selected' | 'broke',
         itemId: number,
     };
 
@@ -30,7 +30,11 @@
         if (!item.owned) {
             const bought = await houseService.buyItem(item);
             if (!bought) {
-                showInsufficientFundsReport();
+                cancelClickArtifact();
+                clickedItemState = {
+                    type: 'broke',
+                    itemId: item.id,
+                };
                 return;
             }
             items[index].owned = true;
@@ -59,10 +63,6 @@
                 };
             });
         }
-    }
-
-    function showInsufficientFundsReport() {
-        console.error('User does not have enough money to buy the item.');
     }
 
     function cancelClickArtifact() {
@@ -113,7 +113,11 @@
                                     <div class="item-overlay-bg"/>
                                     <div class="item-overlay-content">
                                         {#if itemClicked}
-                                            <span>Bought!</span>
+                                            {#if clickedItemState.type == 'bought'}
+                                                <span>Bought!</span>
+                                            {:else if clickedItemState.type == 'broke'}
+                                                <span>Not enough money!</span>
+                                            {/if}
                                         {:else}
                                             <span class="mr-1"><CoinIcon color={'#FBBF24'}/></span>
                                             <span>{item.cost}</span>
