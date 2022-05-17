@@ -212,7 +212,7 @@ export class MockHouseService implements HouseService {
 
     async buyItem(item: Item): Promise<boolean> {
         const enoughFunds = await this.userService.takeMoney(item.cost);
-        if(!enoughFunds){
+        if (!enoughFunds) {
             return false;
         }
         const house = this.houseBehaviourSubject.getValue();
