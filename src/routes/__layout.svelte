@@ -5,6 +5,8 @@
 		CIRCUIT_BUILDER_SERVICE,
 		CIRCUIT_LOADER_SERVICE,
 		COMPONENT_DEFINITION_LOADER_SERVICE,
+		HOUSE_SERVICE,
+		ITEM_SERVICE,
 		QUEST_SERVICE,
 		SIMULATOR_SERVICE,
 		USER_SERVICE
@@ -17,26 +19,33 @@
 	import { WorkerSimulatorService } from '$lib/services/impl/worker_simulator_service';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import { WorkerCircuitBuilderService } from '$lib/services/impl/worker_circuit_builder_service';
-    import Modal from 'svelte-simple-modal';
-	import Notifications from 'svelte-notifications'; 
+	import Modal from 'svelte-simple-modal';
+	import Notifications from 'svelte-notifications';
 	import type { QuestService } from '$lib/services/quest_service';
 	import { MockQuestsService } from '$lib/services/impl/mock_quest_service';
-	import type { UserService } from '$lib/services/auth_service';
 	import { MockUserService } from '$lib/services/impl/mock_user_service';
+	import type { HouseService } from '$lib/services/house_service';
+	import { MockHouseService } from '$lib/services/impl/mock_house_service';
+	import type { UserService } from '$lib/services/user_service';
 
 	let userService: UserService = new MockUserService();
 	let circuitLoaderService: CircuitLoaderService = new MockCircuitLoaderService();
 	let componentDefinitionLoaderService: ComponentDefinitionLoaderService =
 		new MockComponentDefinitonLoaderService();
-	let simulatorService: SimulatorService = new WorkerSimulatorService(componentDefinitionLoaderService);
+	let simulatorService: SimulatorService = new WorkerSimulatorService(
+		componentDefinitionLoaderService
+	);
 	let circuitBuilderService: CircuitBuilderService = new WorkerCircuitBuilderService();
 	let questsService: QuestService = new MockQuestsService(userService);
+	let houseService: HouseService = new MockHouseService(userService);
+
 	setContext(USER_SERVICE, userService);
 	setContext(CIRCUIT_LOADER_SERVICE, circuitLoaderService);
 	setContext(COMPONENT_DEFINITION_LOADER_SERVICE, componentDefinitionLoaderService);
 	setContext(SIMULATOR_SERVICE, simulatorService);
 	setContext(CIRCUIT_BUILDER_SERVICE, circuitBuilderService);
 	setContext(QUEST_SERVICE, questsService);
+	setContext(HOUSE_SERVICE, houseService);
 
 	const services = [
 		userService,
@@ -44,8 +53,10 @@
 		componentDefinitionLoaderService,
 		simulatorService,
 		circuitBuilderService,
-		questsService
+		questsService,
+		houseService,
 	];
+
 	onMount(() => {
 		console.log('App root initted');
 		for (const service of services) {
@@ -62,7 +73,7 @@
 </script>
 
 <Notifications>
-    <Modal>
-				    <slot />
-    </Modal>
+	<Modal>
+		<slot />
+	</Modal>
 </Notifications>

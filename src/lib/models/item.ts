@@ -1,4 +1,12 @@
+export type ItemType = 'bed' | 'cabinet' | 'chair' | 'couch' | 'desk' |
+ 'extra-large-desk' | 'large-desk' | 'pc' | 'trashcan' | 'tv' | 'wall-decoration';
+
 export type Item = {
-    componentDefinitionId: number;
-    amount: number;
+    id: number;
+    name: string;
+    type: ItemType;
+    url: string;
+    imageUrl: string;
+    owned: boolean;
+    cost: number;
 }
