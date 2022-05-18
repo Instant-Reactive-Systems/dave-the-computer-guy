@@ -54,11 +54,11 @@
 		type WireData
 	} from '$lib/models/editor_mode';
 	import Notifier from '$lib/util/notifier';
-    import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
-    import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
-    import TutorialPanel from '$lib/components/overlays/tutorial_panel.svelte';
+	import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
+	import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
+	import TutorialPanel from '$lib/components/overlays/tutorial_panel.svelte';
 
-    // Types
+	// Types
 	type CircuitTab = {
 		name: string;
 		circuit: Circuit;
@@ -66,13 +66,15 @@
 		redoStack: Command[];
 	};
 
-    // Services
+	// Services
 	const simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
 	const circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
-	const defLoader: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
+	const defLoader: ComponentDefinitionLoaderService = getContext(
+		COMPONENT_DEFINITION_LOADER_SERVICE
+	);
 	const circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 
-    // Variables
+	// Variables
 	const { open, close } = getContext('simple-modal');
 	const notifier: Notifier = new Notifier(getNotificationsContext());
 	let circuitTabs: CircuitTab[] = [];
@@ -81,14 +83,13 @@
 	let isInSimulation = false;
 	let isExporting = false;
 
-
-    // Logic
+	// Logic
 	function openSaveCircuitModal() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot save circuit while running the simulation.');
-            return;
-        }
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot save circuit while running the simulation.');
+			return;
+		}
 
 		open(SaveCircuit, {
 			onSend: (name: string, description: string) => {
@@ -101,23 +102,23 @@
 					circuitTabs = circuitTabs;
 					currentCircuitTab = currentCircuitTab;
 				});
-                actionStore.set({
-                    type: 'circuit-save',
-                    data: {
-                        name,
-                    },
-                });
+				actionStore.set({
+					type: 'circuit-save',
+					data: {
+						name
+					}
+				});
 				close();
 			}
 		});
 	}
 
 	function openLoadCircuitModal() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot load circuit while running the simulation.');
-            return;
-        }
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot load circuit while running the simulation.');
+			return;
+		}
 
 		open(LoadCircuit, {
 			onLoad: (circuit: Circuit) => {
@@ -139,73 +140,81 @@
 				};
 				circuitTabs = [...circuitTabs, newCircuitTab];
 				currentCircuitTab = newCircuitTab;
-                actionStore.set({
-                    type: 'circuit-load',
-                    data: {
-                        name: circuit.name,
-                    },
-                });
+				actionStore.set({
+					type: 'circuit-load',
+					data: {
+						name: circuit.name
+					}
+				});
 				close();
 			}
 		});
 	}
 
-    function openNavigationModal() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot navigate through rooms while running the simulation.');
-            return;
-        }
+	function openNavigationModal() {
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot navigate through rooms while running the simulation.');
+			return;
+		}
 
 		open(NavigationPanel);
 	}
-    
-    function openQuestsModal() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot open quests while running the simulation.');
-            return;
-        }
 
-		open(QuestsPanel, {}, {
-			styleWindow: {
-				width: "auto",
-				overflow: "hidden"
-			},
-		});
+	function openQuestsModal() {
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot open quests while running the simulation.');
+			return;
+		}
+
+		open(
+			QuestsPanel,
+			{},
+			{
+				styleWindow: {
+					width: 'auto',
+					overflow: 'hidden'
+				}
+			}
+		);
 	}
 
-    function openTutorialModal() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot open tutorial while running the simulation.');
-            return;
-        }
+	function openTutorialModal() {
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot open tutorial while running the simulation.');
+			return;
+		}
 
-		open(TutorialPanel, {}, {
-			styleWindow: {
-				width: "auto",
-				overflow: "hidden"
-			},
-		});
+		open(
+			TutorialPanel,
+			{},
+			{
+				styleWindow: {
+					width: 'auto',
+					overflow: 'hidden'
+				}
+			}
+		);
 	}
 
 	function startExportCircuit() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot export circuit while running the simulation.');
-            return;
-        }
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot export circuit while running the simulation.');
+			return;
+		}
 
 		isExporting = true;
 	}
 
 	function createNewCircuit() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot create a circuit while running the simulation.');
-            return;
-        }
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot create a circuit while running the simulation.');
+			return;
+		}
 
 		let newCircuitTab = {
 			name: Math.random().toString(36).slice(-5),
@@ -215,47 +224,47 @@
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
-        actionStore.set({
-            type: 'circuit-new',
-            data: null,
-        });
+		actionStore.set({
+			type: 'circuit-new',
+			data: null
+		});
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot switch circuit tabs while running the simulation.');
-            return;
-        }
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot switch circuit tabs while running the simulation.');
+			return;
+		}
 
 		currentCircuitTab = tab;
-        actionStore.set({
-            type: 'circuit-switch',
-            data: {
-                name: tab.name,
-            },
-        });
+		actionStore.set({
+			type: 'circuit-switch',
+			data: {
+				name: tab.name
+			}
+		});
 	}
 
 	function undo() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot undo while running the simulation.');
-            return;
-        }
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot undo while running the simulation.');
+			return;
+		}
 
 		const commandToUndo: Command = currentCircuitTab.undoStack.pop();
 		if (commandToUndo != undefined) {
 			commandToUndo.undo();
-            actionStore.set({
-                type: 'undo',
-                data: null,
-            });
+			actionStore.set({
+				type: 'undo',
+				data: null
+			});
 		} else {
-            actionStore.set({
-                type: 'undo-empty',
-                data: null,
-            });
+			actionStore.set({
+				type: 'undo-empty',
+				data: null
+			});
 			return;
 		}
 		if (commandToUndo.redoable) {
@@ -264,24 +273,24 @@
 	}
 
 	function redo() {
-        // Prevent any actions while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot redo while running the simulation.');
-            return;
-        }
+		// Prevent any actions while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot redo while running the simulation.');
+			return;
+		}
 
 		const commandToRedo: Command = currentCircuitTab.redoStack.pop();
 		if (commandToRedo != undefined) {
 			commandToRedo.do();
-            actionStore.set({
-                type: 'redo',
-                data: null,
-            });
+			actionStore.set({
+				type: 'redo',
+				data: null
+			});
 		} else {
-            actionStore.set({
-                type: 'redo-empty',
-                data: null,
-            });
+			actionStore.set({
+				type: 'redo-empty',
+				data: null
+			});
 			return;
 		}
 		currentCircuitTab.undoStack.push(commandToRedo);
@@ -297,23 +306,23 @@
 						.setCircuit(circuit)
 						.then(() => simulator.start())
 						.then(() => updateCircuitTab(circuit))
-						.then(() => setEditorMode(defaultRunningMode()))
+						.then(() => setEditorMode(defaultRunningMode()));
 
-                    actionStore.set({
-                        type: 'sim-start',
-                        data: null,
-                    });
+					actionStore.set({
+						type: 'sim-start',
+						data: null
+					});
 
 					break;
 				case 'paused': {
 					simulator.start().then(() => {
-						setEditorMode(defaultRunningMode())
+						setEditorMode(defaultRunningMode());
 					});
-                    
-                    actionStore.set({
-                        type: 'sim-resume',
-                        data: null,
-                    });
+
+					actionStore.set({
+						type: 'sim-resume',
+						data: null
+					});
 					break;
 				}
 				default: {
@@ -326,13 +335,12 @@
 	function pauseSimulation() {
 		switch ($editorModeStore.type) {
 			case 'running': {
-				simulator.pause()
-					.then(() => setEditorMode(defaultPausedMode()))
-                    
-                actionStore.set({
-                    type: 'sim-pause',
-                    data: null,
-                });
+				simulator.pause().then(() => setEditorMode(defaultPausedMode()));
+
+				actionStore.set({
+					type: 'sim-pause',
+					data: null
+				});
 				break;
 			}
 			case 'paused': {
@@ -349,32 +357,32 @@
 		const preCommandCircuit = $circuitStore;
 		const wireId = e.detail.wireId;
 
+
 		const deleteWireCommand: Command = {
 			name: 'DeleteWireCommand',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuitBuilder
-					.deleteWire(circuit, wireId)
-					.then((circuit) => updateCircuitTab(circuit));
-;
+				circuitBuilder.deleteWire(circuit, wireId).then((circuit) => updateCircuitTab(circuit));
 			},
 			undo: () => {
-				updateCircuitTab(preCommandCircuit);
+					updateCircuitTab(preCommandCircuit);
 			},
 			redoable: false
 		};
 		deleteWireCommand.do();
 		addComandToUndoStack(deleteWireCommand);
-        
-        actionStore.set({
-            type: 'wire-delete',
-            data: null,
-        });
+
+		actionStore.set({
+			type: 'wire-delete',
+			data: null
+		});
 	}
 
 	function deleteComponent(e) {
 		const componentId = e.detail.componentId;
 		const preCommandCircuit = $circuitStore;
+
+		
 		const deleteComponentCommmand: Command = {
 			name: 'DeleteComponentCommand',
 			do: () => {
@@ -384,33 +392,34 @@
 					.then((circuit) => updateCircuitTab(circuit));
 			},
 			undo: () => {
-				updateCircuitTab(preCommandCircuit);
+				() => updateCircuitTab(preCommandCircuit)
 			},
 			redoable: false
 		};
 		deleteComponentCommmand.do();
 		addComandToUndoStack(deleteComponentCommmand);
-        
-        actionStore.set({
-            type: 'component-delete',
-            data: {
-                id: componentId,
-            },
-        });
+
+		actionStore.set({
+			type: 'component-delete',
+			data: {
+				id: componentId
+			}
+		});
 	}
 
 	function stopSimulation() {
 		switch ($editorModeStore.type) {
 			case 'paused':
 			case 'running': {
-				simulator.stop()
+				simulator
+					.stop()
 					.then(() => setEditorMode(defaultEditorMode()))
-					.then(() => setCircuitStateStore(null))
+					.then(() => setCircuitStateStore(null));
 
-                actionStore.set({
-                    type: 'sim-stop',
-                    data: null,
-                });
+				actionStore.set({
+					type: 'sim-stop',
+					data: null
+				});
 
 				break;
 			}
@@ -420,7 +429,7 @@
 		}
 	}
 
-	function setCircuitStateStore(state:Map<number,any>): Promise<void>{
+	function setCircuitStateStore(state: Map<number, any>): Promise<void> {
 		circuitStateStore.set(state);
 		return tick();
 	}
@@ -430,10 +439,10 @@
 			case 'paused': {
 				simulator.step();
 
-                actionStore.set({
-                    type: 'sim-step',
-                    data: null,
-                });
+				actionStore.set({
+					type: 'sim-step',
+					data: null
+				});
 				break;
 			}
 			case 'running': {
@@ -448,10 +457,10 @@
 						.then(() => setEditorMode(defaultPausedMode()));
 				});
 
-                actionStore.set({
-                    type: 'sim-start-step',
-                    data: null,
-                });
+				actionStore.set({
+					type: 'sim-start-step',
+					data: null
+				});
 			}
 		}
 	}
@@ -470,19 +479,19 @@
 			redo();
 			e.preventDefault();
 		}
-        if (e.altKey == true && e.key.toLowerCase() == 'backspace') {
-            // currentIndex should always be defined (i.e. not -1)
-            // If it isn't, currentCircuitTab is not being updated somewhere
-            const currentIndex = circuitTabs.findIndex((x) => x == currentCircuitTab);
-            removeCircuitTab(currentIndex);
-            e.preventDefault();
-        }
-        if (e.ctrlKey == true && e.key.toLowerCase() == 's') {
-            openSaveCircuitModal();
+		if (e.altKey == true && e.key.toLowerCase() == 'backspace') {
+			// currentIndex should always be defined (i.e. not -1)
+			// If it isn't, currentCircuitTab is not being updated somewhere
+			const currentIndex = circuitTabs.findIndex((x) => x == currentCircuitTab);
+			removeCircuitTab(currentIndex);
 			e.preventDefault();
 		}
-        if (e.ctrlKey == true && e.key.toLowerCase() == 'o') {
-            openLoadCircuitModal();
+		if (e.ctrlKey == true && e.key.toLowerCase() == 's') {
+			openSaveCircuitModal();
+			e.preventDefault();
+		}
+		if (e.ctrlKey == true && e.key.toLowerCase() == 'o') {
+			openLoadCircuitModal();
 			e.preventDefault();
 		}
 	}
@@ -492,6 +501,7 @@
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
 		const preCommandCircuit = $circuitStore;
+		const preCommandMode = clone($editorModeStore);
 		const addNewComponentCommand: Command = {
 			name: 'AddNewComponent',
 			do: () => {
@@ -501,21 +511,22 @@
 					.then((circuit) => updateCircuitTab(circuit));
 			},
 			undo: () => {
-				updateCircuitTab(preCommandCircuit);
+				setEditorMode(preCommandMode).then(() => updateCircuitTab(preCommandCircuit));
 			},
 			redoable: false
 		};
 		addNewComponentCommand.do();
 		addComandToUndoStack(addNewComponentCommand);
-        
-        actionStore.set({
-            type: 'component-new',
-            data: null,
-        });
+
+		actionStore.set({
+			type: 'component-new',
+			data: null
+		});
 	}
 
 	function moveComponent(event): void {
 		const preCommandCircuit = $circuitStore;
+		const preCommandMode = clone($editorModeStore);
 		const x = event.detail.x;
 		const y = event.detail.y;
 		const id = event.detail.componentId;
@@ -523,12 +534,12 @@
 			name: 'MoveComponent',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
-				circuitBuilder
-					.moveComponent(circuit, id, x, y)
-					.then((circ) => updateCircuitTab(circ));
+				circuitBuilder.moveComponent(circuit, id, x, y).then((circ) => updateCircuitTab(circ));
 			},
 			undo: () => {
-				updateCircuitTab(preCommandCircuit);
+				setEditorMode(preCommandMode).then(() => {
+					updateCircuitTab(preCommandCircuit);
+				});
 			},
 			redoable: true
 		};
@@ -536,13 +547,16 @@
 		moveCommand.do();
 		addComandToUndoStack(moveCommand);
 
-        actionStore.set({
-            type: 'component-move',
-            data: { x, y },
-        });
+		actionStore.set({
+			type: 'component-move',
+			data: { x, y }
+		});
 	}
 
 	function addComandToUndoStack(command: Command) {
+		if (currentCircuitTab.undoStack.length == 30) {
+			currentCircuitTab.undoStack.shift();
+		}
 		currentCircuitTab.undoStack.push(command);
 	}
 
@@ -551,7 +565,7 @@
 		const preCommandCircuit = $circuitStore;
 		const wire: Wire = e.detail.wire;
 		const junction: Junction[] = e.detail.junction;
-
+		const preCommandMode = clone($editorModeStore);
 		const addNewWireCommand: Command = {
 			name: 'Add new wire',
 			do: () => {
@@ -562,28 +576,22 @@
 						(mode.data as WireData).lastX = wire.endX;
 						(mode.data as WireData).lastY = wire.endY;
 					}
-					setEditorMode(mode)
-						.then(() => updateCircuitTab(circ))
+					setEditorMode(mode).then(() => updateCircuitTab(circ));
 				});
 			},
 			undo: () => {
 				const mode = clone(get(editorModeStore));
-				if (mode.type == 'wire') {
-					(mode.data as WireData).lastX = wire.startX;
-					(mode.data as WireData).lastY = wire.startY;
-				}
-				setEditorMode(mode)
-					.then(() => updateCircuitTab(preCommandCircuit))
+				setEditorMode(preCommandMode).then(() => updateCircuitTab(preCommandCircuit));
 			},
 			redoable: false
 		};
 		addNewWireCommand.do();
 		addComandToUndoStack(addNewWireCommand);
-        
-        actionStore.set({
-            type: 'wire-new',
-            data: null,
-        });
+
+		actionStore.set({
+			type: 'wire-new',
+			data: null
+		});
 	}
 
 	function processUserEvent(e) {
@@ -605,7 +613,7 @@
 		}
 	}
 
-	function setEditorMode(mode: EditorMode): Promise<void>{
+	function setEditorMode(mode: EditorMode): Promise<void> {
 		editorModeStore.set(mode);
 		return tick();
 	}
@@ -614,22 +622,22 @@
 		console.log('Exported: ', event.detail.definition);
 		isExporting = false;
 		defLoader.insertDefinition(event.detail.definition, true);
-        
-        actionStore.set({
-            type: 'circuit-export',
-            data: {
-                name: event.detail.definition.name,
-            },
-        });
+
+		actionStore.set({
+			type: 'circuit-export',
+			data: {
+				name: event.detail.definition.name
+			}
+		});
 	}
 
 	function cancelExport() {
 		isExporting = false;
-        
-        actionStore.set({
-            type: 'circuit-export-cancel',
-            data: null,
-        });
+
+		actionStore.set({
+			type: 'circuit-export-cancel',
+			data: null
+		});
 	}
 
 	function updateCircuitTab(circuit: Circuit): Promise<void> {
@@ -639,35 +647,35 @@
 		return tick();
 	}
 
-    function removeCircuitTab(index: number): Promise<void> {
-        // Do not remove circuit tabs while in simulation
-        if (isInSimulation) {
-            notifier.warning('Cannot remove circuit tab while running the simulation.');
-            return tick();
-        }
+	function removeCircuitTab(index: number): Promise<void> {
+		// Do not remove circuit tabs while in simulation
+		if (isInSimulation) {
+			notifier.warning('Cannot remove circuit tab while running the simulation.');
+			return tick();
+		}
 
-        const deleted = circuitTabs.splice(index, 1)[0];
-        if (circuitTabs.length == 0) {
-            createNewCircuit(); // Updates circuitTabs inside, so return early
-            return tick();
-        }
+		const deleted = circuitTabs.splice(index, 1)[0];
+		if (circuitTabs.length == 0) {
+			createNewCircuit(); // Updates circuitTabs inside, so return early
+			return tick();
+		}
 
-        // Make deleting tabs switch to a different tab when necessary intuitively
-        if (deleted == currentCircuitTab) {
-            if (index != 0) currentCircuitTab = circuitTabs[index - 1];
-            else currentCircuitTab = circuitTabs[index];
-        }
-        circuitTabs = circuitTabs;
-        
-        actionStore.set({
-            type: 'circuit-tab-remove',
-            data: {
-                name: deleted.name,
-            },
-        });
+		// Make deleting tabs switch to a different tab when necessary intuitively
+		if (deleted == currentCircuitTab) {
+			if (index != 0) currentCircuitTab = circuitTabs[index - 1];
+			else currentCircuitTab = circuitTabs[index];
+		}
+		circuitTabs = circuitTabs;
 
-        return tick();
-    }
+		actionStore.set({
+			type: 'circuit-tab-remove',
+			data: {
+				name: deleted.name
+			}
+		});
+
+		return tick();
+	}
 
 	$: {
 		const circuit = currentCircuitTab?.circuit;
@@ -688,7 +696,7 @@
 		}
 	}
 
-    // Component lifetime
+	// Component lifetime
 	onMount(() => {
 		createNewCircuit();
 		serviceSubscriptions.push(
@@ -700,11 +708,9 @@
 
 	onDestroy(() => {
 		serviceSubscriptions.forEach((sub) => sub.unsubscribe());
-        close();
+		close();
 	});
 </script>
-
-
 
 <nav id="toolbar" class="shadow-md inline-flex w-full">
 	<ul class="app-tab-menu">
@@ -772,7 +778,7 @@
 		</li>
 	</ul>
 	<ul class="game-tools">
-        <li>
+		<li>
 			<button on:click={() => openNavigationModal()} title="Navigate rooms">
 				<NavigationIcon />
 			</button>
@@ -794,20 +800,20 @@
 	<div class="col-span-9">
 		<div class="h-full flex flex-col">
 			<div class="canvas-view">
-                <div id="canvas-wrapper">
-                    <Canvas
-					    on:componentMove={moveComponent}
-					    on:addNewComponent={addNewComponent}
-					    on:addNewWire={addNewWire}
-					    on:userEventGenerated={processUserEvent}
-					    on:deleteWire={deleteWire}
-					    on:deleteComponent={deleteComponent}
-				    />
-                </div>
-                <div class="status-bar">
-                    <span>Status</span>
-                    <span class="status scroll-shadows-x">{actionToString($actionStore)}</span>
-                </div>
+				<div id="canvas-wrapper">
+					<Canvas
+						on:componentMove={moveComponent}
+						on:addNewComponent={addNewComponent}
+						on:addNewWire={addNewWire}
+						on:userEventGenerated={processUserEvent}
+						on:deleteWire={deleteWire}
+						on:deleteComponent={deleteComponent}
+					/>
+				</div>
+				<div class="status-bar">
+					<span>Status</span>
+					<span class="status scroll-shadows-x">{actionToString($actionStore)}</span>
+				</div>
 			</div>
 			<div class="bottom-bar">
 				<div
@@ -827,9 +833,9 @@
 							<li class:selected={tab.name == currentCircuitTab.name}>
 								<button on:click={() => switchCircuitTab(tab)}>
 									<span>{tab.name}</span>
-                                    <button on:click|stopPropagation={() => removeCircuitTab(i)}>
-                                        <CloseIcon/>
-                                    </button>
+									<button on:click|stopPropagation={() => removeCircuitTab(i)}>
+										<CloseIcon />
+									</button>
 								</button>
 							</li>
 						{/each}
@@ -931,9 +937,9 @@
 		@apply border-t-blue-400 !important;
 	}
 
-    .selected > button > button {
-        @apply visible !important;
-    }
+	.selected > button > button {
+		@apply visible !important;
+	}
 
 	/*
     Editor mode styles
@@ -988,14 +994,14 @@
 	.circuit-tabs > ul > li > button {
 		@apply py-2 pl-10 pr-2 inline-flex space-x-2 select-none;
 	}
-    
+
 	.circuit-tabs > ul > li > button:hover > button {
 		@apply visible;
 	}
 
-    .circuit-tabs > ul > li > button > button {
-        @apply invisible rounded-md hover:bg-slate-300 hover:opacity-50;
-    }
+	.circuit-tabs > ul > li > button > button {
+		@apply invisible rounded-md hover:bg-slate-300 hover:opacity-50;
+	}
 
 	/*
     Aside
@@ -1018,30 +1024,30 @@
 		min-height: var(--hgt);
 	}
 
-    /*
+	/*
     Canvas view
     */
 	.canvas-view {
 		@apply grow grid-cols-1 relative;
 	}
 
-    #canvas-wrapper {
-        @apply w-full h-full col-start-1 row-start-1;
-    }
+	#canvas-wrapper {
+		@apply w-full h-full col-start-1 row-start-1;
+	}
 
-    .status-bar {
-        @apply absolute right-0 bottom-0 col-start-1 row-start-1 inline-flex;
-    }
+	.status-bar {
+		@apply absolute right-0 bottom-0 col-start-1 row-start-1 inline-flex;
+	}
 
-    .status-bar > * {
-        @apply bg-white;
-    }
+	.status-bar > * {
+		@apply bg-white;
+	}
 
-    .status-bar > span:first-child {
-        @apply py-1 pl-3 pr-2 rounded-l-full border-l border-t border-slate-300 font-bold uppercase;
-    }
+	.status-bar > span:first-child {
+		@apply py-1 pl-3 pr-2 rounded-l-full border-l border-t border-slate-300 font-bold uppercase;
+	}
 
-    .status-bar > .status {
-        @apply overflow-x-auto whitespace-nowrap max-w-[24rem] py-1 px-2 border-l border-t border-slate-300 cursor-text;
-    }
+	.status-bar > .status {
+		@apply overflow-x-auto whitespace-nowrap max-w-[24rem] py-1 px-2 border-l border-t border-slate-300 cursor-text;
+	}
 </style>
