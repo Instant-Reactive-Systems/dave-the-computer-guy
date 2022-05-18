@@ -14,11 +14,11 @@ export class JunctionRenderable {
 
     buildFabricObject(): fabric.Object {
         const obj = new fabric.Circle({
-			radius: 4,
+			radius: 3,
 			selectable: false,
 			fill: 'black',
-			top: this.junction.y - 4,
-			left: this.junction.x - 4,
+			top: this.junction.y - 3,
+			left: this.junction.x - 3,
 			data: {
 				ref: this,
 				type: 'junction'

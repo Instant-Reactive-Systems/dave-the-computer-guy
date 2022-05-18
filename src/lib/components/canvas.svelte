@@ -352,7 +352,7 @@
 
 		const x = (mode.data as WireData).currentWire.endX;
 		const y = (mode.data as WireData).currentWire.endY;
-		const hitCircle = new fabric.Circle({ top: y - 1, left: x - 1, fill: null, radius: 1 });
+		const hitCircle = new fabric.Circle({ top: y, left: x, fill: null, radius: 0.4 });
 
 		for (const obj of canvas.getObjects()) {
 			if (obj.intersectsWithObject(hitCircle, true)) {
@@ -361,9 +361,15 @@
 						const component = obj.data.ref;
 						for (const pin of component.pins) {
 							let matrix = pin.calcTransformMatrix();
-							let pinX = matrix[4]; // translation in X
-							let pinY = matrix[5];
-							if (Math.abs(pinX - x) < pin.width && Math.abs(pinY - y) < pin.height) {
+							let pinX = matrix[4] - pin.radius; // translation in X
+							let pinY = matrix[5] - pin.radius;
+							const pinCircle = new fabric.Circle({
+								top: pinY,
+								left: pinX,
+								fill: null,
+								radius: pin.radius
+							});
+							if (pinCircle.intersectsWithObject(hitCircle)) {
 								setEditorMode(mode);
 								return pin;
 							}

@@ -30,6 +30,7 @@ export class WireRenderable {
         return this.fabricObject;
     }
 
+
     update(val: boolean) {
         if (val) {
             this.fabricObject.set("stroke", "green");

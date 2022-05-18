@@ -51,7 +51,7 @@ export function createPinObject(name: string, pin: number, x: number, y: number,
             "component": component
         }
     });
-
+    
     normalizeLook(fabricPin);
     return fabricPin;
 }
