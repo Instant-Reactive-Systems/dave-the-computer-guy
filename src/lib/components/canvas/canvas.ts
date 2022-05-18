@@ -81,6 +81,7 @@ export class Canvas {
                     fabricWire.data.isTemp = true;
                     this.tempWire = fabricWire;
                     this.canvas.add(this.tempWire);
+                    fabricWire.sendToBack()
                 }
                 if ((mode.data as WireData).currentJunction != null) {
                     if (this.tempJunction != null) this.canvas.remove(this.tempJunction!);
