@@ -22,7 +22,7 @@
 	import type { Subscription } from 'rxjs';
 	import { circuitStateStore } from '$lib/stores/circuit_state';
 	import type { UserEvent } from '$lib/models/user_event';
-	import { type Action, actionToString } from '$lib/models/action';
+	import { actionToString } from '$lib/models/action';
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { actionStore } from '$lib/stores/action_store';
@@ -58,9 +58,7 @@
     import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
     import TutorialPanel from '$lib/components/overlays/tutorial_panel.svelte';
 
-	const { open, close } = getContext('simple-modal');
-	const notifier: Notifier = new Notifier(getNotificationsContext());
-
+    // Types
 	type CircuitTab = {
 		name: string;
 		circuit: Circuit;
@@ -68,16 +66,23 @@
 		redoStack: Command[];
 	};
 
+    // Services
+	const simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
+	const circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
+	const defLoader: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
+	const circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
+
+    // Variables
+	const { open, close } = getContext('simple-modal');
+	const notifier: Notifier = new Notifier(getNotificationsContext());
 	let circuitTabs: CircuitTab[] = [];
 	let currentCircuitTab: CircuitTab;
-	let simulator: SimulatorService = getContext(SIMULATOR_SERVICE);
-	let circuitLoader: CircuitLoaderService = getContext(CIRCUIT_LOADER_SERVICE);
-	let defLoader: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
-	let circuitBuilder: CircuitBuilderService = getContext(CIRCUIT_BUILDER_SERVICE);
 	let serviceSubscriptions: Subscription[] = [];
 	let isInSimulation = false;
 	let isExporting = false;
 
+
+    // Logic
 	function openSaveCircuitModal() {
         // Prevent any actions while in simulation
         if (isInSimulation) {
@@ -683,6 +688,7 @@
 		}
 	}
 
+    // Component lifetime
 	onMount(() => {
 		createNewCircuit();
 		serviceSubscriptions.push(
