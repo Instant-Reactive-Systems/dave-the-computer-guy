@@ -3,9 +3,9 @@
     import ParamEditor from '$lib/components/overlays/simulator/param_editor.svelte';
     import { componentStore } from '$lib/stores/component_store';
     import { circuitStore } from '$lib/stores/circuit';
-    import type { ComponentDefinition } from '$lib/models/component_definition';
+    import { actionStore } from '$lib/stores/action_store';
     import type { Component } from '$lib/models/component';
-    import type { Param, Params } from '$lib/models/circuit';
+    import type { Params } from '$lib/models/circuit';
 
     // Variables
     const { open, close } = getContext('simple-modal');
@@ -24,6 +24,14 @@
                 params[param[0]] = param[1];
                 $circuitStore.params[key] = params;
                 $circuitStore = $circuitStore;
+                actionStore.set({
+                    type: 'component-param-changed',
+                    data: {
+                        name: param[0],
+                        value: param[1],
+                        id: component.id,
+                    },
+                });
                 close();
             },
         });
@@ -66,7 +74,11 @@
                 </li>
                 <li>
                     <span>Description:</span>
-                    <span>{component.definition.description}</span>
+                    {#if component.definition.description != ''}
+                        <span>{component.definition.description}</span>
+                    {:else}
+                        <span class="text-gray-400">No description.</span>
+                    {/if}
                 </li>
             </ul>
         </section>
