@@ -3,7 +3,7 @@ export type ActionType = 'circuit-save' | 'circuit-load' | 'circuit-new' | 'circ
     'component-delete' | 'sim-stop' | 'sim-step' | 'sim-start-step' | 'component-new' |
     'component-move' | 'wire-new' | 'circuit-export' | 'circuit-export-cancel' | 
     'circuit-tab-remove' | 'undo-empty' | 'redo-empty' | 'component-hovered' | 'pin-hovered' |
-    'component-selected';
+    'component-selected' | 'component-param-changed';
 
 export type Action = {
     type: ActionType,
@@ -38,6 +38,7 @@ export function actionToString(action?: Action): string {
         case 'component-move': return `Moved component to (x: ${Math.round(action.data.x)}, y: ${Math.round(action.data.y)}).`;
         case 'component-hovered': return `Hovered on component (#${action.data.componentId}).`;
         case 'component-selected': return `Selected component '${action.data.name}' (#${action.data.id}).`;
+        case 'component-param-changed': return `Changed parameter '${action.data.name}' of component (#${action.data.id}) to '${action.data.value}'.`;
         case 'pin-hovered': return `Hovered on ${action.data.pinType} pin '${action.data.pinName}' (#${action.data.pinIndex}) of component (#${action.data.componentId}).`;
         default: {}
     }
