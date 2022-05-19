@@ -3,7 +3,7 @@ export type ActionType = 'circuit-save' | 'circuit-load' | 'circuit-new' | 'circ
     'component-delete' | 'sim-stop' | 'sim-step' | 'sim-start-step' | 'component-new' |
     'component-move' | 'wire-new' | 'circuit-export' | 'circuit-export-cancel' | 
     'circuit-tab-remove' | 'undo-empty' | 'redo-empty' | 'component-hovered' | 'pin-hovered' |
-    'component-selected';
+    'component-selected' | 'sim-settings-update';
 
 export type Action = {
     type: ActionType,
@@ -31,6 +31,7 @@ export function actionToString(action?: Action): string {
         case 'sim-stop': return `Stopped the simulation.`;
         case 'sim-step': return `Stepped a tick in the simulation.`;
         case 'sim-start-step': return `Started the simulation and stepped a tick.`;
+        case 'sim-settings-update': return `Updated the simulator's settings.`;
         case 'wire-new': return `Created a wire segment.`;
         case 'wire-delete': return `Deleted a wire segment.`;
         case 'component-new': return `Added component to circuit.`;
