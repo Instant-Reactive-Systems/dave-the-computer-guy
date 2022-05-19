@@ -7,9 +7,9 @@ import type { QuestService } from "../quest_service";
 
 const AND_GATE_QUEST: Quest = {
     id: 1,
-    name: "And gate quest",
+    name: "AND gate",
     reward: 100,
-    description: "This is the first quest, make an AND GATE from NAND gates",
+    description: "Create an AND gate from two NAND gates.",
     verificationData: {
         type: 'Combinational',
         restrictions: {
@@ -25,9 +25,9 @@ const AND_GATE_QUEST: Quest = {
 
 const NOT_GATE_QUEST: Quest = {
     id: 2,
-    name: "Not gate quest",
+    name: "NOT gate",
     reward: 150,
-    description: "This is the second quest, make an NOT GATE from NAND gates",
+    description: "Create a NOT gate from a NAND gate.",
     verificationData: {
         type: 'Combinational',
         restrictions: {
@@ -44,9 +44,9 @@ const NOT_GATE_QUEST: Quest = {
 
 const OR_GATE_QUEST: Quest = {
     id: 3,
-    name: "Or gate quest",
+    name: "OR gate",
     reward: 200,
-    description: "This is the third quest, make an OR gate from NAND gates",
+    description: "Create an OR gate from NAND gates.",
     verificationData: {
         type: "Combinational",
         restrictions: {
@@ -62,9 +62,9 @@ const OR_GATE_QUEST: Quest = {
 
 const XOR_GATE_QUEST: Quest = {
     id: 4,
-    name: "XOR gate quest",
+    name: "XOR gate",
     reward: 250,
-    description: "This is the fourth quest, make an XOR gate from NAND gates",
+    description: "Create a XOR gate from NAND gates.",
     verificationData: {
         type: "Combinational",
         restrictions: {
@@ -81,9 +81,9 @@ const XOR_GATE_QUEST: Quest = {
 
 const NOR_GATE_QUEST: Quest = {
     id: 5,
-    name: "NOR gate quest",
+    name: "NOR gate",
     reward: 300,
-    description: "This is the fifth quest, make an NOR gate from NAND gates",
+    description: "Create a NOR gate from NAND gates.",
     verificationData: {
         type: "Combinational",
         restrictions: {
