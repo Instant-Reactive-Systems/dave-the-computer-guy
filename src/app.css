@@ -101,3 +101,8 @@
     height: 0;
 }
 
+
+*:disabled {
+    @apply cursor-not-allowed;
+}
+

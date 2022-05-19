@@ -824,7 +824,7 @@
 			</button>
 		</li>
 		<li>
-			<button on:click={() => openTutorialModal()} title="Tutorial">
+			<button on:click={() => openTutorialModal()} title="Tutorial | Not available in demo" disabled>
 				<TutorialIcon />
 			</button>
 		</li>
