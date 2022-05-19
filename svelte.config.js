@@ -15,7 +15,7 @@ const config = {
 	],
 
 	kit: {
-		adapter: adapterStatic(),
+		adapter: adapterStatic({fallback: 'index.html'}),
 		vite: {
 			build: {
 				minify: false,
