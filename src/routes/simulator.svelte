@@ -41,6 +41,7 @@
 	import TutorialIcon from '$lib/icons/tutorial.svelte';
 	import CloseIcon from '$lib/icons/close.svelte';
 	import NavigationIcon from '$lib/icons/navigation.svelte';
+	import SettingsIcon from '$lib/icons/settings.svelte';
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
@@ -58,6 +59,8 @@
     import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
     import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
     import TutorialPanel from '$lib/components/overlays/tutorial_panel.svelte';
+    import SettingsPanel from '$lib/components/overlays/simulator/settings.svelte';
+    import type { SimulationSettings } from '$lib/models/simulation_settings';
 
     // Types
 	type CircuitTab = {
@@ -192,6 +195,20 @@
 			},
 		});
 	}
+
+    function openSettingsModal() {
+        open(SettingsPanel, {onSave: (settings: SimulationSettings) => {
+            // There is a race here that is unlikely to occur unless 
+            // the user intentionally wants to break the simulation.
+            // Covering this case is not worth it.
+            simulator.setSettings(settings);
+            actionStore.set({
+                type: 'sim-settings-update',
+                data: null,
+            });
+            close();
+        }});
+    }
 
 	function startExportCircuit() {
         // Prevent any actions while in simulation
@@ -809,6 +826,13 @@
 			</button>
 		</li>
 	</ul>
+    <ul class="settings">
+        <li>
+            <button on:click={() => openSettingsModal()} title="Settings">
+                <SettingsIcon />
+            </button>
+        </li>
+    </ul>
 </nav>
 
 <div id="main-content-wrapper" class="grid grid-cols-12">
@@ -925,6 +949,14 @@
 	.game-tools > li > button {
 		@apply p-2;
 	}
+
+    .settings {
+        @apply mr-4;
+    }
+
+    .settings > li > button {
+        @apply p-2;
+    }
 
 	/*
     Dropdown menu styles

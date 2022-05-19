@@ -1,19 +1,22 @@
 import type { Circuit } from "./models/circuit";
 import type { ComponentDefinition } from "./models/component_definition";
 import type { UserEvent } from "./models/user_event";
-import init, { set_panic_hook, Simulation, Config, test_combinational, update_registry } from "digisim";
+import { todo, assert, unreachable } from '$lib/util/common';
+import init, { set_panic_hook, Simulation, Settings, test_combinational, update_registry } from "digisim";
 import type { VerificationData } from "./models/quest";
 import type { ValidationReport } from "./models/component_validation";
+import { defaultSimulationSettings, type SimulationSettings } from "./models/simulation_settings";
 
-export type WorkerAction = 'setCircuit' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinitions' | 'verifyComponent';
-
+export type WorkerAction = 'setCircuit' | 'setSettings' | 'start' | 'pause' | 'stop' | 'step' | 'insertUserEvent' | 'insertDefinitions' | 'verifyComponent';
+export type WorkerResponseAction = 'circuitStateUpdate' | WorkerAction /*used for worker promises*/;
 
 export type VerifyComponentPayload = {
     definition: ComponentDefinition,
     verificationData: VerificationData
 }
 
-export type WorkerPayload = ComponentDefinition[] | Circuit | UserEvent | VerifyComponentPayload;
+export type WorkerPayload = ComponentDefinition[] | Circuit | UserEvent | VerifyComponentPayload | SimulationSettings;
+export type WorkerResponsePayload = Map<number, any> | ValidationReport;
 
 export type WorkerMessage = {
     id: number,
@@ -24,8 +27,8 @@ export type WorkerMessage = {
 export type WorkerResponse = {
     id: number,
     err: string,
-    action: 'circuitStateUpdate' | WorkerAction,
-    payload: Map<number, any> | ValidationReport,
+    action: WorkerResponseAction,
+    payload: WorkerResponsePayload,
 };
 
 enum SimulationState {
@@ -43,7 +46,8 @@ let unprocessedMessageQueue: WorkerMessage[] = [];
 init().then(() => {
     set_panic_hook();
 
-    simulation = Simulation.new(Config.new(1000));
+    const defaultSettings = defaultSimulationSettings();
+    simulation = Simulation.new(Settings.new(defaultSettings.maxDelay));
     simulatorInitted = true;
     for (const msg of unprocessedMessageQueue) {
         processMessage(msg)
@@ -54,10 +58,16 @@ init().then(() => {
 declare var self: DedicatedWorkerGlobalScope;
 export default onmessage = (msg: MessageEvent<WorkerMessage>) => {
     if (!simulatorInitted) {
-        if (msg.data.action == 'insertDefinitions') {
-            unprocessedMessageQueue.push(msg.data);
+        switch (msg.data.action) {
+            case 'insertDefinitions':
+            case 'setSettings': {
+                unprocessedMessageQueue.push(msg.data);
+                break;
+            }
+            default: break;
         }
-        return
+
+        return;
     }
     console.log("Received message in worker", msg);
     processMessage(msg.data);
@@ -87,6 +97,9 @@ function processMessage(msg: WorkerMessage) {
         case 'setCircuit':
             setCircuit(msg);
             break;
+        case 'setSettings':
+            setSettings(msg);
+            break;
         case 'verifyComponent':
             verifyComponent(msg)
         default: break;
@@ -103,14 +116,9 @@ function verifyComponent(msg: WorkerMessage) {
         const validationReport: ValidationReport = {
             errors: result.errors,
             passed: result.errors.length == 0
-        }
-        const response: WorkerResponse = {
-            id: msg.id,
-            action: msg.action,
-            payload: validationReport,
-            err: undefined
-        }
-        postMessage(response)
+        };
+        const res = createResponse(msg, validationReport);
+        postMessage(res);
     } else {
         console.log("Sequential verification not implemented yet");
     }
@@ -122,13 +130,18 @@ function setCircuit(msg: WorkerMessage) {
 
     simulation.set_circuit(circuit);
 
-    const response: WorkerResponse = {
-        id: msg.id,
-        action: msg.action,
-        payload: undefined,
-        err: undefined
-    }
-    postMessage(response);
+    const res = createResponse(msg);
+    postMessage(res);
+}
+
+function setSettings(msg: WorkerMessage) {
+    const settings = msg.payload as SimulationSettings;
+    console.log('Setting settings', settings);
+
+    simulation.set_settings(settings);
+
+    const res = createResponse(msg);
+    postMessage(res);
 }
 
 function insertDefinitions(msg: WorkerMessage) {
@@ -139,13 +152,8 @@ function insertDefinitions(msg: WorkerMessage) {
         update_registry(def);
     }
 
-    const response: WorkerResponse = {
-        id: msg.id,
-        action: msg.action,
-        payload: undefined,
-        err: undefined
-    }
-    postMessage(response);
+    const res = createResponse(msg);
+    postMessage(res);
 }
 
 function startSimulation(msg: WorkerMessage) {
@@ -159,39 +167,24 @@ function startSimulation(msg: WorkerMessage) {
     startTime = performance.now();
     simulate();
 
-    const response: WorkerResponse = {
-        id: msg.id,
-        action: msg.action,
-        payload: undefined,
-        err: undefined,
-    }
-
-    postMessage(response);
+    const res = createResponse(msg);
+    postMessage(res);
 }
 
 function pauseSimulation(msg: WorkerMessage) {
     console.log("Pausing simulation");
     state = SimulationState.PAUSED;
-    const response: WorkerResponse = {
-        id: msg.id,
-        action: msg.action,
-        payload: undefined,
-        err: undefined
-    }
-    postMessage(response);
+
+    const res = createResponse(msg);
+    postMessage(res);
 }
 
 function stopSimulation(msg: WorkerMessage) {
     console.log("Stopping simulation");
     state = SimulationState.STOPPED;
-    const response: WorkerResponse = {
-        id: msg.id,
-        action: msg.action,
-        payload: undefined,
-        err: undefined
-    };
-    postMessage(response)
 
+    const res = createResponse(msg);
+    postMessage(res);
 }
 
 function stepSimulation(msg: WorkerMessage) {
@@ -204,39 +197,22 @@ function stepSimulation(msg: WorkerMessage) {
 
     state = SimulationState.PAUSED;
     simulation.tick();
-
     const circuitState = getCircuitState();
     console.log("Circuit state", circuitState);
-    const stateMsg: WorkerResponse = {
-        action: "circuitStateUpdate",
-        payload: circuitState,
-        err: undefined,
-        id: undefined
-    };
 
-    const response: WorkerResponse = {
-        id: msg.id,
-        action: msg.action,
-        payload: undefined,
-        err: undefined,
-    };
+    const res = createResponse(msg);
+    const stateMsg = createCircuitStateMessage(circuitState);
 
     postMessage(stateMsg);
-    postMessage(response);
-
+    postMessage(res);
 }
 
 function insertUserEvent(msg: WorkerMessage) {
     const event = msg.payload as UserEvent;
     simulation.insert_input_event(event);
-    const response: WorkerResponse = {
-        id: msg.id,
-        action: msg.action,
-        payload: undefined,
-        err: undefined,
-    };
 
-    postMessage(response);
+    const res = createResponse(msg);
+    postMessage(res);
 }
 
 function simulate() {
@@ -250,13 +226,8 @@ function simulate() {
         if (performance.now() - startTime > 50) {
             startTime = performance.now();
             const circuitState = getCircuitState();
-            const message: WorkerResponse = {
-                action: "circuitStateUpdate",
-                payload: circuitState,
-                err: undefined,
-                id: undefined,
-            };
-            postMessage(message)
+            const msg = createCircuitStateMessage(circuitState);
+            postMessage(msg);
         }
         simulate();
     }, 10);
@@ -264,5 +235,23 @@ function simulate() {
 
 function getCircuitState(): Map<number, any> {
     return new Map(Object.entries(simulation.circuit_state()).map(val => [parseInt(val[0]), val[1]]));
+}
+
+function createResponse(msg: WorkerMessage, payload?: WorkerResponsePayload): WorkerResponse {
+    return {
+        id: msg.id,
+        action: msg.action,
+        payload,
+        err: undefined,
+    };
+}
+
+function createCircuitStateMessage(circuitState: Map<number, any>): WorkerResponse {
+    return {
+        action: 'circuitStateUpdate',
+        payload: circuitState,
+        id: undefined,
+        err: undefined,
+    };
 }
 
