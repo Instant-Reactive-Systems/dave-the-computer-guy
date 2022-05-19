@@ -568,7 +568,7 @@
 			undo: () => {
 				updateCircuitTab(preCommandCircuit);
 			},
-			redoable: true
+			redoable: false
 		};
 
 		moveCommand.do();
