@@ -10,39 +10,31 @@
     // Variables
     const { open, close } = getContext('simple-modal');
     let component: Component = null;
-    let params: Param[] = [];
+    let params: [string, any][] = [];
     let isPrebuilt = false;
 
     // Logic
-    function openParamEditorModal(param: Param) {
+    function openParamEditorModal(param: [string, any]) {
         open(ParamEditor, {
             param: param,
-            onSave: (param: any) => {
+            onSave: (param: [string, any]) => {
                 const key = `${component.id}`;
-                let params_ = $circuitStore.params[key];
-                if (params_ == undefined) params_ = {};
-                params_[param.name] = param.value;
-                $circuitStore.params[key] = params_;
+                let params = $circuitStore.params[key];
+                if (params == undefined) params = {};
+                params[param[0]] = param[1];
+                $circuitStore.params[key] = params;
                 $circuitStore = $circuitStore;
-                params = getParams();
+                close();
             },
         });
     }
 
-    function getParams(): Param[] {
-        const params_ = Object.entries(component.definition.params);
-        const circuitParams = $circuitStore.params[`${component.id}`];
-        if (circuitParams == null) return params_;
-        Object.entries(circuitParams).map(([name, value]) => {
-            const found = params_.find(([name_, ]) => name_ == name);
-            if (found != null) {
-                const [name] = found;
-                return {name: value};
-            }
-        });
-        for (const [name, value] of Object.entries(circuitParams)) {
-        }
-        return params_;
+    function getParams(): [string, any][] {
+        const params: Params = {
+            ...component.definition.params,
+            ...$circuitStore.params[`${component.id}`]
+        };
+        return Object.entries(params);
     }
 
     $: {
@@ -50,10 +42,9 @@
         isPrebuilt = component && component!.definition.id < 0;
     }
 
-    $: {
-        if (component != null) {
-            params = getParams();
-        }
+    $: if (component != null) {
+        $circuitStore;
+        params = getParams();
     }
 </script>
 
@@ -89,17 +80,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each params as param, i}
-                    <tr on:click={() => openParamEditorModal(param)} class="param-row">
-                        <td>{param.name}</td>
-                        <td>{param.value}</td>
-                    </tr>
+                    {#each params as param}
+                        {@const [name, value] = param}
+                        <tr on:click={() => openParamEditorModal(param)} class="param-row">
+                            <td>{name}</td>
+                            <td>{value}</td>
+                        </tr>
                     {:else}
-                    <tr>
-                        <td colspan="2">
-                            Component has no parameters.
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="2">
+                                Component has no parameters.
+                            </td>
+                        </tr>
                     {/each}
                 </tbody>
             </table>

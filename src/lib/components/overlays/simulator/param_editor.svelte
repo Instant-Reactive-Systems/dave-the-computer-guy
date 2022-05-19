@@ -3,35 +3,35 @@
     import { todo } from '$lib/util/common';
 
     // Props
-    export let param: Param;
-    export let onSave: (param: Param) => void;
+    export let param: [string, any];
+    export let onSave: (param: [string, any]) => void;
 
     // Variables
-    let value: any = param.value;
+    let value: any = param[1];
 
     // Logic
     function saveParam() {
-        param.value = value;
+        param[1] = value;
         onSave(param);
     }
 </script>
 
 <form on:submit|preventDefault>
     <header>
-        <h1>Edit parameter '{param.name}'</h1>
+        <h1>Edit parameter '{param[0]}'</h1>
     </header>
     <main>
-        {#if typeof param.value == 'string'}
+        {#if typeof param[1] == 'string'}
             <label>
                 <span>Value:</span>
                 <input on:keydown|stopPropagation placeholder="cool string" bind:value={value}/>
             </label>
-        {:else if typeof param.value === 'number'}
+        {:else if typeof param[1] === 'number'}
             <label>
                 <span>Value:</span>
                 <input on:keydown|stopPropagation type="number" bind:value={value}/>
             </label>
-        {:else if typeof param.value === 'boolean'}
+        {:else if typeof param[1] === 'boolean'}
             <label>
                 <span>Value:</span>
                 <input on:keydown|stopPropagation type="checkbox" bind:value={value}/>
