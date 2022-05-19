@@ -2,6 +2,7 @@ import adapter from '@sveltejs/adapter-auto';
 import adapterStatic from '@sveltejs/adapter-static';
 import preprocess from 'svelte-preprocess';
 import wasmPack from 'vite-plugin-wasm-pack';
+import rust from '@wasm-tool/rollup-plugin-rust';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -27,7 +28,11 @@ const config = {
 				noExternal: ["three"]
 			},
 			plugins: [
-				wasmPack([], ['digisim'])
+				wasmPack([], ['digisim']),
+                rust({
+                    verbose: true,
+                    serverPath: "/build/_app/assets/"
+                })
 			]
 		}
 
