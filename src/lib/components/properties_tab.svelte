@@ -66,7 +66,11 @@
                 </li>
                 <li>
                     <span>Description:</span>
-                    <span>{component.definition.description}</span>
+                    {#if component.definition.description != ''}
+                        <span>{component.definition.description}</span>
+                    {:else}
+                        <span class="text-gray-400">No description.</span>
+                    {/if}
                 </li>
             </ul>
         </section>
