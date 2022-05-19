@@ -26,6 +26,7 @@
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { actionStore } from '$lib/stores/action_store';
+    import { componentStore } from '$lib/stores/component_store';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
 	import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
@@ -100,6 +101,7 @@
 					currentCircuitTab.circuit = circ;
 					circuitTabs = circuitTabs;
 					currentCircuitTab = currentCircuitTab;
+                    componentStore.set(null);
 				});
                 actionStore.set({
                     type: 'circuit-save',
@@ -145,6 +147,7 @@
                         name: circuit.name,
                     },
                 });
+                componentStore.set(null);
 				close();
 			}
 		});
@@ -219,6 +222,7 @@
             type: 'circuit-new',
             data: null,
         });
+        componentStore.set(null);
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
@@ -235,6 +239,7 @@
                 name: tab.name,
             },
         });
+        componentStore.set(null);
 	}
 
 	function undo() {
@@ -246,6 +251,7 @@
 
 		const commandToUndo: Command = currentCircuitTab.undoStack.pop();
 		if (commandToUndo != undefined) {
+            if (commandToUndo.name == 'AddNewComponent') componentStore.set(null);
 			commandToUndo.undo();
             actionStore.set({
                 type: 'undo',
