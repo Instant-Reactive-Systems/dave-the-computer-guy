@@ -1,4 +1,4 @@
-import type { ComponentDefinition } from "$lib/models/component_definition";
+import { commonParams, type ComponentDefinition } from "$lib/models/component_definition";
 import type { User } from "$lib/models/user";
 import { assert, getRandomInt } from "$lib/util/common";
 import { BehaviorSubject } from "rxjs";
@@ -116,7 +116,8 @@ const NAND_DEFINITION: ComponentDefinition = {
             right: [{ name: "Y", pin: 2 }]
         },
         imageUrl: "nand_gate.png"
-    }
+    },
+    params: commonParams(),
 }
 
 const TRISTATE_DEFINITION: ComponentDefinition = {
@@ -142,8 +143,8 @@ const TRISTATE_DEFINITION: ComponentDefinition = {
             right: [{ name: "Y", pin: 2 }]
         },
         imageUrl: "tristate.png"
-    }
-
+    },
+    params: commonParams(),
 }
 
 //clock questions
@@ -170,7 +171,8 @@ const CLOCK_DEFINITION: ComponentDefinition = {
             right: [{ name: "Y", pin: 0 }]
         },
         imageUrl: "clock.png"
-    }
+    },
+    params: commonParams(),
 }
 
 
@@ -197,7 +199,8 @@ const GROUND_DEFINITION: ComponentDefinition = {
             right: [{ name: "Y", pin: 0 }]
         },
         imageUrl: "ground.png"
-    }
+    },
+    params: commonParams(),
 }
 
 
@@ -224,7 +227,8 @@ const SOURCE_DEFINITION: ComponentDefinition = {
             right: [{ name: "Y", pin: 0 }]
         },
         imageUrl: "source.png"
-    }
+    },
+    params: commonParams(),
 }
 
 
@@ -251,7 +255,8 @@ const SWITCH_DEFININITION: ComponentDefinition = {
             right: [{ name: "Y", pin: 0 }]
         },
         imageUrl: "switch.png"
-    }
+    },
+    params: commonParams(),
 }
 
 
@@ -278,7 +283,8 @@ const LED_DEFINITION: ComponentDefinition = {
             right: []
         },
         imageUrl: "led.png"
-    }
+    },
+    params: commonParams(),
 }
 
 const BUILTIN_DEFINITIONS: ComponentDefinition[] = [

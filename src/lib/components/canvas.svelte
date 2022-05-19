@@ -29,6 +29,7 @@
 	import { getNotificationsContext } from 'svelte-notifications';
 	import { on_keydown } from '$lib/util/key_handling';
 	import { actionStore } from '$lib/stores/action_store';
+	import { componentStore } from '$lib/stores/component_store';
 
     // Services
     let definitionLoaderService: ComponentDefinitionLoaderService = getContext(COMPONENT_DEFINITION_LOADER_SERVICE);
@@ -333,13 +334,22 @@
 		const target = event.target;
 		const subTargets = event.subTargets;
 		if (target?.data?.type == 'component') {
+			const component = (target.data.ref as RenderableComponent).component;
 			for (const subTarget of subTargets) {
 				if (subTarget.data?.type == 'pinGroup') {
-					const component = (target.data.ref as RenderableComponent).component;
 					const pinData = subTarget.data.pin.data;
 					//TODO HANDLE EXPORT HERE
 				}
 			}
+
+            componentStore.set(component);
+            actionStore.set({
+                type: 'component-selected',
+                data: {
+                    name: component.definition.name,
+                    id: component.id,
+                },
+            });
 		}
 	}
 

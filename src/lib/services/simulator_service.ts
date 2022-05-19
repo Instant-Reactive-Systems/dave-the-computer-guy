@@ -1,7 +1,8 @@
 import type { Circuit } from "$lib/models/circuit";
 import type { ComponentDefinition } from "$lib/models/component_definition";
 import type { ValidationReport } from "$lib/models/component_validation";
-import type { CombinationalVerificationData, SequentialVerificationData, SequentialVerificationRestrictions, VerificationData } from "$lib/models/quest";
+import type { VerificationData } from "$lib/models/quest";
+import type { SimulationSettings } from "$lib/models/simulation_settings";
 import type { UserEvent } from "$lib/models/user_event";
 import type { BehaviorSubject } from "rxjs";
 
@@ -19,6 +20,7 @@ export type SimulatorService = {
     insertUserEvent(userEvent: UserEvent): Promise<void>;
     insertDefinitions(defs: ComponentDefinition[]): Promise<void>;
     setCircuit(circuit: Circuit): Promise<void>;
+    setSettings(settings: SimulationSettings): Promise<void>;
     verifyComponent(definition: ComponentDefinition, verificationData: VerificationData): Promise<ValidationReport>;
 };
 

@@ -26,6 +26,7 @@
 	import type { CircuitLoaderService } from '$lib/services/circuit_loader_service';
 	import { editorModeStore } from '$lib/stores/editor_mode';
 	import { actionStore } from '$lib/stores/action_store';
+    import { componentStore } from '$lib/stores/component_store';
 	import type { CircuitBuilderService } from '$lib/services/circuit_builder_serivce';
 	import SaveCircuit from '$lib/components/overlays/simulator/save_circuit.svelte';
 	import LoadCircuit from '$lib/components/overlays/simulator/load_circuit.svelte';
@@ -40,6 +41,7 @@
 	import TutorialIcon from '$lib/icons/tutorial.svelte';
 	import CloseIcon from '$lib/icons/close.svelte';
 	import NavigationIcon from '$lib/icons/navigation.svelte';
+	import SettingsIcon from '$lib/icons/settings.svelte';
 	import { getNotificationsContext } from 'svelte-notifications';
 	import ExportTab from '$lib/components/export_tab.svelte';
 	import type { ComponentDefinitionLoaderService } from '$lib/services/component_definition_loader_service';
@@ -54,9 +56,11 @@
 		type WireData
 	} from '$lib/models/editor_mode';
 	import Notifier from '$lib/util/notifier';
-	import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
-	import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
-	import TutorialPanel from '$lib/components/overlays/tutorial_panel.svelte';
+    import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
+    import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
+    import TutorialPanel from '$lib/components/overlays/tutorial_panel.svelte';
+    import SettingsPanel from '$lib/components/overlays/simulator/settings.svelte';
+    import type { SimulationSettings } from '$lib/models/simulation_settings';
 
 	// Types
 	type CircuitTab = {
@@ -101,6 +105,7 @@
 					currentCircuitTab.circuit = circ;
 					circuitTabs = circuitTabs;
 					currentCircuitTab = currentCircuitTab;
+                    componentStore.set(null);
 				});
 				actionStore.set({
 					type: 'circuit-save',
@@ -140,12 +145,13 @@
 				};
 				circuitTabs = [...circuitTabs, newCircuitTab];
 				currentCircuitTab = newCircuitTab;
-				actionStore.set({
-					type: 'circuit-load',
-					data: {
-						name: circuit.name
-					}
-				});
+                actionStore.set({
+                    type: 'circuit-load',
+                    data: {
+                        name: circuit.name,
+                    },
+                });
+                componentStore.set(null);
 				close();
 			}
 		});
@@ -199,6 +205,20 @@
 		);
 	}
 
+    function openSettingsModal() {
+        open(SettingsPanel, {onSave: (settings: SimulationSettings) => {
+            // There is a race here that is unlikely to occur unless 
+            // the user intentionally wants to break the simulation.
+            // Covering this case is not worth it.
+            simulator.setSettings(settings);
+            actionStore.set({
+                type: 'sim-settings-update',
+                data: null,
+            });
+            close();
+        }});
+    }
+
 	function startExportCircuit() {
 		// Prevent any actions while in simulation
 		if (isInSimulation) {
@@ -224,10 +244,11 @@
 		};
 		circuitTabs = [...circuitTabs, newCircuitTab];
 		currentCircuitTab = newCircuitTab;
-		actionStore.set({
-			type: 'circuit-new',
-			data: null
-		});
+        actionStore.set({
+            type: 'circuit-new',
+            data: null,
+        });
+        componentStore.set(null);
 	}
 
 	function switchCircuitTab(tab: CircuitTab) {
@@ -238,12 +259,13 @@
 		}
 
 		currentCircuitTab = tab;
-		actionStore.set({
-			type: 'circuit-switch',
-			data: {
-				name: tab.name
-			}
-		});
+        actionStore.set({
+            type: 'circuit-switch',
+            data: {
+                name: tab.name,
+            },
+        });
+        componentStore.set(null);
 	}
 
 	function undo() {
@@ -381,8 +403,9 @@
 	function deleteComponent(e) {
 		const componentId = e.detail.componentId;
 		const preCommandCircuit = $circuitStore;
+        const previousSelectedComponent = $componentStore;
+        let deletedSelectedComponent = false;
 
-		
 		const deleteComponentCommmand: Command = {
 			name: 'DeleteComponentCommand',
 			do: () => {
@@ -390,9 +413,16 @@
 				circuitBuilder
 					.deleteComponent(circuit, componentId)
 					.then((circuit) => updateCircuitTab(circuit));
+
+                // Remove the selected component
+                if (componentId == $componentStore?.id) {
+                    deletedSelectedComponent = true;
+                    componentStore.set(null);
+                }
 			},
 			undo: () => {
-				() => updateCircuitTab(preCommandCircuit)
+				updateCircuitTab(preCommandCircuit);
+                if (deletedSelectedComponent) componentStore.set(previousSelectedComponent);
 			},
 			redoable: false
 		};
@@ -502,16 +532,22 @@
 		const y: number = event.detail.y;
 		const preCommandCircuit = $circuitStore;
 		const preCommandMode = clone($editorModeStore);
+        let createdComponentId: number;
+
 		const addNewComponentCommand: Command = {
 			name: 'AddNewComponent',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
 				circuitBuilder
 					.addNewComponent(circuit, definition, x, y)
-					.then((circuit) => updateCircuitTab(circuit));
+					.then(([circuit, component]) => {
+                        updateCircuitTab(circuit);
+                        createdComponentId = component.id;
+                    });
 			},
 			undo: () => {
 				setEditorMode(preCommandMode).then(() => updateCircuitTab(preCommandCircuit));
+                if (createdComponentId == $componentStore?.id) componentStore.set(null);
 			},
 			redoable: false
 		};
@@ -541,7 +577,7 @@
 					updateCircuitTab(preCommandCircuit);
 				});
 			},
-			redoable: true
+			redoable: false
 		};
 
 		moveCommand.do();
@@ -793,6 +829,13 @@
 			</button>
 		</li>
 	</ul>
+    <ul class="settings">
+        <li>
+            <button on:click={() => openSettingsModal()} title="Settings">
+                <SettingsIcon />
+            </button>
+        </li>
+    </ul>
 </nav>
 
 <div id="main-content-wrapper" class="grid grid-cols-12">
@@ -909,6 +952,14 @@
 	.game-tools > li > button {
 		@apply p-2;
 	}
+
+    .settings {
+        @apply mr-4;
+    }
+
+    .settings > li > button {
+        @apply p-2;
+    }
 
 	/*
     Dropdown menu styles
