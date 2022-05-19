@@ -1100,4 +1100,8 @@
 	.status-bar > .status {
 		@apply overflow-x-auto whitespace-nowrap max-w-[24rem] py-1 px-2 border-l border-t border-slate-300 cursor-text;
 	}
+
+    *:disabled {
+        @apply cursor-not-allowed;
+    }
 </style>

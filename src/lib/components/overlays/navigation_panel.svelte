@@ -89,5 +89,9 @@
     .icon {
         @apply flex justify-center;
     }
+
+    *:disabled {
+        @apply cursor-not-allowed;
+    }
 </style>
 
