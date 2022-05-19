@@ -284,7 +284,7 @@ const LED_DEFINITION: ComponentDefinition = {
         },
         imageUrl: "led.png"
     },
-    params: commonParams(),
+    params: {},
 }
 
 const BUILTIN_DEFINITIONS: ComponentDefinition[] = [
