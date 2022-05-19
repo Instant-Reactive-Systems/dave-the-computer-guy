@@ -8,52 +8,65 @@
 		HemisphereLight,
 		Mesh,
 		OrbitControls,
-		PerspectiveCamera,
+		PerspectiveCamera
 	} from 'threlte';
 	import { getContext, onDestroy, onMount } from 'svelte';
-    import { goto } from '$app/navigation'
-    import { Router } from "$lib/router";
+	import { goto } from '$app/navigation';
+	import { Router } from '$lib/router';
 	import QuestsPanel from '$lib/components/overlays/quests_panel.svelte';
-    import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
-    import RoomBar from '$lib/components/room_bar.svelte';
+	import NavigationPanel from '$lib/components/overlays/navigation_panel.svelte';
+	import RoomBar from '$lib/components/room_bar.svelte';
 
 	const { open, close } = getContext('simple-modal');
+
+	let bossScale = { x: 0.2, y: 0.2, z: 0.2 };
+
+	let doorScale = { x: 1, y: 1, z: 1 };
+
+	let pcScale = { x: 1, y: 1, z: 1 };
+
+	let seniorDevScale = { x: 0.2, y: 0.2, z: 0.2 };
 
 	function openTutorialPanel() {
 		open(TutorialPanel);
 	}
 
 	function openQuestsPanel() {
-		open(QuestsPanel, {}, {
-			styleWindow: {
-				width: "auto",
-				overflow: "hidden"
-			},
-			styleContent: {
-				overflow: "hidden"
+		open(
+			QuestsPanel,
+			{},
+			{
+				styleWindow: {
+					width: 'auto',
+					overflow: 'hidden'
+				},
+				styleContent: {
+					overflow: 'hidden'
+				}
 			}
-		});
+		);
 	}
 
-    function openNavigationPanel() {
+	function openNavigationPanel() {
+		document.body.style.cursor = 'default';
 		open(NavigationPanel);
 	}
 
-    function navigateToSimulator() {
-        goto(Router.SIMULATOR_ROUTE, {replaceState: true})
-    }
+	function navigateToSimulator() {
+		goto(Router.SIMULATOR_ROUTE, { replaceState: true });
+	}
 
-	onMount(()=> {
-		console.log("Mounted office")
-	})
+	onMount(() => {
+		console.log('Mounted office');
+	});
 
-	onDestroy(()=> {
-		console.log("Destroyed office")
-        close();
-	})
+	onDestroy(() => {
+		console.log('Destroyed office');
+		close();
+	});
 </script>
 
-<RoomBar/>
+<RoomBar />
 <main>
 	<Canvas>
 		<PerspectiveCamera position={{ x: -10, y: 10, z: -10 }}>
@@ -125,6 +138,14 @@
 				side: DoubleSide,
 				color: 'white'
 			})}
+			on:pointerenter={() => {
+				pcScale = { x: 1.02, y: 1.02, z: 1.02 };
+				document.body.style.cursor = 'pointer';
+			}}
+			on:pointerleave={() => {
+				pcScale = { x: 1, y: 1, z: 1 };
+				document.body.style.cursor = 'default';
+			}}
 		/>
 
 		<GLTF
@@ -132,6 +153,7 @@
 			receiveShadow
 			position={{ y: 0.7, x: 4, z: -0.5 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
+			scale={pcScale}
 		/>
 		<GLTF
 			url="models/office/Office_Misc_PC_01.gltf"
@@ -163,11 +185,20 @@
 				side: DoubleSide,
 				color: 'white'
 			})}
+			on:pointerenter={() => {
+				doorScale = { x: 1.01, y: 1.01, z: 1.01 };
+				document.body.style.cursor = 'pointer';
+			}}
+			on:pointerleave={() => {
+				doorScale = { x: 1, y: 1, z: 1 };
+				document.body.style.cursor = 'default';
+			}}
 		/>
 		<GLTF
 			url="models/office/Office_Misc_Door_01.gltf"
 			position={{ y: -0.4, x: 4.85, z: -3.6 }}
 			rotation={{ y: -90 * (Math.PI / 180) }}
+			scale={doorScale}
 		/>
 		<GLTF
 			url="models/office/Office_Table_Brown_2x2_02.gltf"
@@ -260,13 +291,21 @@
 				side: DoubleSide,
 				color: 'white'
 			})}
+			on:pointerenter={() => {
+				bossScale = { x: 0.205, y: 0.205, z: 0.205 };
+				document.body.style.cursor = 'pointer';
+			}}
+			on:pointerleave={() => {
+				bossScale = { x: 0.2, y: 0.2, z: 0.2 };
+				document.body.style.cursor = 'default';
+			}}
 		/>
 		<GLTF
 			url="models/office/boss-sitting-1.gltf"
 			receiveShadow
 			rotation={{ y: 90 * (Math.PI / 180) }}
 			position={{ y: -0.35, x: -5.5, z: 3.55 }}
-			scale={{ x: 0.2, y: 0.2, z: 0.2 }}
+			scale={bossScale}
 		/>
 
 		<Mesh
@@ -280,6 +319,14 @@
 				side: DoubleSide,
 				color: 'white'
 			})}
+			on:pointerenter={() => {
+				seniorDevScale = { x: 0.205, y: 0.205, z: 0.205 };
+				document.body.style.cursor = 'pointer';
+			}}
+			on:pointerleave={() => {
+				seniorDevScale = { x: 0.2, y: 0.2, z: 0.2 };
+				document.body.style.cursor = 'default';
+			}}
 		/>
 
 		<GLTF
@@ -287,7 +334,7 @@
 			receiveShadow
 			rotation={{ y: 90 * (Math.PI / 180) }}
 			position={{ y: -0.35, x: 2.9, z: 1.55 }}
-			scale={{ x: 0.2, y: 0.2, z: 0.2 }}
+			scale={seniorDevScale}
 		/>
 		<GLTF
 			url="models/office/player-sitting-1.gltf"
@@ -302,10 +349,9 @@
 <style>
 	main {
 		--hgt: calc(theme(height.screen) - theme(height.10));
-        height: var(--hgt);
+		height: var(--hgt);
 		max-height: var(--hgt);
 		min-height: var(--hgt);
-        @apply w-full;
+		@apply w-full;
 	}
 </style>
-
