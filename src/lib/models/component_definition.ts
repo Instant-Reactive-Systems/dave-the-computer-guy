@@ -1,4 +1,4 @@
-import type { Circuit } from "./circuit";
+import type { Circuit, Param } from "./circuit";
 import type { ComponentType } from "./component_type";
 import type { Connector } from "./connector";
 
@@ -55,7 +55,8 @@ export function defaultComponentDefinition(): ComponentDefinition {
             createdAt: new Date(),
             modifiedAt: new Date(),
             imageUrl: ''
-        }
+        },
+        params: null,
     }
 }
 
@@ -70,4 +71,12 @@ export type ComponentDefinition = {
     truthTable: boolean[][];
     booleanFunction: string;
     metadata: ComponentDefinitionMetadata;
+    params: Param,
 }
+
+export function commonParams(): Param {
+    return {
+        delay: 1,
+    };
+}
+

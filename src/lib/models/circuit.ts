@@ -1,10 +1,7 @@
-import type { Connection } from "./connection"
-import type { Param } from "./param"
-import type { Wire } from "./wire"
-import type { ComponentRef } from "./component_ref"
-import type { Connector } from "./connector"
-
-
+import type { Connection } from "./connection";
+import type { Wire } from "./wire";
+import type { ComponentRef } from "./component_ref";
+import type { Connector } from "./connector";
 
 
 export function defaultCircuit(): Circuit {
@@ -14,7 +11,7 @@ export function defaultCircuit(): Circuit {
         description: "",
         components: [],
         connections: [],
-        params: undefined,
+        params: {},
         metadata: {
             createdAt: new Date(),
             modifiedAt: new Date(),
@@ -61,12 +58,21 @@ export type CircuitMetadata = {
     modifiedAt: Date;
 }
 
+export type Param = {
+    [name: string]: any,
+}
+
+export type Params = {
+    [id: string]: Param,
+}
+
 export type Circuit = {
     id: number;
     name: string;
     description: string;
     components: ComponentRef[];
     connections: Connection[];
-    params: Param[];
+    params: Params;
     metadata: CircuitMetadata;
 }
+
