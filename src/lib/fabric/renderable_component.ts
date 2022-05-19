@@ -11,5 +11,6 @@ export interface RenderableComponent {
     update(state: any): void;
     updatePin(pinId: number, value: boolean): void;
     setPinConnected(pinId: number, connected: boolean): void;
+    dispose(): void;
 }
 

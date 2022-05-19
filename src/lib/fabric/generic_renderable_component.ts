@@ -21,6 +21,8 @@ export class GenericComponentRenderable implements RenderableComponent {
         this.pins = [];
     }
 
+    dispose(): void {}
+
     setPinConnected(pinId: number, connected: boolean): void {
         if (connected) {
             const pin = this.pins.find(pin => pin.data.value.pin == pinId);

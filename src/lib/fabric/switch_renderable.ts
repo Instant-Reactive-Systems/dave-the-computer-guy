@@ -1,6 +1,6 @@
 import { fabric } from 'fabric'
-import { createConnector, createPinObject, loadSvg, normalizeLook } from '$lib/util/fabric_utils';
-import type {RenderableComponent} from './renderable_component';
+import { createConnector, normalizeLook } from '$lib/util/fabric_utils';
+import type { RenderableComponent } from './renderable_component';
 import type { Component } from '$lib/models/component';
 import type { UserEvent } from '$lib/models/user_event';
 
@@ -18,6 +18,7 @@ export class SwitchRenderable implements RenderableComponent {
         this.component = component;
     }
 
+    dispose(): void {}
 
     setPinConnected(pinId: number, connected: boolean): void {
         if (connected) {

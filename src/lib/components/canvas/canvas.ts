@@ -12,6 +12,8 @@ import type { EditorMode, WireData } from '$lib/models/editor_mode';
 import type { RenderableComponent } from '$lib/fabric/renderable_component';
 import type { Point } from '$lib/models/point';
 import _ from 'lodash';
+import type { SimulatorService } from '$lib/services/simulator_service';
+import type {AudioListenerRenderable} from '$lib/fabric/audio_listener_renderable';
 
 type EventHandlerType = (event: fabric.IEvent) => void;
 
@@ -33,14 +35,13 @@ export class Canvas {
         this.resize(size);
     }
 
-    public render(circuit: Circuit, definitions: Map<number, ComponentDefinition>) {
+    public render(circuit: Circuit, definitions: Map<number, ComponentDefinition>, simulatorService: SimulatorService) {
         console.log("Rerendering whole circuit: ", circuit);
         this.clear();
         const components: Component[] = circuit.components.map((c) => {
             const component: Component = {
                 id: c.id,
                 definition: definitions.get(c.definitionId)
-
             }
             return component;
         });
@@ -205,7 +206,7 @@ export class Canvas {
         this.tempJunction = null;
     }
 
-    private renderComponents(circuit: Circuit, components: Component[]) {
+    private renderComponents(circuit: Circuit, components: Component[], simulatorService: SimulatorService) {
         for (const component of components) {
             const renderingData = circuit.metadata.rendering.components[component.id];
             const fabricComponent = createComponent(
@@ -213,6 +214,7 @@ export class Canvas {
                 renderingData.y,
                 component
             ).buildFabricObject();
+            if (component.definition.id == -8) (fabricComponent.data.ref as AudioListenerRenderable).simulatorService = simulatorService;
             this.canvas.add(fabricComponent);
             fabricComponent.bringToFront();    
             this.components.set(component.id, fabricComponent);

@@ -1,27 +1,47 @@
 import { fabric } from 'fabric'
 import { createConnector, normalizeLook } from '$lib/util/fabric_utils';
-import type { Component } from '../models/component'
 import type { RenderableComponent } from './renderable_component';
+import type { Component } from '$lib/models/component';
 import type { UserEvent } from '$lib/models/user_event';
+import { SIMULATOR_SERVICE } from '$lib/services/service';
+import type { SimulatorService } from '$lib/services/simulator_service';
 
-export class LedRenderable implements RenderableComponent {
+export class AudioListenerRenderable implements RenderableComponent {
     component: Component;
     left: number;
     top: number;
     fabricObject: fabric.Object;
     outline: fabric.Object;
     pins: fabric.Object[];
+    intervalId: number;
+    simulatorService: SimulatorService;
 
     constructor(left: number, top: number, component: Component) {
         this.left = left;
         this.top = top;
         this.component = component;
+
+        navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+            const audioCtx = new AudioContext();
+            const source = audioCtx.createMediaStreamSource(stream);
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 2048;
+
+            source.connect(analyser);
+
+            let bytes = new Float32Array(analyser.fftSize);
+            this.intervalId = setInterval(() => {
+                analyser.getFloatFrequencyData(bytes);
+                this.simulatorService.insertUserEvent({
+                    componentId: this.component.id,
+                    payload: bytes,
+                });
+            }, 1000);
+        });
     }
 
-    dispose(): void {}
-
-    onClick(): UserEvent {
-        return null;
+    dispose(): void {
+        clearInterval(this.intervalId);
     }
 
     setPinConnected(pinId: number, connected: boolean): void {
@@ -52,24 +72,39 @@ export class LedRenderable implements RenderableComponent {
         }
     }
 
+    onClick(): UserEvent {
+        const currentFill = this.outline.get("fill");
+        if(currentFill != "black"){
+            this.outline.set("fill", "black");
+        }else{
+            this.outline.set("fill", "transparent");
+        }
+
+        const event:UserEvent = {
+               componentId: this.component.id,
+               payload: "toggle"
+        }
+        return event;
+    }
+
     update(state: any) {
-        const fill = state.value ? 'red' : 'transparent';
-        this.outline.set("fill", fill);
+        // none
     }
 
     buildFabricObject(): fabric.Object {
-        let outline = new fabric.Circle({
-            radius: 20,
+        let outline = new fabric.Rect({
+            height: 75,
+            width: 75,
             fill: 'transparent',
             strokeUniform: true,
         });
         normalizeLook(outline);
         this.outline = outline;
 
-        let a = createConnector("A", 0, -35, 16.5, 'input', this.component, 'left');
-        this.pins = [a.item(1)];
+        let y = createConnector("Y", 0, 75, 35, 'output', this.component, 'right');
+        this.pins = [y.item(1)];
 
-        this.fabricObject = new fabric.Group([outline, a], {
+        this.fabricObject = new fabric.Group([outline, y], {
             left: this.left,
             top: this.top,
             subTargetCheck: true,

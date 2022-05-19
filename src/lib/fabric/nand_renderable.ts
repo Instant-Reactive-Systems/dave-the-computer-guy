@@ -23,6 +23,8 @@ export class NandRenderable implements RenderableComponent {
         this.component = component;
     }
 
+    dispose(): void {}
+
     onClick(): UserEvent {
         return null;
     }
