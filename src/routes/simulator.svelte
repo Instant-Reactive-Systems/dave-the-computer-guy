@@ -580,7 +580,6 @@
 				});
 			},
 			undo: () => {
-				const mode = clone(get(editorModeStore));
 				setEditorMode(preCommandMode).then(() => updateCircuitTab(preCommandCircuit));
 			},
 			redoable: false
