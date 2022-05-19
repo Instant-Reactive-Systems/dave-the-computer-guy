@@ -90,7 +90,7 @@
         @apply flex justify-center;
     }
 
-    *:disabled {
+    button:disabled {
         @apply cursor-not-allowed;
     }
 </style>
