@@ -77,7 +77,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
         })
     }
 
-    async addNewComponent(circuit: Circuit, definition: ComponentDefinition, x: number, y: number): Promise<Circuit> {
+    async addNewComponent(circuit: Circuit, definition: ComponentDefinition, x: number, y: number): Promise<[Circuit, ComponentRef]> {
         const circuitCopy: Circuit = copy(circuit)
         const id = circuitCopy.components.length;
         const component: ComponentRef = {
@@ -91,7 +91,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
         }
         circuitCopy.metadata.rendering.components.push(componentRenderingData);
         circuitCopy.components.push(component);
-        return circuitCopy;
+        return [circuitCopy, component];
     }
 
     async popComponent(circuit: Circuit): Promise<Circuit> {
@@ -156,6 +156,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
             }
         });
 
+        circuitCopy.params[componentId] = undefined;
         circuitCopy.components.splice(componentId, 1);
         circuitCopy.components.forEach((component, id) => {
             if (id != component.id) {
@@ -163,6 +164,7 @@ export class WorkerCircuitBuilderService implements CircuitBuilderService {
             }
         });
         circuitCopy.connections = [];
+        
         return circuitCopy;
     }
 

@@ -251,7 +251,6 @@
 
 		const commandToUndo: Command = currentCircuitTab.undoStack.pop();
 		if (commandToUndo != undefined) {
-            if (commandToUndo.name == 'AddNewComponent') componentStore.set(null);
 			commandToUndo.undo();
             actionStore.set({
                 type: 'undo',
@@ -381,6 +380,9 @@
 	function deleteComponent(e) {
 		const componentId = e.detail.componentId;
 		const preCommandCircuit = $circuitStore;
+        const previousSelectedComponent = $componentStore;
+        let deletedSelectedComponent = false;
+
 		const deleteComponentCommmand: Command = {
 			name: 'DeleteComponentCommand',
 			do: () => {
@@ -388,9 +390,16 @@
 				circuitBuilder
 					.deleteComponent(circuit, componentId)
 					.then((circuit) => updateCircuitTab(circuit));
+
+                // Remove the selected component
+                if (componentId == $componentStore?.id) {
+                    deletedSelectedComponent = true;
+                    componentStore.set(null);
+                }
 			},
 			undo: () => {
 				updateCircuitTab(preCommandCircuit);
+                if (deletedSelectedComponent) componentStore.set(previousSelectedComponent);
 			},
 			redoable: false
 		};
@@ -498,16 +507,22 @@
 		const x: number = event.detail.x;
 		const y: number = event.detail.y;
 		const preCommandCircuit = $circuitStore;
+        let createdComponentId: number;
+
 		const addNewComponentCommand: Command = {
 			name: 'AddNewComponent',
 			do: () => {
 				const circuit: Circuit = get(circuitStore);
 				circuitBuilder
 					.addNewComponent(circuit, definition, x, y)
-					.then((circuit) => updateCircuitTab(circuit));
+					.then(([circuit, component]) => {
+                        updateCircuitTab(circuit);
+                        createdComponentId = component.id;
+                    });
 			},
 			undo: () => {
 				updateCircuitTab(preCommandCircuit);
+                if (createdComponentId == $componentStore?.id) componentStore.set(null);
 			},
 			redoable: false
 		};
