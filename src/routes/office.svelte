@@ -53,6 +53,7 @@
 	}
 
 	function navigateToSimulator() {
+		document.body.style.cursor = 'default';
 		goto(Router.SIMULATOR_ROUTE, { replaceState: true });
 	}
 
