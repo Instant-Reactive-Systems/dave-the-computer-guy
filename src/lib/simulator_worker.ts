@@ -182,7 +182,8 @@ function pauseSimulation(msg: WorkerMessage) {
 function stopSimulation(msg: WorkerMessage) {
     console.log("Stopping simulation");
     state = SimulationState.STOPPED;
-
+    const stateMsg = createCircuitStateMessage(null);
+    postMessage(stateMsg);
     const res = createResponse(msg);
     postMessage(res);
 }
